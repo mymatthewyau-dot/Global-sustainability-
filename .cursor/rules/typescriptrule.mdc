@@ -1,3 +1,13 @@
 ---
 alwaysApply: true
 ---
+{
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"]
+    }
+  }
+}

@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [lastScanTime, setLastScanTime] = useState<string>('');
   const [isSimulating, setIsSimulating] = useState(false);
+  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations'>('sensor');
 
   const fetchData = async () => {
     try {
@@ -134,37 +135,73 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* WQI Gauge Section */}
-        <div className="mb-6 sm:mb-8">
-          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-            <div className="flex flex-col items-center">
-              <WQIGauge wqi={wqi} />
+        {/* Tab Navigation */}
+        <div className="mb-6 bg-white rounded-lg shadow">
+          <div className="border-b border-gray-200">
+            <nav className="flex -mb-px">
+              <button
+                onClick={() => setActiveTab('sensor')}
+                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
+                  activeTab === 'sensor'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <span className="mr-2">📊</span>
+                Sensor Data Breakdown
+              </button>
+              <button
+                onClick={() => setActiveTab('recommendations')}
+                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
+                  activeTab === 'recommendations'
+                    ? 'border-blue-600 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <span className="mr-2">💡</span>
+                Recommendations
+              </button>
+            </nav>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'sensor' && (
+          <div className="space-y-6 mb-6">
+            {/* WQI Gauge Section */}
+            <div>
+              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                <div className="flex flex-col items-center">
+                  <WQIGauge wqi={wqi} />
+                </div>
+              </div>
+            </div>
+
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Section 1: Water Quality Trends */}
+              <div className="lg:col-span-2">
+                <WaterQualityChart readings={readings.length > 0 ? readings : [latestReading]} />
+              </div>
+
+              {/* Section 2: Current Sensor Data */}
+              <div>
+                <SensorDataTable reading={latestReading} />
+              </div>
+
+              {/* Section 3: WQI Breakdown */}
+              <div>
+                <WQIBreakdown wqi={wqi} />
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        {/* Grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Section 1: Water Quality Trends */}
-          <div className="lg:col-span-2">
-            <WaterQualityChart readings={readings.length > 0 ? readings : [latestReading]} />
+        {activeTab === 'recommendations' && (
+          <div className="mb-6">
+            <RecommendationsList recommendations={recommendations} />
           </div>
-
-          {/* Section 2: Current Sensor Data */}
-          <div>
-            <SensorDataTable reading={latestReading} />
-          </div>
-
-          {/* Section 3: WQI Breakdown */}
-          <div>
-            <WQIBreakdown wqi={wqi} />
-          </div>
-        </div>
-
-        {/* Section 4: Recommendations */}
-        <div className="mb-6">
-          <RecommendationsList recommendations={recommendations} />
-        </div>
+        )}
 
         {/* Footer with Simulate Button */}
         <footer className="bg-white rounded-lg shadow p-4 sm:p-6 text-center">

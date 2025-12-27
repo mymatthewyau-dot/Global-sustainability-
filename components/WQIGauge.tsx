@@ -43,9 +43,9 @@ export default function WQIGauge({ wqi }: WQIGaugeProps) {
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="relative w-48 h-24 sm:w-64 sm:h-32">
+      <div className="relative w-48 h-24 sm:w-64 sm:h-32" style={{ overflow: 'visible' }}>
         {/* Background arc */}
-        <svg className="w-full h-full" viewBox="0 0 200 100">
+        <svg className="w-full h-full" viewBox="0 -8 200 108" style={{ overflow: 'visible' }}>
           <path
             d="M 20 80 A 80 80 0 0 1 180 80"
             fill="none"

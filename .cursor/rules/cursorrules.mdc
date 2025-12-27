@@ -1,3 +1,23 @@
 ---
 alwaysApply: true
 ---
+# Aquaculture Water Quality Dashboard - Project Rules
+
+## File Organization
+- All configuration files go in `lib/` (wqi-config.ts, recommendation-rules.ts)
+- All API routes go in `app/api/`
+- All React components go in `components/`
+- All TypeScript types go in `types/`
+- Mock data goes in `data/`
+
+## Code Style
+- Use TypeScript for all logic files (.ts)
+- Use .tsx only for React components
+- Keep functions small and focused
+- Export configs as const objects for easy modification
+
+## Naming Conventions
+- Components: PascalCase (WQIGauge.tsx)
+- Utilities: camelCase (wqi-calculator.ts)
+- Config files: kebab-case (wqi-config.ts)
+- API routes: kebab-case (sensor-data/route.ts)

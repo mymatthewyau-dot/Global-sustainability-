@@ -76,6 +76,83 @@
       "ammonia": 0.177,
       "tn": 0.47,
       "tp": 0.181
+    },
+    {
+      "timestamp": "2025-12-27T22:43:52.691Z",
+      "temperature": 28.3,
+      "ph": 7.32,
+      "do": 7.8,
+      "turbidity": 1.4,
+      "salinity": 23.3,
+      "ammonia": 0.168,
+      "tn": 0.21,
+      "tp": 0.079
+    },
+    {
+      "timestamp": "2025-12-27T22:43:55.028Z",
+      "temperature": 20.2,
+      "ph": 6.96,
+      "do": 5.8,
+      "turbidity": 8.6,
+      "salinity": 24.9,
+      "ammonia": 0.136,
+      "tn": 0.99,
+      "tp": 0.135
+    },
+    {
+      "timestamp": "2025-12-27T23:49:10.430Z",
+      "temperature": 22.6,
+      "ph": 7.25,
+      "do": 6.1,
+      "turbidity": 19.8,
+      "salinity": 33.5,
+      "ammonia": 0.038,
+      "tn": 1.45,
+      "tp": 0.007
+    },
+    {
+      "timestamp": "2025-12-27T23:49:23.800Z",
+      "temperature": 24.5,
+      "ph": 7.05,
+      "do": 5.9,
+      "turbidity": 17.9,
+      "salinity": 31.7,
+      "ammonia": 0.144,
+      "tn": 1.94,
+      "tp": 0.161
+    },
+    {
+      "timestamp": "2025-12-27T23:49:28.764Z",
+      "temperature": 25.6,
+      "ph": 7.5,
+      "do": 4.6,
+      "turbidity": 8.8,
+      "salinity": 22.5,
+      "ammonia": 0.128,
+      "tn": 0.56,
+      "tp": 0.078
+    },
+    {
+      "timestamp": "2025-12-27T23:49:35.635Z",
+      "temperature": 24.3,
+      "ph": 8.39,
+      "do": 5.5,
+      "turbidity": 1.7,
+      "salinity": 6.7,
+      "ammonia": 0.019,
+      "tn": 0.94,
+      "tp": 0.007
+    },
+    {
+      "timestamp": "2025-12-27T23:49:42.395Z",
+      "temperature": 21.2,
+      "ph": 7,
+      "do": 4.3,
+      "turbidity": 13.2,
+      "salinity": 10.8,
+      "ammonia": 0.014,
+      "tn": 1.97,
+      "tp": 0.008
     }
   ]
 }
