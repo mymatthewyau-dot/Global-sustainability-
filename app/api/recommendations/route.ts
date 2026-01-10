@@ -3,6 +3,9 @@ import { getLatestReading } from '@/lib/sensor-data';
 import { calculateWQI } from '@/lib/wqi-calculator';
 import { generateRecommendations, getRecommendationsByWQI } from '@/lib/recommendations';
 
+// Force dynamic rendering since we use searchParams
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/recommendations?wqi=75
  * Generates recommendations based on sensor data and WQI

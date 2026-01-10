@@ -9,11 +9,6 @@ import RecommendationsList from '@/components/RecommendationsList';
 import SensorDataTable from '@/components/SensorDataTable';
 import AuthButton from '@/components/AuthButton';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import ActivityLogger from '@/components/ActivityLogger';
-import ActivityHistory from '@/components/ActivityHistory';
-import TrendAnalysis from '@/components/TrendAnalysis';
-import MilestoneDisplay from '@/components/MilestoneDisplay';
-import ImpactSummary from '@/components/ImpactSummary';
 import { format } from 'date-fns';
 import { db } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
@@ -23,27 +18,23 @@ import { convertToSensorReading } from '@/lib/sensor-data-instant';
 
 function DashboardContent() {
   const { farm } = useFarm();
-  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations' | 'activity' | 'trends' | 'milestones'>('sensor');
+  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations'>('sensor');
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Real-time query for sensor readings
-  const sensorQuery = farm
-    ? {
-        sensorReadings: {
-          $: {
-            where: {
-              farmId: farm.id,
+  const { isLoading, error, data } = db.useQuery(
+    farm
+      ? {
+          sensorReadings: {
+            $: {
+              where: {
+                farmId: farm.id,
+              },
             },
           },
-        },
-      }
-    : null;
-
-  const { isLoading, error, data } = db.useQuery(sensorQuery as any) as {
-    isLoading: boolean;
-    error?: any;
-    data?: { sensorReadings?: any[] };
-  };
+        }
+      : null
+  );
 
   // Convert InstantDB data to SensorReading format and sort by timestamp
   const readings: SensorReading[] = useMemo(() => {
@@ -81,16 +72,18 @@ function DashboardContent() {
     
     try {
       setIsSimulating(true);
-      
-      // Generate mock sensor reading
-      const { generateMockSensorReading, addSensorReading } = await import('@/lib/sensor-data-instant');
-      const { calculateWQI } = await import('@/lib/wqi-calculator');
-      
-      const reading = generateMockSensorReading(farm.id);
-      const wqiScore = calculateWQI(reading);
-      
-      await addSensorReading({ ...reading, wqiScore: wqiScore.overall });
-      
+      const response = await fetch('/api/sensor-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ farmId: farm.id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to simulate scan');
+      }
+
       // Data will automatically update via real-time query
     } catch (error) {
       console.error('Error simulating scan:', error);
@@ -187,7 +180,7 @@ function DashboardContent() {
                 }`}
               >
                 <span className="mr-2">📊</span>
-                Sensor Data
+                Sensor Data Breakdown
               </button>
               <button
                 onClick={() => setActiveTab('recommendations')}
@@ -199,39 +192,6 @@ function DashboardContent() {
               >
                 <span className="mr-2">💡</span>
                 Recommendations
-              </button>
-              <button
-                onClick={() => setActiveTab('activity')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'activity'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">📝</span>
-                Activity Log
-              </button>
-              <button
-                onClick={() => setActiveTab('trends')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'trends'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">📈</span>
-                Trends
-              </button>
-              <button
-                onClick={() => setActiveTab('milestones')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'milestones'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">🏆</span>
-                Milestones
               </button>
             </nav>
           </div>
@@ -272,30 +232,6 @@ function DashboardContent() {
         {activeTab === 'recommendations' && (
           <div className="mb-6">
             <RecommendationsList recommendations={recommendations} />
-          </div>
-        )}
-
-        {activeTab === 'activity' && (
-          <div className="mb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ActivityLogger />
-              <ActivityHistory />
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'trends' && (
-          <div className="mb-6">
-            <TrendAnalysis />
-          </div>
-        )}
-
-        {activeTab === 'milestones' && (
-          <div className="mb-6">
-            <div className="space-y-6">
-              <ImpactSummary />
-              <MilestoneDisplay />
-            </div>
           </div>
         )}
 

@@ -44,7 +44,7 @@ export default function WQIBreakdown({ wqi }: WQIBreakdownProps) {
         </div>
       )}
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={chartData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+        <BarChart data={chartData} margin={{ top: 5, right: 20, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis 
             dataKey="parameter" 
@@ -59,7 +59,7 @@ export default function WQIBreakdown({ wqi }: WQIBreakdownProps) {
             stroke="#6b7280"
             fontSize={12}
             tick={{ fill: '#6b7280' }}
-            label={{ value: 'Contribution to WQI', angle: -90, position: 'insideLeft' }}
+            label={{ value: 'Contribution to WQI', angle: -90, position: 'center', dx: -10 }}
           />
           <Tooltip 
             contentStyle={{ 

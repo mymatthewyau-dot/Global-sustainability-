@@ -1,4 +1,6 @@
 export interface SensorReading {
+  id?: string;
+  farmId?: string;
   timestamp: string;
   temperature: number; // °C
   ph: number;
@@ -8,6 +10,7 @@ export interface SensorReading {
   ammonia: number; // NH3-N, mg/L
   tn: number; // Total Nitrogen, mg/L
   tp: number; // Total Phosphate, mg/L
+  wqiScore?: number;
 }
 
 export interface WQIParameterBreakdown {
@@ -37,5 +40,35 @@ export interface Recommendation {
 
 export interface SensorHistory {
   readings: SensorReading[];
+}
+
+export interface Farm {
+  id: string;
+  name: string;
+  location?: string;
+  imtaStartDate: string; // ISO date string
+  createdAt: string; // ISO date string
+  ownerId: string; // InstantDB auth user ID
+}
+
+export interface Activity {
+  id: string;
+  farmId: string;
+  timestamp: string;
+  type: 'feed' | 'species_added' | 'species_removed' | 'maintenance';
+  species?: string;
+  feedAmount?: number; // kg
+  feedType?: string;
+  notes?: string;
+}
+
+export interface Milestone {
+  id: string;
+  farmId: string;
+  achievedAt: string;
+  type: 'wqi_improved_10' | 'wqi_improved_25' | 'wqi_improved_50' | '30_days_tracked' | '60_days_tracked' | '90_days_tracked';
+  baselineWqi: number;
+  currentWqi: number;
+  improvementPercent: number;
 }
 

@@ -1,202 +1,330 @@
-# Aquaculture Water Quality Monitoring Dashboard
+# IMTA Aquaculture Water Quality Dashboard
 
-A prototype web dashboard for IMTA (Integrated Multi-Trophic Aquaculture) water quality monitoring system. This MVP focuses on core API-driven features: IoT sensor data ingestion, AI-powered WQI (Water Quality Index) analysis, and farmer recommendations.
+A full-stack web application for IMTA (Integrated Multi-Trophic Aquaculture) water quality monitoring and impact tracking. Monitor water quality in real-time, track farm activities, analyze trends, and measure IMTA's positive impact on your aquaculture operation.
 
-## Features
+## 🌟 Key Features
 
-- **Real-time Sensor Data Ingestion**: Mock IoT sensor data collection (simulates sensors from i-ocean, Milesight)
-- **WQI Calculation**: NSFWQI-based water quality index with configurable parameter weights
-- **AI-Powered Recommendations**: Rule-based recommendations for feeding and species additions
-- **Interactive Dashboard**: Mobile-first responsive design with charts and visualizations
-- **Configurable Parameters**: Easy-to-modify weights and recommendation rules
+### 🔐 Authentication & Multi-Tenancy
+- **Email magic link authentication** powered by InstantDB
+- **Multi-farm support** - each farm has isolated data
+- **Onboarding flow** for new farm setup
 
-## Tech Stack
+### 📊 Real-Time Water Quality Monitoring
+- **Live sensor data** with InstantDB real-time sync
+- **WQI (Water Quality Index)** calculation based on 8 parameters
+- **Visual dashboard** with gauges, charts, and breakdowns
+- **AI-powered recommendations** for feeding, species, and maintenance
 
-- **Frontend**: Next.js 14+ (App Router), React, Tailwind CSS
+### 📝 Activity Tracking
+- **Feed logging** - track feed amounts, types, and species
+- **Species management** - log additions and removals
+- **Maintenance records** - keep notes on farm operations
+- **Real-time activity history** with filtering
+
+### 📈 Trend Analysis & Baseline
+- **Automatic baseline** calculated from first 30 days
+- **Long-term WQI trends** with customizable time ranges
+- **Improvement tracking** compared to baseline
+- **Visual trend charts** showing progress over time
+
+### 🏆 Milestone System
+- **Automatic achievement detection** for WQI improvements
+- **Progress tracking** - 30, 60, 90 days milestones
+- **Impact summary** showing IMTA benefits
+- **Eco-friendliness score** based on water quality
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 14+ (App Router), React, TypeScript, Tailwind CSS
+- **Database**: InstantDB (real-time, cloud-hosted)
+- **Authentication**: InstantDB Auth (magic links)
 - **Charts**: Recharts
-- **Data Storage**: JSON files (can migrate to SQLite later)
-- **WQI Calculation**: Rule-based NSFWQI formula
-- **Recommendations**: Rule-based logic with configurable thresholds
+- **Date Handling**: date-fns
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn
+- Node.js 18+ and npm
+- InstantDB account (free at [instantdb.com](https://instantdb.com))
 
 ### Installation
 
-1. Install dependencies:
+1. **Clone and install dependencies:**
 ```bash
 npm install
 ```
 
-2. Run the development server:
+2. **Configure InstantDB:**
+   - The app is already configured with App ID: `0ff4c356-edb9-4b27-b6e6-7e1e32c7ccd8`
+   - No additional configuration needed!
+
+3. **Run the development server:**
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+4. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-### Initial Data Setup
+### First-Time Setup
 
-On first run, the system will automatically generate 24 hours of historical sensor data. You can also click "Run New Scan" to simulate new sensor readings.
+1. **Sign in** - Enter your email to receive a magic link
+2. **Onboarding** - Create your farm profile:
+   - Farm name
+   - Location (optional)
+   - IMTA implementation date
+3. **Generate data** - Click "Generate Initial Data" to create your first sensor reading
+4. **Start tracking** - Use "Run New Scan" to simulate new readings
 
-## Project Structure
+### Optional: Seed Historical Data
+
+To populate 30 days of baseline data for testing:
+
+```bash
+# Get admin token from InstantDB dashboard
+export INSTANTDB_ADMIN_TOKEN="your-admin-token"
+
+# Run seeding script (replace with your farmId)
+npx ts-node scripts/seed-initial-data.ts <your-farm-id>
+```
+
+## 📁 Project Structure
 
 ```
 /
 ├── app/
-│   ├── api/              # API routes
-│   │   ├── sensor-data/  # POST endpoint for sensor ingestion
-│   │   ├── wqi/          # GET endpoint for WQI calculation
-│   │   └── recommendations/ # GET endpoint for recommendations
-│   ├── page.tsx          # Main dashboard
-│   └── layout.tsx        # Root layout
-├── components/           # React components
-│   ├── WQIGauge.tsx
-│   ├── WaterQualityChart.tsx
-│   ├── WQIBreakdown.tsx
-│   ├── RecommendationsList.tsx
-│   └── SensorDataTable.tsx
-├── lib/                  # Core logic
-│   ├── wqi-calculator.ts      # WQI calculation
-│   ├── wqi-config.ts          # Configurable WQI weights
-│   ├── recommendations.ts     # Recommendation engine
-│   ├── recommendation-rules.ts # Configurable rules
-│   └── sensor-data.ts         # Mock data management
-├── types/                # TypeScript interfaces
-└── data/                 # JSON data storage
+│   ├── api/                    # API routes
+│   │   ├── sensor-data/        # Sensor data ingestion
+│   │   ├── wqi/                # WQI calculation (legacy)
+│   │   └── recommendations/    # Recommendations (legacy)
+│   ├── auth/                   # Authentication pages
+│   ├── onboarding/             # Farm setup
+│   ├── page.tsx                # Main dashboard
+│   └── layout.tsx              # Root layout with providers
+│
+├── components/                 # React components
+│   ├── WQIGauge.tsx           # WQI visualization
+│   ├── WaterQualityChart.tsx  # 24h trend chart
+│   ├── WQIBreakdown.tsx       # Parameter breakdown
+│   ├── SensorDataTable.tsx    # Current readings
+│   ├── RecommendationsList.tsx # Action items
+│   ├── ActivityLogger.tsx      # Activity input form
+│   ├── ActivityHistory.tsx     # Activity timeline
+│   ├── TrendAnalysis.tsx       # Long-term trends
+│   ├── MilestoneDisplay.tsx    # Achievements
+│   ├── ImpactSummary.tsx       # IMTA impact metrics
+│   ├── AuthButton.tsx          # Login/logout
+│   └── ProtectedRoute.tsx      # Route protection
+│
+├── lib/                        # Core business logic
+│   ├── instant.ts              # InstantDB client
+│   ├── auth-context.tsx        # Auth provider
+│   ├── farm-context.tsx        # Farm data provider
+│   ├── wqi-calculator.ts       # WQI algorithm
+│   ├── wqi-config.ts           # WQI weights (configurable)
+│   ├── recommendations.ts      # Recommendation engine
+│   ├── recommendation-rules.ts # Rules (configurable)
+│   ├── sensor-data-instant.ts  # Sensor data helpers
+│   ├── baseline-calculator.ts  # Baseline & trends
+│   └── milestone-detector.ts   # Achievement logic
+│
+├── types/                      # TypeScript definitions
+│   └── index.ts               # All interfaces
+│
+└── scripts/                    # Utility scripts
+    └── seed-initial-data.ts   # Data seeding
 ```
 
-## Configuration
+## 🎯 Features Guide
 
-### Modifying WQI Weights
+### Dashboard Tabs
 
-Edit `lib/wqi-config.ts` to adjust parameter weights:
+1. **Sensor Data**
+   - Current WQI gauge with color-coded status
+   - 24-hour trend chart
+   - Live sensor readings table
+   - Parameter breakdown with risk levels
+
+2. **Recommendations**
+   - AI-generated action items
+   - Prioritized by urgency
+   - Context-aware suggestions for IMTA
+
+3. **Activity Log**
+   - Log feeding events with amounts and types
+   - Track species additions/removals
+   - Record maintenance activities
+   - View activity history timeline
+
+4. **Trends**
+   - Long-term WQI trend analysis
+   - Baseline comparison
+   - Improvement percentage
+   - Customizable time ranges (7/30/90 days, all time)
+
+5. **Milestones**
+   - IMTA impact summary with key metrics
+   - Achievement badges for WQI improvements
+   - Progress tracking (30/60/90 days)
+   - Eco-friendliness score
+
+### Water Quality Parameters
+
+| Parameter | Units | Optimal Range | WQI Weight |
+|-----------|-------|---------------|------------|
+| Temperature | °C | 20-30 | 10% |
+| pH | - | 7.0-8.5 | 15% |
+| Dissolved Oxygen (DO) | mg/L | 5-8 | 20% |
+| Turbidity | NTU | <15 | 12% |
+| Salinity | ppt | Species-dependent | 8% |
+| Ammonia (NH3-N) | mg/L | <0.1 | 18% |
+| Total Nitrogen (TN) | mg/L | <1 | 9% |
+| Total Phosphate (TP) | mg/L | <0.1 | 8% |
+
+### WQI Categories
+
+- **Excellent** (90-100): All parameters optimal
+- **Good** (70-90): Minor adjustments recommended
+- **Moderate** (50-70): Action required for some parameters
+- **Poor** (<50): Immediate intervention needed
+
+## ⚙️ Configuration
+
+### Customize WQI Weights
+
+Edit `lib/wqi-config.ts`:
 
 ```typescript
 export const WQI_WEIGHTS = {
-  dissolvedOxygen: 0.2,  // Change this value
+  dissolvedOxygen: 0.20,  // Adjust weights
   pH: 0.15,
-  // ... etc
+  ammonia: 0.18,
+  // ...
 };
 ```
 
-### Modifying Recommendation Rules
+### Customize Recommendations
 
-Edit `lib/recommendation-rules.ts` to adjust thresholds and actions:
+Edit `lib/recommendation-rules.ts`:
 
 ```typescript
 {
-  condition: (reading, wqi) => reading.do < 6,  // Change threshold
+  condition: (reading, wqi) => reading.do < 5,
   category: 'Feeding',
-  action: 'Your custom action here',
-  // ... etc
+  action: 'Your custom recommendation',
+  reason: 'Your explanation',
+  priority: 'High',
 }
 ```
 
-## API Endpoints
+### Add New Milestones
+
+Edit `lib/milestone-detector.ts` to add custom achievement types.
+
+## 🔧 API Reference
 
 ### POST `/api/sensor-data`
-Accepts sensor reading payload or generates mock data.
 
-**Request Body (optional):**
+Add a new sensor reading (requires `farmId`).
+
+**Request:**
 ```json
 {
-  "timestamp": "2025-12-28T02:18:00Z",
+  "farmId": "farm-id-here",
   "temperature": 27.5,
   "ph": 7.2,
   "do": 6.8,
-  "turbidity": 15,
-  "salinity": 20,
-  "ammonia": 0.08,
-  "tn": 0.8,
-  "tp": 0.06
+  "turbidity": 12,
+  "salinity": 25,
+  "ammonia": 0.05,
+  "tn": 0.7,
+  "tp": 0.04
 }
 ```
-
-### GET `/api/wqi`
-Returns current WQI score, category, breakdown, and 24h trend.
 
 **Response:**
 ```json
 {
-  "overall": 75.5,
-  "category": "Good",
-  "breakdown": [...],
-  "trendAnalysis": "...",
-  "trend": {
-    "timestamps": [...],
-    "scores": [...]
-  }
+  "success": true,
+  "message": "Sensor data recorded successfully",
+  "reading": { /* ... */ }
 }
 ```
 
-### GET `/api/recommendations?wqi=75`
-Returns recommendations based on sensor data and WQI.
+## 🌱 IMTA Benefits Tracked
 
-**Response:**
-```json
-{
-  "wqi": 75,
-  "recommendations": [
-    {
-      "category": "Feeding",
-      "action": "...",
-      "reason": "...",
-      "priority": "High"
-    }
-  ]
-}
+The dashboard tracks these IMTA improvements:
+
+1. **Water Quality Improvement** - Measured by WQI increase from baseline
+2. **Days Tracked** - Continuous monitoring duration
+3. **Eco-Friendliness Score** - Based on current WQI and improvement
+4. **Estimated Yield Increase** - Calculated from water quality improvements
+
+### Impact Calculation
+
+- **Baseline**: Average WQI from first 30 days
+- **Current**: Rolling 7-day average WQI
+- **Improvement**: Percentage increase from baseline
+- **Yield Estimate**: 1% WQI improvement ≈ 0.5% yield increase
+
+## 🔐 Data Security
+
+- **Multi-tenancy**: Each farm's data is isolated by `farmId`
+- **Authentication**: Required for all dashboard access
+- **Real-time sync**: InstantDB handles data consistency
+- **Permissions**: Users can only access their own farm data
+
+## 🐛 Troubleshooting
+
+### Can't sign in?
+- Check your email for the magic link
+- Link expires after 10 minutes
+- Try resending the code
+
+### No data showing?
+- Click "Generate Initial Data" on first visit
+- Ensure you're logged in and have a farm set up
+- Check browser console for errors
+
+### Milestones not appearing?
+- Ensure you have 30+ days of data for baseline
+- Milestones auto-detect on page load
+- Try refreshing the Milestones tab
+
+## 📝 Development Notes
+
+- **Real-time updates**: All data syncs automatically via InstantDB
+- **No backend server needed**: InstantDB handles database and auth
+- **Mobile-first**: Optimized for field use on tablets/phones
+- **Type-safe**: Full TypeScript coverage
+- **Configurable**: Easy to adjust weights, rules, and thresholds
+
+## 🚀 Deployment
+
+This app can be deployed to Vercel, Netlify, or any Next.js hosting platform:
+
+```bash
+npm run build
+npm start
 ```
 
-## Testing Scenarios
+No environment variables needed - InstantDB App ID is already configured!
 
-1. **Normal Conditions**: All parameters in range → Good WQI → Standard recommendations
-2. **Low DO Crisis**: DO < 5 mg/L → Poor WQI → "Delay feeding, add aeration"
-3. **High Turbidity**: Turbidity > 15 NTU → Moderate WQI → "Add mussels"
-4. **High Nutrients**: TN/TP elevated → Moderate WQI → "Add seaweed"
+## 📚 Learn More
 
-## Sensor Parameters
+- [InstantDB Documentation](https://instantdb.com/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [IMTA Overview](https://www.fao.org/aquaculture/imta)
 
-| Parameter | Units | Typical Range | Impact on WQI |
-|-----------|-------|---------------|---------------|
-| Temperature | °C | 20-30 | Affects DO solubility |
-| pH | - | 6.5-8.5 | Acidification risk |
-| Dissolved Oxygen (DO) | mg/L | 5-8 | Fish stress threshold |
-| Turbidity | NTU | 0-20 | Waste accumulation |
-| Salinity | ppt | 0-35 | Species tolerance |
-| Ammonia (NH3-N) | mg/L | <0.1 | Toxicity |
-| Total Nitrogen (TN) | mg/L | <1 | Eutrophication |
-| Phosphate (TP) | mg/L | <0.1 | Algal blooms |
+## 🤝 Contributing
 
-## WQI Categories
+This is a prototype project. Improvements welcome!
 
-- **Excellent** (90-100): All parameters optimal
-- **Good** (70-90): Minor adjustments may be needed
-- **Moderate** (50-70): Some parameters require attention
-- **Poor** (<50): Immediate intervention required
+## 📄 License
 
-## Next Steps (Post-Prototype)
+MIT License - Free to use and modify for your aquaculture operation.
 
-- Real sensor API integration (i-ocean, Milesight)
-- SQLite database migration
-- User authentication
-- Historical data analytics
-- Alert notifications
-- Multi-farm support
-- Advanced ML-based recommendations
+---
 
-## Development Notes
-
-- This is a prototype using mock data
-- File-based JSON storage for rapid development
-- Rule-based logic (not ML) for recommendations
-- Mobile-first design for field use
-- Configurable weights and rules for easy iteration
-
-## License
-
-This is a prototype project for demonstration purposes.
-
+**Built with ❤️ for sustainable aquaculture farmers**
