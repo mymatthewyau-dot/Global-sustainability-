@@ -1,80 +1,111 @@
 'use client';
 
-import { Recommendation } from '@/types';
+import { useState, useMemo } from 'react';
+import { SensorReading } from '@/types';
+import { SPECIES_CONFIG } from '@/lib/species-suitability-config';
+import { calculateAllSpeciesSuitability } from '@/lib/species-suitability-calculator';
+import SpeciesSuitabilityTab from './SpeciesSuitabilityTab';
+import GeneralRecommendations from './GeneralRecommendations';
 
 interface RecommendationsListProps {
-  recommendations: Recommendation[];
+  reading: SensorReading;
 }
 
-export default function RecommendationsList({ recommendations }: RecommendationsListProps) {
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'High':
-        return 'bg-red-50 border-red-200 text-red-800';
-      case 'Medium':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
-      case 'Low':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
-      default:
-        return 'bg-gray-50 border-gray-200 text-gray-800';
-    }
+type TabId = 'shrimp' | 'tilapia' | 'ulva' | 'general';
+
+export default function RecommendationsList({ reading }: RecommendationsListProps) {
+  const [activeTab, setActiveTab] = useState<TabId>('shrimp');
+
+  // Calculate suitability for all species
+  const suitabilities = useMemo(() => {
+    return calculateAllSpeciesSuitability(reading);
+  }, [reading]);
+
+  // Get tab configuration
+  const tabs: { id: TabId; label: string; icon: string; species?: string }[] = [
+    { id: 'shrimp', label: 'Shrimp', icon: '🦐', species: 'shrimp' },
+    { id: 'tilapia', label: 'Tilapia', icon: '🐟', species: 'tilapia' },
+    { id: 'ulva', label: 'Ulva', icon: '🌿', species: 'ulva' },
+    { id: 'general', label: 'General', icon: '📋' },
+  ];
+
+  // Get the current species suitability
+  const currentSuitability = useMemo(() => {
+    if (activeTab === 'general') return null;
+    return suitabilities.find((s) => s.species.id === activeTab);
+  }, [activeTab, suitabilities]);
+
+  // Count issues for each tab
+  const getIssueCount = (speciesId: string) => {
+    const suit = suitabilities.find((s) => s.species.id === speciesId);
+    if (!suit) return 0;
+    return suit.problems.length;
   };
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Feeding':
-        return '🌾';
-      case 'Species':
-        return '🐟';
-      case 'Maintenance':
-        return '🔧';
-      default:
-        return '📋';
-    }
+  const getTotalIssues = () => {
+    return suitabilities.reduce((sum, s) => sum + s.problems.length, 0);
   };
-
-  if (recommendations.length === 0) {
-    return (
-      <div className="w-full bg-white rounded-lg shadow p-6 text-center">
-        <p className="text-gray-500 text-lg">No recommendations at this time.</p>
-        <p className="text-gray-400 text-sm mt-2">Water quality parameters are within acceptable ranges.</p>
-      </div>
-    );
-  }
 
   return (
-    <div className="w-full bg-white rounded-lg shadow p-4">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Actions for Today</h3>
-      <div className="space-y-3">
-        {recommendations.map((rec, index) => (
-          <div
-            key={index}
-            className={`border-2 rounded-lg p-4 ${getPriorityColor(rec.priority)}`}
-          >
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">{getCategoryIcon(rec.category)}</span>
-                <span className="font-semibold text-base">{rec.category}</span>
-              </div>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                rec.priority === 'High' ? 'bg-red-200 text-red-900' :
-                rec.priority === 'Medium' ? 'bg-yellow-200 text-yellow-900' :
-                'bg-blue-200 text-blue-900'
-              }`}>
-                {rec.priority}
-              </span>
-            </div>
-            <p className="font-medium mb-2 text-base">{rec.action}</p>
-            <p className="text-sm opacity-90">{rec.reason}</p>
-            {rec.dataLink && (
-              <p className="text-xs mt-2 opacity-75">
-                Linked to: <span className="font-semibold">{rec.dataLink}</span>
-              </p>
-            )}
+    <div className="w-full">
+      {/* Tab Navigation */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-6 overflow-hidden">
+        <div className="flex overflow-x-auto">
+          {tabs.map((tab) => {
+            const issueCount =
+              tab.id === 'general'
+                ? getTotalIssues()
+                : tab.species
+                ? getIssueCount(tab.species)
+                : 0;
+
+            const isActive = activeTab === tab.id;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 min-w-[100px] px-4 py-4 text-sm font-medium transition-all relative ${
+                  isActive
+                    ? 'text-blue-600 bg-blue-50 border-b-2 border-blue-600'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50 border-b-2 border-transparent'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-1">
+                  <span className="text-xl">{tab.icon}</span>
+                  <span>{tab.label}</span>
+                  {issueCount > 0 && (
+                    <span
+                      className={`absolute top-2 right-2 w-5 h-5 flex items-center justify-center rounded-full text-xs font-bold ${
+                        isActive
+                          ? 'bg-blue-600 text-white'
+                          : issueCount > 0
+                          ? 'bg-red-500 text-white'
+                          : 'bg-gray-200 text-gray-600'
+                      }`}
+                    >
+                      {issueCount}
+                    </span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tab Content */}
+      <div>
+        {activeTab === 'general' ? (
+          <GeneralRecommendations suitabilities={suitabilities} />
+        ) : currentSuitability ? (
+          <SpeciesSuitabilityTab suitability={currentSuitability} />
+        ) : (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+            <p className="text-gray-500">No data available for this species.</p>
           </div>
-        ))}
+        )}
       </div>
     </div>
   );
 }
-

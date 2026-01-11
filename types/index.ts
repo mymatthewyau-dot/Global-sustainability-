@@ -5,11 +5,10 @@ export interface SensorReading {
   temperature: number; // °C
   ph: number;
   do: number; // Dissolved Oxygen, mg/L
-  turbidity: number; // NTU
+  tss: number; // Total Suspended Solids, mg/L
   salinity: number; // ppt
-  ammonia: number; // NH3-N, mg/L
-  tn: number; // Total Nitrogen, mg/L
-  tp: number; // Total Phosphate, mg/L
+  ammonia: number; // TAN (Total Ammonia Nitrogen), mg/L
+  alkalinity: number; // mg/L CaCO₃
   wqiScore?: number;
 }
 

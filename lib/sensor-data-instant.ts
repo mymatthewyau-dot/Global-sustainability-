@@ -10,14 +10,13 @@ export function generateMockSensorReading(farmId: string): Omit<SensorReading, '
   return {
     farmId,
     timestamp: now.toISOString(),
-    temperature: parseFloat((20 + Math.random() * 10).toFixed(1)), // 20-30°C
-    ph: parseFloat((6.5 + Math.random() * 2).toFixed(2)), // 6.5-8.5
-    do: parseFloat((4 + Math.random() * 4).toFixed(1)), // 4-8 mg/L
-    turbidity: parseFloat((Math.random() * 20).toFixed(1)), // 0-20 NTU
-    salinity: parseFloat((Math.random() * 35).toFixed(1)), // 0-35 ppt
-    ammonia: parseFloat((Math.random() * 0.2).toFixed(3)), // 0-0.2 mg/L
-    tn: parseFloat((Math.random() * 2).toFixed(2)), // 0-2 mg/L
-    tp: parseFloat((Math.random() * 0.2).toFixed(3)), // 0-0.2 mg/L
+    temperature: parseFloat((24 + Math.random() * 8).toFixed(1)), // 24-32°C
+    ph: parseFloat((7.0 + Math.random() * 2).toFixed(2)), // 7.0-9.0
+    do: parseFloat((3 + Math.random() * 5).toFixed(1)), // 3-8 mg/L
+    tss: parseFloat((50 + Math.random() * 700).toFixed(0)), // 50-750 mg/L
+    salinity: parseFloat((5 + Math.random() * 35).toFixed(1)), // 5-40 ppt
+    ammonia: parseFloat((Math.random() * 2).toFixed(2)), // 0-2 mg/L TAN
+    alkalinity: parseFloat((60 + Math.random() * 140).toFixed(0)), // 60-200 mg/L CaCO₃
   };
 }
 
@@ -35,20 +34,21 @@ export function generateHistoricalData(farmId: string): Omit<SensorReading, 'id'
     const timestamp = new Date(now.getTime() - i * intervalMinutes * 60 * 1000);
     
     // Add some realistic variation over time
-    const baseTemp = 25 + Math.sin(i / 10) * 3;
-    const baseDO = 6 + Math.cos(i / 8) * 1.5;
+    const baseTemp = 28 + Math.sin(i / 10) * 3;
+    const baseDO = 5.5 + Math.cos(i / 8) * 1.5;
+    const baseTSS = 400 + Math.sin(i / 6) * 150;
+    const baseAlkalinity = 120 + Math.cos(i / 12) * 30;
     
     readings.push({
       farmId,
       timestamp: timestamp.toISOString(),
       temperature: parseFloat((baseTemp + (Math.random() - 0.5) * 2).toFixed(1)),
-      ph: parseFloat((7 + (Math.random() - 0.5) * 0.5).toFixed(2)),
+      ph: parseFloat((8 + (Math.random() - 0.5) * 0.5).toFixed(2)),
       do: parseFloat((baseDO + (Math.random() - 0.5) * 1).toFixed(1)),
-      turbidity: parseFloat((10 + Math.random() * 5 + Math.sin(i / 5) * 3).toFixed(1)),
-      salinity: parseFloat((15 + Math.random() * 10).toFixed(1)),
-      ammonia: parseFloat((0.05 + Math.random() * 0.1).toFixed(3)),
-      tn: parseFloat((0.5 + Math.random() * 0.5).toFixed(2)),
-      tp: parseFloat((0.05 + Math.random() * 0.1).toFixed(3)),
+      tss: parseFloat((baseTSS + (Math.random() - 0.5) * 100).toFixed(0)),
+      salinity: parseFloat((18 + Math.random() * 10).toFixed(1)),
+      ammonia: parseFloat((0.3 + Math.random() * 0.5).toFixed(2)),
+      alkalinity: parseFloat((baseAlkalinity + (Math.random() - 0.5) * 20).toFixed(0)),
     });
   }
 
@@ -70,11 +70,10 @@ export async function addSensorReading(
       temperature: reading.temperature,
       ph: reading.ph,
       do: reading.do,
-      turbidity: reading.turbidity,
+      tss: reading.tss,
       salinity: reading.salinity,
       ammonia: reading.ammonia,
-      tn: reading.tn,
-      tp: reading.tp,
+      alkalinity: reading.alkalinity,
       wqiScore: reading.wqiScore,
     }),
   ]);
@@ -94,11 +93,10 @@ export async function batchAddSensorReadings(
       temperature: reading.temperature,
       ph: reading.ph,
       do: reading.do,
-      turbidity: reading.turbidity,
+      tss: reading.tss,
       salinity: reading.salinity,
       ammonia: reading.ammonia,
-      tn: reading.tn,
-      tp: reading.tp,
+      alkalinity: reading.alkalinity,
       wqiScore: reading.wqiScore,
     });
   });
@@ -117,11 +115,10 @@ export function convertToSensorReading(dbReading: any): SensorReading {
     temperature: dbReading.temperature,
     ph: dbReading.ph,
     do: dbReading.do,
-    turbidity: dbReading.turbidity,
+    tss: dbReading.tss,
     salinity: dbReading.salinity,
     ammonia: dbReading.ammonia,
-    tn: dbReading.tn,
-    tp: dbReading.tp,
+    alkalinity: dbReading.alkalinity,
     wqiScore: dbReading.wqiScore,
   };
 }

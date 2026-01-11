@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="tilapiaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FB3D5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5DADE2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3498DB;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="tilapiaBelly" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4E6F1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#AED6F1;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="#F0F8FF" stroke="#3498DB" stroke-width="2"/>
+  <!-- Fish body -->
+  <ellipse cx="100" cy="100" rx="60" ry="35" fill="url(#tilapiaGradient)"/>
+  <!-- Belly -->
+  <ellipse cx="100" cy="115" rx="45" ry="18" fill="url(#tilapiaBelly)"/>
+  <!-- Head -->
+  <ellipse cx="155" cy="100" rx="25" ry="28" fill="url(#tilapiaGradient)"/>
+  <!-- Eye -->
+  <circle cx="165" cy="92" r="8" fill="white"/>
+  <circle cx="167" cy="91" r="5" fill="#1a1a1a"/>
+  <circle cx="168" cy="89" r="1.5" fill="white"/>
+  <!-- Mouth -->
+  <path d="M178 102 Q185 105 178 108" stroke="#2980B9" stroke-width="2" fill="none"/>
+  <!-- Tail -->
+  <path d="M40 100 Q20 75 25 55 Q35 70 45 65 Q35 80 40 100 Q35 120 45 135 Q35 130 25 145 Q20 125 40 100 Z" fill="#5DADE2"/>
+  <!-- Dorsal fin -->
+  <path d="M60 65 Q70 40 85 50 Q95 35 110 45 Q120 30 130 50 Q140 40 145 55 L145 72 Q120 80 100 78 Q80 80 60 70 Z" fill="#3498DB"/>
+  <!-- Pectoral fin -->
+  <ellipse cx="145" cy="120" rx="15" ry="8" fill="#5DADE2" transform="rotate(30 145 120)"/>
+  <!-- Ventral fin -->
+  <path d="M90 130 Q85 150 95 145 Q100 155 105 145 Q115 150 110 130 Z" fill="#5DADE2"/>
+  <!-- Anal fin -->
+  <path d="M55 125 Q45 145 60 140 Q55 150 70 135 L75 120 Z" fill="#3498DB"/>
+  <!-- Scales pattern -->
+  <g opacity="0.3" stroke="#2980B9" stroke-width="0.5" fill="none">
+    <circle cx="80" cy="100" r="8"/>
+    <circle cx="95" cy="95" r="8"/>
+    <circle cx="110" cy="100" r="8"/>
+    <circle cx="125" cy="95" r="8"/>
+    <circle cx="85" cy="110" r="8"/>
+    <circle cx="100" cy="108" r="8"/>
+    <circle cx="115" cy="110" r="8"/>
+  </g>
+  <!-- Lateral line -->
+  <path d="M50 100 Q80 95 120 98 Q150 100 165 100" stroke="#2980B9" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+  <!-- Label -->
+  <text x="100" y="185" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#3498DB" font-weight="bold">O. niloticus</text>
+</svg>
+

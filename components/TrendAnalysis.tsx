@@ -12,7 +12,7 @@ import {
   getTrendData,
 } from '@/lib/baseline-calculator';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 
 export default function TrendAnalysis() {
   const { farm } = useFarm();
@@ -63,13 +63,38 @@ export default function TrendAnalysis() {
     return getTrendData(readings, days);
   }, [readings, timeRange]);
 
-  // Format data for Recharts
+  // Format data for Recharts - aggregate by day for cleaner X-axis
   const chartData = useMemo(() => {
-    return trendData.map((point) => ({
-      timestamp: format(new Date(point.timestamp), 'MMM dd'),
-      fullTimestamp: point.timestamp,
-      WQI: parseFloat(point.wqi.toFixed(1)),
-    }));
+    if (trendData.length === 0) return [];
+
+    // Group readings by day
+    const dailyMap = new Map<string, { timestamps: string[]; wqiSum: number; count: number }>();
+    
+    trendData.forEach((point) => {
+      const date = startOfDay(new Date(point.timestamp));
+      const dateKey = date.toISOString();
+      
+      if (!dailyMap.has(dateKey)) {
+        dailyMap.set(dateKey, { timestamps: [], wqiSum: 0, count: 0 });
+      }
+      
+      const dayData = dailyMap.get(dateKey)!;
+      dayData.timestamps.push(point.timestamp);
+      dayData.wqiSum += point.wqi;
+      dayData.count += 1;
+    });
+
+    // Convert to array and sort chronologically
+    const dailyData = Array.from(dailyMap.entries())
+      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime())
+      .map(([dateKey, data]) => ({
+        timestamp: format(new Date(dateKey), 'MMM dd'),
+        fullTimestamp: dateKey,
+        WQI: parseFloat((data.wqiSum / data.count).toFixed(1)),
+        readingsCount: data.count,
+      }));
+
+    return dailyData;
   }, [trendData]);
 
   if (isLoading) {
@@ -171,14 +196,20 @@ export default function TrendAnalysis() {
             <Tooltip
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
+                  const readingsCount = payload[0].payload.readingsCount;
                   return (
                     <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
                       <p className="text-sm text-gray-600">
-                        {format(new Date(payload[0].payload.fullTimestamp), 'PPp')}
+                        {format(new Date(payload[0].payload.fullTimestamp), 'PP')}
                       </p>
                       <p className="text-lg font-bold text-blue-600">
                         WQI: {payload[0].value}
                       </p>
+                      {readingsCount > 1 && (
+                        <p className="text-xs text-gray-500">
+                          Daily avg ({readingsCount} readings)
+                        </p>
+                      )}
                     </div>
                   );
                 }

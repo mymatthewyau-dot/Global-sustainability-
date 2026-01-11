@@ -12,8 +12,8 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import ActivityLogger from '@/components/ActivityLogger';
 import ActivityHistory from '@/components/ActivityHistory';
 import TrendAnalysis from '@/components/TrendAnalysis';
-import MilestoneDisplay from '@/components/MilestoneDisplay';
-import ImpactSummary from '@/components/ImpactSummary';
+import SensorDataLogger from '@/components/SensorDataLogger';
+import EutrophicationRisk from '@/components/EutrophicationRisk';
 import { format } from 'date-fns';
 import { db } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
@@ -23,7 +23,7 @@ import { convertToSensorReading } from '@/lib/sensor-data-instant';
 
 function DashboardContent() {
   const { farm } = useFarm();
-  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations' | 'activity' | 'trends' | 'milestones'>('sensor');
+  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations' | 'activity' | 'trends'>('sensor');
   const [isSimulating, setIsSimulating] = useState(false);
 
   // Real-time query for sensor readings
@@ -222,17 +222,6 @@ function DashboardContent() {
                 <span className="mr-2">📈</span>
                 Trends
               </button>
-              <button
-                onClick={() => setActiveTab('milestones')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'milestones'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">🏆</span>
-                Milestones
-              </button>
             </nav>
           </div>
         </div>
@@ -249,20 +238,32 @@ function DashboardContent() {
               </div>
             </div>
 
-            {/* Grid Layout */}
+            {/* Manual Input and Current Readings */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Section 1: Water Quality Trends */}
-              <div className="lg:col-span-2">
-                <WaterQualityChart readings={readings24h.length > 0 ? readings24h : [latestReading]} />
+              {/* Manual Sensor Input Form */}
+              <div>
+                <SensorDataLogger />
               </div>
 
-              {/* Section 2: Current Sensor Data */}
+              {/* Current Sensor Data */}
               <div>
                 <SensorDataTable reading={latestReading} />
               </div>
+            </div>
 
-              {/* Section 3: WQI Breakdown */}
-              <div>
+            {/* Eutrophication Risk Assessment */}
+            <div>
+              <EutrophicationRisk reading={latestReading} />
+            </div>
+
+            {/* Water Quality Trends */}
+            <div>
+              <WaterQualityChart readings={readings24h.length > 0 ? readings24h : [latestReading]} />
+            </div>
+
+            {/* WQI Breakdown */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="lg:col-span-2">
                 <WQIBreakdown wqi={wqi} />
               </div>
             </div>
@@ -271,7 +272,7 @@ function DashboardContent() {
 
         {activeTab === 'recommendations' && (
           <div className="mb-6">
-            <RecommendationsList recommendations={recommendations} />
+            <RecommendationsList reading={latestReading} />
           </div>
         )}
 
@@ -287,15 +288,6 @@ function DashboardContent() {
         {activeTab === 'trends' && (
           <div className="mb-6">
             <TrendAnalysis />
-          </div>
-        )}
-
-        {activeTab === 'milestones' && (
-          <div className="mb-6">
-            <div className="space-y-6">
-              <ImpactSummary />
-              <MilestoneDisplay />
-            </div>
           </div>
         )}
 

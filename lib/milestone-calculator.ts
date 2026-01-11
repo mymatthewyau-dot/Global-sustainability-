@@ -57,13 +57,13 @@ export async function calculateEcoFriendlinessScore(userId: string): Promise<num
     }
   }
 
-  // Calculate nutrient reduction (based on WQI parameters)
+  // Calculate nutrient reduction (based on ammonia improvement)
   const latestReading = readings[readings.length - 1];
   const firstReading = readings[0];
   const nutrientReduction =
-    ((firstReading.ammonia + firstReading.tn + firstReading.tp) -
-      (latestReading.ammonia + latestReading.tn + latestReading.tp)) /
-    (firstReading.ammonia + firstReading.tn + firstReading.tp);
+    firstReading.ammonia > 0
+      ? (firstReading.ammonia - latestReading.ammonia) / firstReading.ammonia
+      : 0;
 
   // Feed efficiency (based on feed history and water quality)
   const feedHistory = await getFeedHistory(userId);

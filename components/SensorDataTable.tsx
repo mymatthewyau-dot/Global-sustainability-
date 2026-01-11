@@ -12,11 +12,10 @@ export default function SensorDataTable({ reading }: SensorDataTableProps) {
     { label: 'Temperature', value: `${reading.temperature}°C`, unit: '°C' },
     { label: 'pH', value: reading.ph.toFixed(2), unit: '' },
     { label: 'Dissolved Oxygen', value: `${reading.do} mg/L`, unit: 'mg/L' },
-    { label: 'Turbidity', value: `${reading.turbidity} NTU`, unit: 'NTU' },
+    { label: 'TSS', value: `${reading.tss} mg/L`, unit: 'mg/L' },
     { label: 'Salinity', value: `${reading.salinity} ppt`, unit: 'ppt' },
-    { label: 'Ammonia (NH3-N)', value: `${reading.ammonia} mg/L`, unit: 'mg/L' },
-    { label: 'Total Nitrogen', value: `${reading.tn} mg/L`, unit: 'mg/L' },
-    { label: 'Total Phosphate', value: `${reading.tp} mg/L`, unit: 'mg/L' },
+    { label: 'Ammonia (TAN)', value: `${reading.ammonia} mg/L`, unit: 'mg/L' },
+    { label: 'Alkalinity', value: `${reading.alkalinity} mg/L CaCO₃`, unit: 'mg/L CaCO₃' },
   ];
 
   return (
@@ -46,4 +45,3 @@ export default function SensorDataTable({ reading }: SensorDataTableProps) {
     </div>
   );
 }
-

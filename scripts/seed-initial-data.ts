@@ -60,11 +60,10 @@ async function seedData() {
         temperature: reading.temperature,
         ph: reading.ph,
         do: reading.do,
-        turbidity: reading.turbidity,
+        tss: reading.tss,
         salinity: reading.salinity,
         ammonia: reading.ammonia,
-        tn: reading.tn,
-        tp: reading.tp,
+        alkalinity: reading.alkalinity,
         wqiScore: wqiScore.overall,
       }),
     ]);
@@ -83,4 +82,3 @@ seedData().catch((error) => {
   console.error('Error seeding data:', error);
   process.exit(1);
 });
-

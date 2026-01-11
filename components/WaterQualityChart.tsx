@@ -26,7 +26,7 @@ const PARAMETERS: ParameterConfig[] = [
     dataKey: 'temperature',
     unit: '°C',
     color: '#ef4444',
-    domain: [15, 35],
+    domain: [15, 40],
     icon: '🌡️',
   },
   {
@@ -35,7 +35,7 @@ const PARAMETERS: ParameterConfig[] = [
     dataKey: 'ph',
     unit: '',
     color: '#3b82f6',
-    domain: [6, 9],
+    domain: [6, 10],
     icon: '⚗️',
   },
   {
@@ -44,25 +44,25 @@ const PARAMETERS: ParameterConfig[] = [
     dataKey: 'do',
     unit: 'mg/L',
     color: '#10b981',
-    domain: [0, 10],
+    domain: [0, 12],
     icon: '💨',
   },
   {
-    key: 'turbidity',
-    label: 'Turbidity',
-    dataKey: 'turbidity',
-    unit: 'NTU',
+    key: 'tss',
+    label: 'TSS',
+    dataKey: 'tss',
+    unit: 'mg/L',
     color: '#f59e0b',
-    domain: [0, 25],
+    domain: [0, 1000],
     icon: '🌊',
   },
   {
     key: 'ammonia',
-    label: 'Ammonia',
+    label: 'Ammonia (TAN)',
     dataKey: 'ammonia',
     unit: 'mg/L',
     color: '#8b5cf6',
-    domain: [0, 0.3],
+    domain: [0, 3],
     icon: '🧪',
   },
   {
@@ -71,8 +71,17 @@ const PARAMETERS: ParameterConfig[] = [
     dataKey: 'salinity',
     unit: 'ppt',
     color: '#06b6d4',
-    domain: [0, 40],
+    domain: [0, 45],
     icon: '🧂',
+  },
+  {
+    key: 'alkalinity',
+    label: 'Alkalinity',
+    dataKey: 'alkalinity',
+    unit: 'mg/L CaCO₃',
+    color: '#14b8a6',
+    domain: [0, 250],
+    icon: '🔬',
   },
 ];
 
@@ -80,7 +89,9 @@ export default function WaterQualityChart({ readings }: WaterQualityChartProps) 
   const [activeTab, setActiveTab] = useState<string>('temperature');
 
   // Prepare data for chart (last 24 hours, sample every hour for performance)
-  const chartData = readings
+  const chartData = [...readings]
+    // Sort chronologically (oldest to newest) for proper X-axis display
+    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
     .filter((_, index) => index % 4 === 0) // Sample every hour (4 readings per hour)
     .map((reading) => ({
       time: format(new Date(reading.timestamp), 'HH:mm'),
@@ -88,9 +99,10 @@ export default function WaterQualityChart({ readings }: WaterQualityChartProps) 
       temperature: reading.temperature,
       ph: reading.ph,
       do: reading.do,
-      turbidity: reading.turbidity,
+      tss: reading.tss,
       ammonia: reading.ammonia,
       salinity: reading.salinity,
+      alkalinity: reading.alkalinity,
     }));
 
   const activeParameter = PARAMETERS.find((p) => p.key === activeTab) || PARAMETERS[0];
@@ -187,4 +199,3 @@ export default function WaterQualityChart({ readings }: WaterQualityChartProps) 
     </div>
   );
 }
-

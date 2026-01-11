@@ -82,6 +82,18 @@ export default function HistoricalTrendChart({ imtaStartDate }: HistoricalTrendC
     }
   };
 
+  const formatDateKey = (timestamp: string) => {
+    const date = parseISO(timestamp);
+    return format(date, 'yyyy-MM-dd');
+  };
+
+  const getCategoryFromWQI = (wqi: number): string => {
+    if (wqi >= 75) return 'Excellent';
+    if (wqi >= 50) return 'Good';
+    if (wqi >= 25) return 'Moderate';
+    return 'Poor';
+  };
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'Excellent':
@@ -115,12 +127,37 @@ export default function HistoricalTrendChart({ imtaStartDate }: HistoricalTrendC
     );
   }
 
-  const chartData = wqiTrend.map((point) => ({
-    timestamp: formatTimestamp(point.timestamp),
-    fullTimestamp: point.timestamp,
-    wqi: parseFloat(point.wqi.toFixed(2)),
-    category: point.category,
-  }));
+  // Group data by day and calculate average WQI for each day
+  const dailyData = new Map<string, { wqiSum: number; count: number; timestamp: string }>();
+  
+  wqiTrend.forEach((point) => {
+    const dateKey = formatDateKey(point.timestamp);
+    const existing = dailyData.get(dateKey);
+    
+    if (existing) {
+      existing.wqiSum += point.wqi;
+      existing.count += 1;
+    } else {
+      dailyData.set(dateKey, {
+        wqiSum: point.wqi,
+        count: 1,
+        timestamp: point.timestamp,
+      });
+    }
+  });
+
+  // Convert to chart data with one point per day
+  const chartData = Array.from(dailyData.entries())
+    .map(([dateKey, data]) => {
+      const avgWQI = data.wqiSum / data.count;
+      return {
+        timestamp: formatTimestamp(data.timestamp),
+        fullTimestamp: data.timestamp,
+        wqi: parseFloat(avgWQI.toFixed(2)),
+        category: getCategoryFromWQI(avgWQI),
+      };
+    })
+    .sort((a, b) => new Date(a.fullTimestamp).getTime() - new Date(b.fullTimestamp).getTime());
 
   return (
     <div className="bg-white rounded-lg shadow p-4 sm:p-6">

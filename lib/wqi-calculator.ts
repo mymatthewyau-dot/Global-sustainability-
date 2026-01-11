@@ -43,26 +43,27 @@ function getRiskLevel(subIndex: number): 'low' | 'medium' | 'high' {
 /**
  * Calculate WQI from sensor reading using NSFWQI formula
  * Formula: WQI = Σ(qi × wi) / Σwi
+ * Updated for 7 parameters: DO, pH, TSS, Temperature, Ammonia, Alkalinity, Salinity
  */
 export function calculateWQI(reading: SensorReading): WQIScore {
   // Calculate sub-indices for each parameter
   const doSubIndex = calculateSubIndex(reading.do, PARAMETER_RANGES.dissolvedOxygen);
   const phSubIndex = calculateSubIndex(reading.ph, PARAMETER_RANGES.pH);
-  const turbiditySubIndex = calculateSubIndex(reading.turbidity, PARAMETER_RANGES.turbidity);
+  const tssSubIndex = calculateSubIndex(reading.tss, PARAMETER_RANGES.tss);
   const tempSubIndex = calculateSubIndex(reading.temperature, PARAMETER_RANGES.temperature);
   const ammoniaSubIndex = calculateSubIndex(reading.ammonia, PARAMETER_RANGES.ammonia);
-  const tnSubIndex = calculateSubIndex(reading.tn, PARAMETER_RANGES.totalNitrogen);
-  const tpSubIndex = calculateSubIndex(reading.tp, PARAMETER_RANGES.totalPhosphate);
+  const alkalinitySubIndex = calculateSubIndex(reading.alkalinity, PARAMETER_RANGES.alkalinity);
+  const salinitySubIndex = calculateSubIndex(reading.salinity, PARAMETER_RANGES.salinity);
 
   // Calculate weighted contributions
   const contributions = [
-    { parameter: 'Dissolved Oxygen', value: reading.do, subIndex: doSubIndex, weight: WQI_WEIGHTS.dissolvedOxygen },
-    { parameter: 'pH', value: reading.ph, subIndex: phSubIndex, weight: WQI_WEIGHTS.pH },
-    { parameter: 'Turbidity', value: reading.turbidity, subIndex: turbiditySubIndex, weight: WQI_WEIGHTS.turbidity },
-    { parameter: 'Temperature', value: reading.temperature, subIndex: tempSubIndex, weight: WQI_WEIGHTS.temperature },
-    { parameter: 'Ammonia', value: reading.ammonia, subIndex: ammoniaSubIndex, weight: WQI_WEIGHTS.ammonia },
-    { parameter: 'Total Nitrogen', value: reading.tn, subIndex: tnSubIndex, weight: WQI_WEIGHTS.totalNitrogen },
-    { parameter: 'Total Phosphate', value: reading.tp, subIndex: tpSubIndex, weight: WQI_WEIGHTS.totalPhosphate },
+    { parameter: 'Dissolved Oxygen', value: reading.do, subIndex: doSubIndex, weight: WQI_WEIGHTS.dissolvedOxygen, unit: 'mg/L' },
+    { parameter: 'pH', value: reading.ph, subIndex: phSubIndex, weight: WQI_WEIGHTS.pH, unit: '' },
+    { parameter: 'TSS', value: reading.tss, subIndex: tssSubIndex, weight: WQI_WEIGHTS.tss, unit: 'mg/L' },
+    { parameter: 'Temperature', value: reading.temperature, subIndex: tempSubIndex, weight: WQI_WEIGHTS.temperature, unit: '°C' },
+    { parameter: 'Ammonia (TAN)', value: reading.ammonia, subIndex: ammoniaSubIndex, weight: WQI_WEIGHTS.ammonia, unit: 'mg/L' },
+    { parameter: 'Alkalinity', value: reading.alkalinity, subIndex: alkalinitySubIndex, weight: WQI_WEIGHTS.alkalinity, unit: 'mg/L CaCO₃' },
+    { parameter: 'Salinity', value: reading.salinity, subIndex: salinitySubIndex, weight: WQI_WEIGHTS.salinity, unit: 'ppt' },
   ];
 
   // Calculate weighted sum
@@ -130,4 +131,3 @@ export function calculateWQITrend(readings: SensorReading[]): {
 
   return { timestamps, wqiScores };
 }
-

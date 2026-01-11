@@ -17,11 +17,10 @@ export const schema = {
     temperature: { type: 'number' },
     ph: { type: 'number' },
     do: { type: 'number' },
-    turbidity: { type: 'number' },
+    tss: { type: 'number' }, // Total Suspended Solids (mg/L)
     salinity: { type: 'number' },
-    ammonia: { type: 'number' },
-    tn: { type: 'number' },
-    tp: { type: 'number' },
+    ammonia: { type: 'number' }, // TAN (mg/L)
+    alkalinity: { type: 'number' }, // mg/L CaCO₃
     createdAt: { type: 'number' },
   },
   wqiScores: {
@@ -69,4 +68,3 @@ export const schema = {
     createdAt: { type: 'number' },
   },
 };
-

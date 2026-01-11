@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="ulvaGradient1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#1D8348;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#58D68D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ulvaGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#239B56;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#82E0AA;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="ulvaGradient3" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#145A32;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#52BE80;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="#F0FFF0" stroke="#27AE60" stroke-width="2"/>
+  <!-- Holdfast/base -->
+  <ellipse cx="100" cy="175" rx="20" ry="8" fill="#1D8348"/>
+  <!-- Main fronds (sea lettuce leaves) -->
+  <!-- Center frond -->
+  <path d="M100 170 Q85 140 75 110 Q70 80 85 55 Q95 40 100 35 Q105 40 115 55 Q130 80 125 110 Q115 140 100 170 Z" fill="url(#ulvaGradient1)" opacity="0.9"/>
+  <!-- Left frond -->
+  <path d="M90 175 Q60 150 45 120 Q35 90 45 65 Q55 45 65 40 Q75 50 80 70 Q85 100 85 130 Q88 155 90 175 Z" fill="url(#ulvaGradient2)" opacity="0.85"/>
+  <!-- Right frond -->
+  <path d="M110 175 Q140 150 155 120 Q165 90 155 65 Q145 45 135 40 Q125 50 120 70 Q115 100 115 130 Q112 155 110 175 Z" fill="url(#ulvaGradient2)" opacity="0.85"/>
+  <!-- Far left frond -->
+  <path d="M85 178 Q50 160 35 135 Q25 110 35 85 Q45 70 55 65 Q60 80 60 100 Q60 130 70 155 Q80 170 85 178 Z" fill="url(#ulvaGradient3)" opacity="0.75"/>
+  <!-- Far right frond -->
+  <path d="M115 178 Q150 160 165 135 Q175 110 165 85 Q155 70 145 65 Q140 80 140 100 Q140 130 130 155 Q120 170 115 178 Z" fill="url(#ulvaGradient3)" opacity="0.75"/>
+  <!-- Wavy edges detail -->
+  <path d="M75 90 Q72 85 78 80 Q74 75 80 72" stroke="#1D8348" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M125 90 Q128 85 122 80 Q126 75 120 72" stroke="#1D8348" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M50 100 Q47 95 53 90 Q49 85 55 82" stroke="#145A32" stroke-width="1" fill="none" opacity="0.5"/>
+  <path d="M150 100 Q153 95 147 90 Q151 85 145 82" stroke="#145A32" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Cell pattern (subtle) -->
+  <g opacity="0.15" stroke="#0B5345" stroke-width="0.5" fill="none">
+    <circle cx="100" cy="80" r="5"/>
+    <circle cx="90" cy="100" r="5"/>
+    <circle cx="110" cy="100" r="5"/>
+    <circle cx="100" cy="120" r="5"/>
+    <circle cx="85" cy="85" r="4"/>
+    <circle cx="115" cy="85" r="4"/>
+  </g>
+  <!-- Light reflection -->
+  <ellipse cx="95" cy="60" rx="8" ry="12" fill="white" opacity="0.2" transform="rotate(-15 95 60)"/>
+  <!-- Label -->
+  <text x="100" y="195" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#27AE60" font-weight="bold">Ulva ohnoi</text>
+</svg>
+
