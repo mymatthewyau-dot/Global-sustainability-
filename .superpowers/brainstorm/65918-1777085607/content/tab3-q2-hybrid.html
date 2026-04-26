@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tab 3 — A+C Hybrid</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #04111F; font-family: 'Segoe UI', system-ui, sans-serif; color: #CBD5E1; padding: 24px 28px; max-width: 960px; }
+
+  /* ── Typography helpers ── */
+  .eyebrow { color: #6B8FAF; font-size: 9px; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 6px; }
+  .section-title { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+
+  /* ── Tab header ── */
+  .tab-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .tab-title { color: #FFFFFF; font-size: 17px; font-weight: 700; }
+  .tab-sub { color: #6B8FAF; font-size: 12px; margin-top: 2px; }
+
+  /* ── Discover button ── */
+  .discover-btn {
+    background: linear-gradient(135deg, #00C896 0%, #007A5E 100%);
+    color: #071A2E;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .discover-icon { font-size: 14px; }
+
+  /* ── Active Labels Row ── */
+  .labels-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+
+  .label-chip {
+    background: #0D2440;
+    border: 1.5px solid #163455;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    min-width: 160px;
+    flex: 1;
+    position: relative;
+    transition: border-color 0.15s;
+  }
+  .label-chip.active {
+    border-color: #00C896;
+    background: #0A2035;
+  }
+  .label-chip-name { color: #FFFFFF; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .label-chip-region { color: #6B8FAF; font-size: 10px; margin-bottom: 8px; }
+  .chip-track { background: #071A2E; border-radius: 20px; height: 5px; margin-bottom: 5px; overflow: hidden; }
+  .chip-fill-green { background: linear-gradient(90deg, #00C896, #00A67A); height: 100%; border-radius: 20px; }
+  .chip-fill-amber { background: linear-gradient(90deg, #F59E0B, #D97706); height: 100%; border-radius: 20px; }
+  .chip-fill-blue { background: linear-gradient(90deg, #3B82F6, #2563EB); height: 100%; border-radius: 20px; }
+  .chip-footer { display: flex; justify-content: space-between; align-items: center; }
+  .chip-pct-green { color: #00C896; font-size: 11px; font-weight: 700; }
+  .chip-pct-amber { color: #F59E0B; font-size: 11px; font-weight: 700; }
+  .chip-pct-blue { color: #3B82F6; font-size: 11px; font-weight: 700; }
+  .chip-status { font-size: 9px; color: #6B8FAF; }
+
+  .add-label-chip {
+    background: #071A2E;
+    border: 1.5px dashed #163455;
+    border-radius: 10px;
+    padding: 10px 18px;
+    cursor: pointer;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    color: #6B8FAF;
+    font-size: 11px;
+  }
+  .add-icon { font-size: 20px; color: #163455; }
+
+  /* ── Active indicator dot ── */
+  .active-dot {
+    position: absolute;
+    top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: #00C896;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #00C896;
+  }
+
+  /* ── Main 2-col layout ── */
+  .main-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+  /* ── Journey (left col) ── */
+  .journey-card {
+    background: #0D2440;
+    border: 1px solid #163455;
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .journey-step-row { display: flex; gap: 12px; margin-bottom: 4px; }
+  .journey-col-left { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+  .j-dot-done {
+    width: 28px; height: 28px;
+    background: #0A3320; border: 2px solid #00C896;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #00C896; font-size: 11px; font-weight: 700;
+  }
+  .j-dot-active {
+    width: 28px; height: 28px;
+    background: #0D2440; border: 2px solid #00C896;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .j-dot-active-inner { width: 9px; height: 9px; background: #00C896; border-radius: 50%; }
+  .j-dot-pending {
+    width: 28px; height: 28px;
+    background: #071A2E; border: 1.5px solid #163455;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .j-dot-pending-inner { width: 8px; height: 8px; background: #163455; border-radius: 50%; }
+  .j-line { width: 2px; background: #163455; flex: 1; min-height: 14px; margin: 3px 0; }
+  .j-line-done { background: #00C896; opacity: 0.4; }
+
+  .j-content { flex: 1; padding-bottom: 14px; }
+  .j-title-done { color: #6B8FAF; font-size: 12px; font-weight: 600; text-decoration: line-through; margin-bottom: 2px; }
+  .j-title { color: #FFFFFF; font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .j-sub { color: #6B8FAF; font-size: 10px; margin-bottom: 5px; line-height: 1.5; }
+  .j-sub-warn { color: #F59E0B; font-size: 10px; margin-bottom: 5px; }
+
+  .tag-done { display: inline-block; background: #0A3320; color: #00C896; border-radius: 20px; font-size: 9px; padding: 2px 8px; }
+  .tag-active { display: inline-block; background: #2D1A00; color: #F59E0B; border-radius: 20px; font-size: 9px; padding: 2px 8px; }
+  .tag-pending { display: inline-block; background: #163455; color: #6B8FAF; border-radius: 20px; font-size: 9px; padding: 2px 8px; }
+  .tag-finish { display: inline-block; background: #071A2E; color: #3B82F6; border-radius: 20px; font-size: 9px; padding: 2px 8px; border: 1px solid #1E3A5F; }
+
+  /* ── Financial (right col) ── */
+  .fin-card {
+    background: #0D2440;
+    border: 1px solid #163455;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .revenue-hero {
+    background: linear-gradient(135deg, #0A3320 0%, #082818 100%);
+    border: 1px solid #00C896;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .revenue-hero-label { color: #6B8FAF; font-size: 10px; margin-bottom: 4px; }
+  .revenue-hero-amt { color: #00C896; font-size: 28px; font-weight: 800; }
+  .revenue-hero-sub { color: #6B8FAF; font-size: 10px; margin-top: 2px; }
+
+  .fin-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #163455; }
+  .fin-row:last-child { border-bottom: none; }
+  .fin-key { color: #6B8FAF; font-size: 11px; }
+  .fin-val { color: #FFFFFF; font-size: 12px; font-weight: 600; }
+  .fin-val-green { color: #00C896; font-size: 12px; font-weight: 600; }
+  .fin-val-amber { color: #F59E0B; font-size: 12px; font-weight: 600; }
+
+  .timeline-bar { background: #071A2E; border-radius: 6px; padding: 10px; }
+  .timeline-label { color: #6B8FAF; font-size: 10px; margin-bottom: 6px; }
+  .timeline-track { display: flex; gap: 3px; }
+  .timeline-seg { height: 8px; border-radius: 3px; flex: 1; }
+  .timeline-months { display: flex; justify-content: space-between; margin-top: 4px; }
+  .timeline-month { color: #6B8FAF; font-size: 9px; }
+  .timeline-now { color: #00C896; font-size: 9px; font-weight: 700; }
+
+  /* ── Overall progress bar ── */
+  .overall-progress { background: #0D2440; border: 1px solid #163455; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px; }
+  .op-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .op-label { color: #FFFFFF; font-size: 13px; font-weight: 600; }
+  .op-pct { color: #00C896; font-size: 20px; font-weight: 800; }
+  .op-track { background: #071A2E; border-radius: 20px; height: 12px; overflow: hidden; position: relative; }
+  .op-fill { background: linear-gradient(90deg, #00C896 0%, #00A67A 100%); height: 100%; border-radius: 20px; width: 67%; }
+  .op-milestone-marker { position: absolute; top: 0; height: 100%; width: 2px; background: #FFFFFF; opacity: 0.3; }
+  .op-sub { color: #6B8FAF; font-size: 10px; margin-top: 6px; }
+
+  /* ── Discover Panel (overlay style) ── */
+  .discover-panel {
+    background: #071A2E;
+    border: 1.5px solid #00C896;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .discover-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .discover-title { color: #00C896; font-size: 14px; font-weight: 700; }
+  .discover-close { color: #6B8FAF; font-size: 12px; cursor: pointer; }
+
+  .suggest-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .suggest-card {
+    background: #0D2440;
+    border: 1px solid #163455;
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+  }
+  .suggest-card:hover { border-color: #1E4A7A; }
+  .suggest-card-name { color: #FFFFFF; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .suggest-card-org { color: #6B8FAF; font-size: 9px; margin-bottom: 8px; }
+  .suggest-match { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+  .match-bar-track { flex: 1; background: #071A2E; border-radius: 20px; height: 5px; overflow: hidden; }
+  .match-bar-fill-hi { background: #00C896; height: 100%; border-radius: 20px; }
+  .match-bar-fill-mid { background: #F59E0B; height: 100%; border-radius: 20px; }
+  .match-bar-fill-lo { background: #3B82F6; height: 100%; border-radius: 20px; }
+  .match-pct { font-size: 10px; font-weight: 700; min-width: 30px; text-align: right; }
+  .match-pct-green { color: #00C896; }
+  .match-pct-amber { color: #F59E0B; }
+  .match-pct-blue { color: #3B82F6; }
+  .suggest-why { color: #6B8FAF; font-size: 9px; line-height: 1.5; margin-bottom: 8px; }
+  .suggest-premium { color: #00C896; font-size: 11px; font-weight: 700; }
+  .suggest-premium-label { color: #6B8FAF; font-size: 9px; }
+  .suggest-add-btn {
+    width: 100%;
+    background: #163455;
+    border: none;
+    border-radius: 7px;
+    color: #CBD5E1;
+    font-size: 10px;
+    padding: 6px;
+    cursor: pointer;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+  .suggest-add-btn.hi {
+    background: #0A3320;
+    color: #00C896;
+  }
+
+  .ai-note {
+    background: #071A2E;
+    border: 1px solid #163455;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .ai-icon { color: #00C896; font-size: 14px; flex-shrink: 0; }
+  .ai-text { color: #6B8FAF; font-size: 11px; line-height: 1.6; }
+  .ai-text strong { color: #CBD5E1; }
+
+  .divider { height: 1px; background: #163455; margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<!-- ── TAB HEADER ── -->
+<div class="tab-header">
+  <div>
+    <div class="tab-title">Eco-label Progress</div>
+    <div class="tab-sub">Track your certification journey and unlock revenue premiums</div>
+  </div>
+  <button class="discover-btn">
+    <span class="discover-icon">✦</span>
+    Discover Labels
+  </button>
+</div>
+
+<!-- ── DISCOVER PANEL (shown after pressing button) ── -->
+<div class="discover-panel">
+  <div class="discover-header">
+    <div class="discover-title">✦ &nbsp;Labels You Could Qualify For</div>
+    <div class="discover-close">✕ close</div>
+  </div>
+
+  <div class="ai-note">
+    <div class="ai-icon">◎</div>
+    <div class="ai-text">
+      Based on your <strong>farm location (Asia-Pacific)</strong>, <strong>current WQI of 72</strong>, and <strong>IMTA species mix</strong>, here are eco-labels matched to your profile. Match % is estimated from your live sensor data and activity log.
+    </div>
+  </div>
+
+  <div class="suggest-grid">
+    <!-- High match -->
+    <div class="suggest-card">
+      <div class="suggest-card-name">ASC</div>
+      <div class="suggest-card-org">Aquaculture Stewardship Council</div>
+      <div class="suggest-match">
+        <div class="match-bar-track"><div class="match-bar-fill-hi" style="width:82%"></div></div>
+        <span class="match-pct match-pct-green">82%</span>
+      </div>
+      <div class="suggest-why">Your WQI and feed efficiency already meet 4 of 6 criteria. Strong fit for Asia-Pacific markets. Widely recognised — adds premium access to Japan &amp; EU buyers.</div>
+      <div class="suggest-premium-label">Revenue premium</div>
+      <div class="suggest-premium">+$12,400 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +18%</span></div>
+      <button class="suggest-add-btn hi">+ Add to my labels</button>
+    </div>
+
+    <!-- Mid match -->
+    <div class="suggest-card">
+      <div class="suggest-card-name">GlobalG.A.P.</div>
+      <div class="suggest-card-org">Good Agricultural Practices</div>
+      <div class="suggest-match">
+        <div class="match-bar-track"><div class="match-bar-fill-mid" style="width:54%"></div></div>
+        <span class="match-pct match-pct-amber">54%</span>
+      </div>
+      <div class="suggest-why">Requires traceability documentation you don't yet have. Once set up, opens EU supermarket supply chains. Good medium-term target after ASC.</div>
+      <div class="suggest-premium-label">Revenue premium</div>
+      <div class="suggest-premium">+$8,200 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +12%</span></div>
+      <button class="suggest-add-btn">+ Add to my labels</button>
+    </div>
+
+    <!-- Lower match -->
+    <div class="suggest-card">
+      <div class="suggest-card-name">Friend of the Sea</div>
+      <div class="suggest-card-org">World Sustainability Organization</div>
+      <div class="suggest-match">
+        <div class="match-bar-track"><div class="match-bar-fill-lo" style="width:38%"></div></div>
+        <span class="match-pct match-pct-blue">38%</span>
+      </div>
+      <div class="suggest-why">Lower fit — mainly targets wild-capture fisheries. Applicable if you expand to open-water cage farming. Worth revisiting in 12 months.</div>
+      <div class="suggest-premium-label">Revenue premium</div>
+      <div class="suggest-premium">+$5,600 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +8%</span></div>
+      <button class="suggest-add-btn">+ Add to my labels</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACTIVE LABELS ROW ── -->
+<div class="eyebrow" style="margin-bottom:10px;">Your Active Labels (2)</div>
+<div class="labels-row">
+
+  <div class="label-chip active">
+    <div class="active-dot"></div>
+    <div class="label-chip-name">ASC Certification</div>
+    <div class="label-chip-region">Aquaculture Stewardship Council · Asia-Pacific</div>
+    <div class="chip-track"><div class="chip-fill-green" style="width:67%"></div></div>
+    <div class="chip-footer">
+      <span class="chip-pct-green">67%</span>
+      <span class="chip-status">4 of 6 criteria met</span>
+    </div>
+  </div>
+
+  <div class="label-chip">
+    <div class="label-chip-name">GlobalG.A.P.</div>
+    <div class="label-chip-region">Good Agricultural Practices · Global</div>
+    <div class="chip-track"><div class="chip-fill-amber" style="width:38%"></div></div>
+    <div class="chip-footer">
+      <span class="chip-pct-amber">38%</span>
+      <span class="chip-status">2 of 7 criteria met</span>
+    </div>
+  </div>
+
+  <div class="add-label-chip">
+    <span class="add-icon">+</span>
+    <span>Add label</span>
+  </div>
+
+</div>
+
+<!-- ── OVERALL PROGRESS ── -->
+<div class="overall-progress">
+  <div class="op-row">
+    <div>
+      <div class="op-label">ASC Certification — Overall Progress</div>
+      <div class="op-sub">4 criteria met · 2 remaining · Est. completion ~6 weeks</div>
+    </div>
+    <div class="op-pct">67%</div>
+  </div>
+  <div class="op-track">
+    <div class="op-fill"></div>
+    <div class="op-milestone-marker" style="left:33%"></div>
+    <div class="op-milestone-marker" style="left:66%"></div>
+  </div>
+</div>
+
+<!-- ── 2-COL: JOURNEY + FINANCIALS ── -->
+<div class="main-cols">
+
+  <!-- LEFT: Journey -->
+  <div class="journey-card">
+    <div class="eyebrow" style="margin-bottom:12px;">Certification Journey · ASC</div>
+
+    <!-- Step 1 done -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-done">✓</div>
+        <div class="j-line j-line-done"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title-done">Water Quality Baseline</div>
+        <div class="j-sub">WQI ≥ 70 sustained for 30 days</div>
+        <span class="tag-done">Achieved</span>
+      </div>
+    </div>
+
+    <!-- Step 2 done -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-done">✓</div>
+        <div class="j-line j-line-done"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title-done">Feed Efficiency</div>
+        <div class="j-sub">FCR below 1.5</div>
+        <span class="tag-done">Achieved</span>
+      </div>
+    </div>
+
+    <!-- Step 3 done -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-done">✓</div>
+        <div class="j-line j-line-done"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title-done">Ammonia Control</div>
+        <div class="j-sub">TAN below 0.5 mg/L for 14 days</div>
+        <span class="tag-done">Achieved</span>
+      </div>
+    </div>
+
+    <!-- Step 4 done -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-done">✓</div>
+        <div class="j-line j-line-done"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title-done">IMTA System Active</div>
+        <div class="j-sub">Multi-species polyculture running ≥ 60 days</div>
+        <span class="tag-done">Achieved</span>
+      </div>
+    </div>
+
+    <!-- Step 5 active -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-active"><div class="j-dot-active-inner"></div></div>
+        <div class="j-line"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title">Chemical-Free Period</div>
+        <div class="j-sub-warn">14 more days without antibiotic use</div>
+        <span class="tag-active">In Progress</span>
+      </div>
+    </div>
+
+    <!-- Step 6 upcoming -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-pending"><div class="j-dot-pending-inner"></div></div>
+        <div class="j-line"></div>
+      </div>
+      <div class="j-content">
+        <div class="j-title">Biodiversity Score ≥ 3</div>
+        <div class="j-sub">Add 1 more extractive species (e.g. seaweed)</div>
+        <span class="tag-pending">Upcoming</span>
+      </div>
+    </div>
+
+    <!-- Finish line -->
+    <div class="journey-step-row">
+      <div class="journey-col-left">
+        <div class="j-dot-pending" style="border-color:#3B82F6;">
+          <span style="font-size:11px;">🏁</span>
+        </div>
+      </div>
+      <div class="j-content">
+        <div class="j-title" style="color:#3B82F6;">Submit ASC Application</div>
+        <div class="j-sub">Unlock +$12,400/yr premium across certified markets</div>
+        <span class="tag-finish">Finish Line</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Financials -->
+  <div class="fin-card">
+    <div class="eyebrow">Financial Return · ASC</div>
+
+    <div class="revenue-hero">
+      <div class="revenue-hero-label">Estimated Annual Revenue Premium</div>
+      <div class="revenue-hero-amt">+$12,400</div>
+      <div class="revenue-hero-sub">+18% above uncertified market price · Asia-Pacific avg</div>
+    </div>
+
+    <div>
+      <div class="fin-row">
+        <span class="fin-key">Certification cost (one-time)</span>
+        <span class="fin-val-amber">~$2,800</span>
+      </div>
+      <div class="fin-row">
+        <span class="fin-key">Annual audit fee</span>
+        <span class="fin-val-amber">~$900 / yr</span>
+      </div>
+      <div class="fin-row">
+        <span class="fin-key">Break-even point</span>
+        <span class="fin-val">~3.5 months</span>
+      </div>
+      <div class="fin-row">
+        <span class="fin-key">Net benefit (Year 1)</span>
+        <span class="fin-val-green">+$8,700</span>
+      </div>
+      <div class="fin-row">
+        <span class="fin-key">Net benefit (Year 2+)</span>
+        <span class="fin-val-green">+$11,500 / yr</span>
+      </div>
+    </div>
+
+    <div class="timeline-bar">
+      <div class="timeline-label">Estimated Timeline to Certification</div>
+      <div class="timeline-track">
+        <div class="timeline-seg" style="background:#00C896;width:55%"></div>
+        <div class="timeline-seg" style="background:#F59E0B;width:20%"></div>
+        <div class="timeline-seg" style="background:#163455;width:25%"></div>
+      </div>
+      <div class="timeline-months">
+        <span class="timeline-month">Now</span>
+        <span class="timeline-now">← You are here</span>
+        <span class="timeline-month">~6 wks</span>
+      </div>
+    </div>
+
+    <div style="background:#071A2E;border-radius:8px;padding:10px 12px;">
+      <div class="eyebrow" style="margin-bottom:4px;">Combined potential (all active labels)</div>
+      <div style="color:#00C896;font-size:18px;font-weight:800;">+$20,600 / yr</div>
+      <div style="color:#6B8FAF;font-size:10px;margin-top:2px;">ASC ($12,400) + GlobalG.A.P. ($8,200) if both certified</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

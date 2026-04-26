@@ -1,0 +1,8 @@
+{"type":"server-started","port":59751,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:59751","screen_dir":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content","state_dir":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/state"}
+{"type":"screen-added","file":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content/q1-farm-layout.html"}
+{"source":"user-event","type":"click","text":"D\n    \n      Flexible / Mixed\n      The layout isn't fixed — users can define any arrangement, or the farm doesn't have a strict physical structure","choice":"d","id":null,"timestamp":1777087984396}
+{"type":"screen-added","file":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content/q2-visual-representation.html"}
+{"type":"screen-added","file":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content/q2-combined-mockup.html"}
+{"type":"screen-added","file":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content/q2-v2.html"}
+{"type":"screen-added","file":"/Users/aa/Desktop/Global sustainability/.superpowers/brainstorm/71221-1777087680/content/q2-v3.html"}
+{"type":"server-stopped","reason":"idle timeout"}

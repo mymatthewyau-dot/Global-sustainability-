@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Brainstorm Companion</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, sans-serif;
+  background: #071A2E;
+  color: #E0EAF4;
+  padding: 24px;
+  min-height: 100vh;
+}
+h2 { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+.subtitle { color: #8BA3B8; font-size: 14px; margin-bottom: 20px; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  grid-template-rows: auto auto;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── POND (C+B): top-left ── */
+.pond-panel {
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px;
+}
+.pond-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+
+.pond {
+  width: 100%;
+  height: 320px;
+  border-radius: 20px;
+  border: 2px solid #163455;
+  background: linear-gradient(180deg, #0A3060 0%, #071A2E 100%);
+  position: relative;
+  overflow: hidden;
+}
+/* zone shading to give B-style proportional feel */
+.zone-tilapia {
+  position: absolute; left: 0; top: 0; width: 50%; height: 100%;
+  background: #00C89610;
+  border-right: 1px dashed #00C89630;
+}
+.zone-salmon {
+  position: absolute; left: 50%; top: 0; width: 33%; height: 100%;
+  background: #FF8C6910;
+  border-right: 1px dashed #FF8C6930;
+}
+.zone-oyster {
+  position: absolute; left: 83%; top: 0; width: 17%; height: 100%;
+  background: #C8A87A10;
+}
+.zone-label {
+  position: absolute;
+  top: 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.5;
+}
+
+/* SVG icon wrappers */
+.icon-wrap {
+  position: absolute;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: default;
+}
+.icon-count {
+  font-size: 10px;
+  background: #071A2E99;
+  border-radius: 10px;
+  padding: 1px 6px;
+  color: #E0EAF4;
+}
+
+/* ── ARROWS ── */
+.arrow-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.arrow-waste {
+  stroke: #F4D03F;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+  marker-end: url(#arrowWaste);
+}
+.arrow-filter {
+  stroke: #00C896;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  fill: none;
+  marker-end: url(#arrowFilter);
+}
+.arrow-label {
+  font-size: 10px;
+  fill: #F4D03F;
+  background: #071A2E;
+}
+.arrow-label-filter {
+  font-size: 10px;
+  fill: #00C896;
+}
+
+/* ── DONUT PANEL (D): top-right ── */
+.donut-panel {
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.donut-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.legend { width: 100%; }
+.legend-item {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px; font-size: 12px; color: #C8D8E8;
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-right { margin-left: auto; font-size: 11px; color: #8BA3B8; }
+
+/* ── INTERACTION KEY (bottom) ── */
+.key-panel {
+  grid-column: 1 / -1;
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px 20px;
+  display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+}
+.key-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 8px; }
+.key-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #C8D8E8; }
+.key-line { width: 40px; height: 2px; border-top: 2px dashed; }
+.key-arrow { font-size: 12px; }
+
+/* ripple / water effect */
+@keyframes ripple {
+  0% { opacity: 0.6; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(2); }
+}
+.ripple {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  animation: ripple 2s infinite;
+}
+</style>
+</head>
+<body>
+
+<h2>Stocking Density: Visual Mockup</h2>
+<p class="subtitle">3,000 Tilapia · 2,000 Salmon · 1,000 Oysters — ratio 3:2:1 · Arrows show ecological interactions</p>
+
+<div class="layout">
+
+  <!-- POND PANEL -->
+  <div class="pond-panel">
+    <h3>Farm View (top-down) — proportional zones</h3>
+    <div class="pond">
+
+      <!-- Zone backgrounds (B-style proportional) -->
+      <div class="zone-tilapia"></div>
+      <div class="zone-salmon"></div>
+      <div class="zone-oyster"></div>
+
+      <!-- Zone labels -->
+      <span class="zone-label" style="left:12px; color:#00C896;">Tilapia zone 50%</span>
+      <span class="zone-label" style="left:52%; color:#FF8C69;">Salmon 33%</span>
+      <span class="zone-label" style="left:84%; color:#C8A87A; writing-mode:vertical-rl; top:8px; font-size:9px;">Oysters 17%</span>
+
+      <!-- TILAPIA icons (×3 large) -->
+      <!-- Tilapia 1 -->
+      <div class="icon-wrap" style="left:30px; top:80px;">
+        <svg width="72" height="54" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+          <!-- body shine -->
+          <ellipse cx="30" cy="22" rx="10" ry="6" fill="#7EEAE4" opacity="0.4"/>
+          <!-- tail -->
+          <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <!-- top fin -->
+          <path d="M25,12 Q36,2 50,14" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <!-- bottom fin -->
+          <ellipse cx="24" cy="44" rx="9" ry="5" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5" transform="rotate(-25,24,44)"/>
+          <!-- eye white -->
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+          <!-- pupil -->
+          <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+          <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+          <!-- mouth -->
+          <path d="M43,34 Q47,38 51,36" fill="none" stroke="#2B8A85" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- gills -->
+          <path d="M40,16 Q38,30 40,44" fill="none" stroke="#2B8A85" stroke-width="1.2" opacity="0.5"/>
+        </svg>
+        <span class="icon-count">3,000</span>
+      </div>
+
+      <!-- Tilapia 2 -->
+      <div class="icon-wrap" style="left:120px; top:180px;">
+        <svg width="64" height="48" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+          <ellipse cx="30" cy="22" rx="10" ry="6" fill="#7EEAE4" opacity="0.4"/>
+          <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <path d="M25,12 Q36,2 50,14" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <ellipse cx="24" cy="44" rx="9" ry="5" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5" transform="rotate(-25,24,44)"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+          <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+          <path d="M43,34 Q47,38 51,36" fill="none" stroke="#2B8A85" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Tilapia 3 (small, background) -->
+      <div class="icon-wrap" style="left:60px; top:220px; opacity:0.6; transform:scale(0.75);">
+        <svg width="64" height="48" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+          <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+          <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+        </svg>
+      </div>
+
+      <!-- SALMON icons (×2) -->
+      <!-- Salmon 1 -->
+      <div class="icon-wrap" style="left:52%; top:60px; transform:translateX(-50%);">
+        <svg width="72" height="54" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+          <ellipse cx="30" cy="22" rx="10" ry="6" fill="#FFAD90" opacity="0.5"/>
+          <!-- pink belly -->
+          <ellipse cx="34" cy="38" rx="18" ry="8" fill="#FFB3A0" opacity="0.4"/>
+          <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+          <path d="M25,12 Q36,2 50,14" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+          <ellipse cx="24" cy="44" rx="9" ry="5" fill="#E07050" stroke="#C0553A" stroke-width="1.5" transform="rotate(-25,24,44)"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+          <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+          <path d="M43,34 Q47,38 51,36" fill="none" stroke="#C0553A" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- spots -->
+          <circle cx="30" cy="26" r="2" fill="#E07050" opacity="0.5"/>
+          <circle cx="22" cy="30" r="1.5" fill="#E07050" opacity="0.5"/>
+        </svg>
+        <span class="icon-count">2,000</span>
+      </div>
+
+      <!-- Salmon 2 -->
+      <div class="icon-wrap" style="left:56%; top:190px;">
+        <svg width="60" height="45" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+          <ellipse cx="30" cy="22" rx="10" ry="6" fill="#FFAD90" opacity="0.5"/>
+          <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+          <path d="M25,12 Q36,2 50,14" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+          <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+        </svg>
+      </div>
+
+      <!-- OYSTER icons (×1) -->
+      <div class="icon-wrap" style="right:12px; top:100px;">
+        <svg width="64" height="54" viewBox="0 0 80 60">
+          <!-- shell bottom -->
+          <ellipse cx="40" cy="38" rx="32" ry="18" fill="#C8A87A" stroke="#8B6914" stroke-width="2"/>
+          <!-- shell ridges -->
+          <path d="M10,35 Q40,20 70,35" fill="none" stroke="#8B6914" stroke-width="1" opacity="0.5"/>
+          <path d="M15,40 Q40,28 65,40" fill="none" stroke="#8B6914" stroke-width="1" opacity="0.4"/>
+          <!-- shell top / open -->
+          <ellipse cx="40" cy="30" rx="28" ry="14" fill="#E8D5A0" stroke="#8B6914" stroke-width="2"/>
+          <!-- inner pearl/meat -->
+          <ellipse cx="40" cy="30" rx="18" ry="9" fill="#F5EDD0"/>
+          <ellipse cx="40" cy="30" rx="10" ry="5" fill="#FBEECF" stroke="#C8A87A" stroke-width="1"/>
+          <!-- eye (cartoon) -->
+          <circle cx="50" cy="27" r="5" fill="#fff" stroke="#8B6914" stroke-width="1"/>
+          <circle cx="51" cy="27" r="2.5" fill="#5D4037"/>
+          <circle cx="52" cy="26" r="1" fill="#fff"/>
+          <!-- smile -->
+          <path d="M42,34 Q46,38 50,36" fill="none" stroke="#8B6914" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <span class="icon-count">1,000</span>
+      </div>
+
+      <!-- WASTE ARROWS (dashed yellow) -->
+      <svg class="arrow-svg" viewBox="0 0 600 320" preserveAspectRatio="none">
+        <defs>
+          <marker id="arrowWaste" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#F4D03F"/>
+          </marker>
+          <marker id="arrowFilter" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00C896"/>
+          </marker>
+        </defs>
+
+        <!-- Tilapia → Oyster (waste) -->
+        <path class="arrow-waste" d="M 160,120 Q 350,200 490,160"/>
+        <text x="290" y="190" class="arrow-label" style="fill:#F4D03F;font-size:11px;font-family:system-ui;">💩 waste &amp; nutrients</text>
+
+        <!-- Salmon → Oyster (waste) -->
+        <path class="arrow-waste" d="M 370,100 Q 440,140 490,140"/>
+
+        <!-- Oyster → water (filter) -->
+        <path class="arrow-filter" d="M 480,200 Q 400,260 200,270"/>
+        <text x="270" y="285" class="arrow-label" style="fill:#00C896;font-size:11px;font-family:system-ui;">🌊 cleans water for fish</text>
+      </svg>
+
+      <!-- water ripple effect for oyster zone -->
+      <div class="ripple" style="right:40px; top:180px; background:#00C89630;"></div>
+      <div class="ripple" style="right:55px; top:195px; background:#00C89620; animation-delay:0.7s;"></div>
+
+    </div>
+  </div>
+
+  <!-- DONUT PANEL -->
+  <div class="donut-panel">
+    <h3>Ratio</h3>
+
+    <svg width="140" height="140" viewBox="0 0 140 140">
+      <!-- Tilapia 50% = 188deg -->
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#00C896" stroke-width="22"
+        stroke-dasharray="163 327" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+      <!-- Salmon 33% = 120deg -->
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#FF8C69" stroke-width="22"
+        stroke-dasharray="109 327" stroke-dashoffset="-163" transform="rotate(-90 70 70)"/>
+      <!-- Oyster 17% = 61deg -->
+      <circle cx="70" cy="70" r="52" fill="none" stroke="#C8A87A" stroke-width="22"
+        stroke-dasharray="55 327" stroke-dashoffset="-272" transform="rotate(-90 70 70)"/>
+      <!-- center -->
+      <circle cx="70" cy="70" r="38" fill="#071A2E"/>
+      <text x="70" y="64" text-anchor="middle" font-size="13" fill="#E0EAF4" font-weight="700">3:2:1</text>
+      <text x="70" y="80" text-anchor="middle" font-size="10" fill="#8BA3B8">ratio</text>
+    </svg>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#00C896;"></div>
+        <svg width="28" height="22" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+          <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+        </svg>
+        Tilapia
+        <span class="legend-right">50%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#FF8C69;"></div>
+        <svg width="28" height="22" viewBox="0 0 80 60">
+          <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+          <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+          <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+          <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+        </svg>
+        Salmon
+        <span class="legend-right">33%</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:#C8A87A;"></div>
+        <svg width="28" height="22" viewBox="0 0 80 60">
+          <ellipse cx="40" cy="30" rx="28" ry="14" fill="#E8D5A0" stroke="#8B6914" stroke-width="2"/>
+          <ellipse cx="40" cy="30" rx="16" ry="8" fill="#F5EDD0"/>
+          <circle cx="50" cy="27" r="4" fill="#fff" stroke="#8B6914" stroke-width="1"/>
+          <circle cx="51" cy="27" r="2" fill="#5D4037"/>
+        </svg>
+        Oyster
+        <span class="legend-right">17%</span>
+      </div>
+    </div>
+
+    <div style="width:100%; border-top:1px solid #163455; padding-top:10px;">
+      <div style="font-size:11px; color:#8BA3B8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">Total Stock</div>
+      <div style="font-size:20px; font-weight:700; color:#00C896;">6,000</div>
+      <div style="font-size:11px; color:#8BA3B8;">individuals</div>
+    </div>
+  </div>
+
+  <!-- KEY PANEL -->
+  <div class="key-panel">
+    <h3>Interaction Key:</h3>
+    <div class="key-item">
+      <div class="key-line" style="border-color:#F4D03F;"></div>
+      <span>💩 Waste / nutrient flow</span>
+      <span style="color:#8BA3B8; font-size:12px;">Fish produce → oysters consume</span>
+    </div>
+    <div class="key-item">
+      <div class="key-line" style="border-color:#00C896;"></div>
+      <span>🌊 Water cleaning</span>
+      <span style="color:#8BA3B8; font-size:12px;">Oysters filter → fish benefit</span>
+    </div>
+    <div style="margin-left:auto; display:flex; gap:16px;">
+      <div style="font-size:12px; color:#8BA3B8;">⚠️ When a zone has a problem,<br>affected species will <span style="color:#FF6B6B;">glow red</span></div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

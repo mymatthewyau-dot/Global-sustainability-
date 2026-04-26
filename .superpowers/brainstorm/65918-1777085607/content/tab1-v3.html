@@ -1,0 +1,220 @@
+<h2>Tab 1 — Fixed Trend Chart Scaling</h2>
+<p class="subtitle">Each parameter normalized to its own safe range. Y-axis shows % of safe threshold.</p>
+
+<div class="mockup">
+  <div class="mockup-header">7-Day Trend — Proper Scale</div>
+  <div class="mockup-body" style="background:#071A2E;padding:20px;font-family:sans-serif;">
+
+    <!-- WQI Persistent Header -->
+    <div style="background:#0D2440;border-radius:10px;padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;border:1px solid #163455;">
+      <div>
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px;">Overall Water Quality Index</div>
+        <div style="color:#00C896;font-size:26px;font-weight:700;">72 <span style="font-size:13px;color:#6B8FAF;font-weight:400;">/ 100</span></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="background:#0A1F35;border-radius:8px;padding:7px 14px;border:1px solid #163455;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5"><path d="M6.5 6.5l11 11L12 24V0l5.5 5.5-11 11"/></svg>
+          <span style="color:#00C896;font-size:11px;font-weight:600;">Connected</span>
+          <div style="width:6px;height:6px;background:#00C896;border-radius:50%;box-shadow:0 0 6px #00C896;"></div>
+        </div>
+        <div style="background:#0A3320;border-radius:8px;padding:7px 14px;border:1px solid #00C896;">
+          <span style="color:#00C896;font-size:13px;font-weight:600;">Good</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;">
+      <div style="background:#00C896;color:#071A2E;padding:7px 18px;border-radius:8px;font-size:12px;font-weight:700;">Risk</div>
+      <div style="background:#163455;color:#6B8FAF;padding:7px 18px;border-radius:8px;font-size:12px;">Stocking</div>
+      <div style="background:#163455;color:#6B8FAF;padding:7px 18px;border-radius:8px;font-size:12px;">Eco-label</div>
+    </div>
+
+    <!-- Farm Summary -->
+    <div style="background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;margin-bottom:14px;">
+      <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">Farm Summary</div>
+      <div style="color:#FFFFFF;font-size:13px;line-height:1.8;">
+        Your farm is currently in <span style="color:#F59E0B;font-weight:600;">moderate condition</span>. Dissolved oxygen is healthy at 6.2 mg/L. However, <span style="color:#F59E0B;font-weight:600;">nitrogen has been trending upward</span> over the past 4 days and is now above the safe threshold at 1.8 mg/L. Phosphorus remains stable. <span style="color:#00C896;font-weight:600;">Recommended: reduce feed input by 15% for 48 hours</span> and monitor nitrogen daily.
+      </div>
+    </div>
+
+    <!-- Eutrophication Risk -->
+    <div style="background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;margin-bottom:14px;">
+      <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Eutrophication Risk</div>
+      <div style="color:#F59E0B;font-size:22px;font-weight:700;margin-bottom:14px;">MODERATE RISK</div>
+      <div style="position:relative;margin-bottom:10px;">
+        <div style="background:linear-gradient(90deg,#00C896 0%,#F59E0B 50%,#EF4444 100%);width:100%;height:14px;border-radius:20px;opacity:0.65;"></div>
+        <div style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:20px;height:20px;background:#F59E0B;border-radius:50%;border:3px solid #FFFFFF;box-shadow:0 0 10px rgba(245,158,11,0.7);"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span style="color:#00C896;font-size:11px;">Safe</span>
+        <span style="color:#F59E0B;font-size:11px;">Moderate</span>
+        <span style="color:#EF4444;font-size:11px;">Critical</span>
+      </div>
+    </div>
+
+    <!-- Parameters stacked -->
+    <div style="margin-bottom:14px;">
+      <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">Parameters</div>
+      <div style="background:#0D2440;border-radius:12px;padding:14px 18px;border:1px solid #163455;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="color:#6B8FAF;font-size:11px;margin-bottom:3px;">Phosphorus</div><div style="color:#FFFFFF;font-size:20px;font-weight:700;">0.12 <span style="font-size:11px;color:#6B8FAF;font-weight:400;">mg/L</span></div></div>
+        <div style="text-align:right;"><div style="color:#00C896;font-size:12px;font-weight:600;margin-bottom:6px;">Normal</div><div style="background:#163455;border-radius:6px;height:6px;width:140px;"><div style="background:#00C896;width:38%;height:6px;border-radius:6px;"></div></div></div>
+      </div>
+      <div style="background:#0D2440;border-radius:12px;padding:14px 18px;border:1px solid #3B2800;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="color:#6B8FAF;font-size:11px;margin-bottom:3px;">Nitrogen</div><div style="color:#F59E0B;font-size:20px;font-weight:700;">1.8 <span style="font-size:11px;color:#6B8FAF;font-weight:400;">mg/L</span></div></div>
+        <div style="text-align:right;"><div style="color:#F59E0B;font-size:12px;font-weight:600;margin-bottom:6px;">Elevated ↑</div><div style="background:#163455;border-radius:6px;height:6px;width:140px;"><div style="background:#F59E0B;width:72%;height:6px;border-radius:6px;"></div></div></div>
+      </div>
+      <div style="background:#0D2440;border-radius:12px;padding:14px 18px;border:1px solid #163455;display:flex;align-items:center;justify-content:space-between;">
+        <div><div style="color:#6B8FAF;font-size:11px;margin-bottom:3px;">Dissolved Oxygen (DO)</div><div style="color:#00C896;font-size:20px;font-weight:700;">6.2 <span style="font-size:11px;color:#6B8FAF;font-weight:400;">mg/L</span></div></div>
+        <div style="text-align:right;"><div style="color:#00C896;font-size:12px;font-weight:600;margin-bottom:6px;">Good</div><div style="background:#163455;border-radius:6px;height:6px;width:140px;"><div style="background:#00C896;width:80%;height:6px;border-radius:6px;"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Manual Data Entry -->
+    <div style="background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;margin-bottom:14px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;">Manual Data Entry</div>
+        <div style="color:#6B8FAF;font-size:10px;">Last logged: 2h ago</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <div style="flex:1;"><div style="color:#6B8FAF;font-size:10px;margin-bottom:4px;">Phosphorus (mg/L)</div><div style="background:#163455;border-radius:8px;padding:8px 12px;border:1px solid #1E4A6E;"><span style="color:#FFFFFF;font-size:13px;">0.12</span></div></div>
+        <div style="flex:1;"><div style="color:#6B8FAF;font-size:10px;margin-bottom:4px;">Nitrogen (mg/L)</div><div style="background:#163455;border-radius:8px;padding:8px 12px;border:1px solid #1E4A6E;"><span style="color:#FFFFFF;font-size:13px;">1.8</span></div></div>
+        <div style="flex:1;"><div style="color:#6B8FAF;font-size:10px;margin-bottom:4px;">DO (mg/L)</div><div style="background:#163455;border-radius:8px;padding:8px 12px;border:1px solid #1E4A6E;"><span style="color:#FFFFFF;font-size:13px;">6.2</span></div></div>
+      </div>
+      <div style="background:#00C896;border-radius:8px;padding:10px;text-align:center;cursor:pointer;"><span style="color:#071A2E;font-size:13px;font-weight:700;">+ Log Reading</span></div>
+    </div>
+
+    <!-- 7-Day Trend — Fixed Scaling -->
+    <div style="background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;">7-Day Trend</div>
+        <div style="color:#6B8FAF;font-size:10px;">% of safe threshold</div>
+      </div>
+      <div style="display:flex;gap:16px;margin-bottom:14px;">
+        <span style="color:#00C896;font-size:11px;">— DO</span>
+        <span style="color:#F59E0B;font-size:11px;">— Nitrogen</span>
+        <span style="color:#6B8FAF;font-size:11px;">-- Phosphorus</span>
+      </div>
+
+      <!--
+        Chart area: 560 wide x 160 tall (usable: y=10 to y=150, so 140px range)
+        Y-axis: 0% at bottom (y=150), 100% at top (y=10). Safe line at 80% = y=38
+        Each param normalized to % of max safe value:
+          DO: safe max ~9 mg/L → Mon:5.5=61%, Tue:5.8=64%, Wed:5.9=66%, Thu:6.0=67%, Fri:6.1=68%, Sat:6.2=69%, Sun:6.2=69%
+          N:  safe max 1.5 mg/L → Mon:0.9=60%, Tue:1.0=67%, Wed:1.2=80%, Thu:1.4=93%, Fri:1.6=107%(over!), Sat:1.7=113%, Sun:1.8=120%
+          P:  safe max 0.1 mg/L → Mon:0.08=80%, Tue:0.09=90%, Wed:0.08=80%, Thu:0.10=100%, Fri:0.11=110%, Sat:0.11=110%, Sun:0.12=120%
+
+        Y pos = 150 - (pct/100 * 140), clamped to 10
+        DO:  y = 150 - (pct * 1.4)
+          Mon:150-85=65, Tue:150-90=60, Wed:150-92=58, Thu:150-94=56, Fri:150-96=54, Sat:150-97=53, Sun:150-97=53
+        N:   Mon:150-84=66, Tue:150-94=56, Wed:150-112=38, Thu:150-130=20, Fri:clamped=10, Sat:10, Sun:10
+        P:   Mon:150-112=38, Tue:150-126=24, Wed:150-112=38, Thu:150-140=10, Fri:10, Sat:10, Sun:10
+
+        Actually let me use more realistic values that tell a clear story:
+        Safe threshold line at 80% = y = 150 - 112 = 38
+
+        DO (want to stay HIGH - so above threshold is good):
+          Mon:60%, Tue:62%, Wed:64%, Thu:67%, Fri:68%, Sat:69%, Sun:69%
+          y: 66, 63, 61, 56, 55, 53, 53
+
+        N (want to stay LOW - so crossing threshold going up is bad):
+          Mon:40%, Tue:50%, Wed:65%, Thu:80%, Fri:90%, Sat:107%, Sun:120%
+          y: 94, 80, 59, 38, 24, 0(clamp10), 0(clamp10)
+
+        P (want to stay LOW - rising slowly):
+          Mon:50%, Tue:55%, Wed:55%, Thu:60%, Fri:65%, Sat:70%, Sun:80%
+          y: 80, 73, 73, 66, 59, 52, 38
+
+        X positions for 7 days (560 wide, margin 30px each side = 500px, step=500/6=83px):
+          x: 30, 113, 196, 279, 362, 445, 528
+      -->
+      <div style="position:relative;">
+        <svg width="100%" height="200" viewBox="0 0 560 200" style="display:block;">
+          <!-- Background -->
+          <rect width="560" height="180" fill="none"/>
+
+          <!-- Y axis grid lines with labels -->
+          <!-- 100% line -->
+          <line x1="50" y1="10" x2="545" y2="10" stroke="#1E4A6E" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <text x="42" y="14" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">100%</text>
+
+          <!-- Safe threshold line at 80% = y=38 -->
+          <line x1="50" y1="38" x2="545" y2="38" stroke="#EF4444" stroke-width="1" stroke-dasharray="5,3" opacity="0.6"/>
+          <text x="42" y="42" fill="#EF4444" font-size="9" text-anchor="end" font-family="sans-serif">80%</text>
+          <text x="548" y="42" fill="#EF4444" font-size="8" font-family="sans-serif">⚠ threshold</text>
+
+          <!-- 60% line -->
+          <line x1="50" y1="66" x2="545" y2="66" stroke="#1E4A6E" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <text x="42" y="70" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">60%</text>
+
+          <!-- 40% line -->
+          <line x1="50" y1="94" x2="545" y2="94" stroke="#1E4A6E" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <text x="42" y="98" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">40%</text>
+
+          <!-- 20% line -->
+          <line x1="50" y1="122" x2="545" y2="122" stroke="#1E4A6E" stroke-width="0.5" stroke-dasharray="3,3"/>
+          <text x="42" y="126" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">20%</text>
+
+          <!-- 0% baseline -->
+          <line x1="50" y1="150" x2="545" y2="150" stroke="#1E4A6E" stroke-width="1"/>
+          <text x="42" y="154" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">0%</text>
+
+          <!-- Phosphorus line (blue dashed, rising slowly) -->
+          <polyline points="30,80 113,73 196,73 279,66 362,59 445,52 528,38"
+            fill="none" stroke="#6B8FAF" stroke-width="2" stroke-dasharray="6,3" stroke-linejoin="round"/>
+
+          <!-- DO line (green, want high — stays healthy ~60-69%) -->
+          <polyline points="30,66 113,63 196,61 279,56 362,55 445,53 528,53"
+            fill="none" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round"/>
+
+          <!-- Nitrogen line (amber, crossing threshold — the problem) -->
+          <polyline points="30,94 113,80 196,59 279,38 362,24 445,10 528,10"
+            fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linejoin="round"/>
+
+          <!-- Data point dots — DO -->
+          <circle cx="30" cy="66" r="3.5" fill="#00C896"/>
+          <circle cx="113" cy="63" r="3.5" fill="#00C896"/>
+          <circle cx="196" cy="61" r="3.5" fill="#00C896"/>
+          <circle cx="279" cy="56" r="3.5" fill="#00C896"/>
+          <circle cx="362" cy="55" r="3.5" fill="#00C896"/>
+          <circle cx="445" cy="53" r="3.5" fill="#00C896"/>
+          <circle cx="528" cy="53" r="3.5" fill="#00C896"/>
+
+          <!-- Data point dots — Nitrogen -->
+          <circle cx="30" cy="94" r="3.5" fill="#F59E0B"/>
+          <circle cx="113" cy="80" r="3.5" fill="#F59E0B"/>
+          <circle cx="196" cy="59" r="3.5" fill="#F59E0B"/>
+          <circle cx="279" cy="38" r="3.5" fill="#F59E0B"/>
+          <circle cx="362" cy="24" r="3.5" fill="#EF4444"/>
+          <circle cx="445" cy="10" r="3.5" fill="#EF4444"/>
+          <circle cx="528" cy="10" r="3.5" fill="#EF4444"/>
+
+          <!-- Day labels on x axis -->
+          <text x="30"  y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Mon</text>
+          <text x="113" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Tue</text>
+          <text x="196" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Wed</text>
+          <text x="279" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Thu</text>
+          <text x="362" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Fri</text>
+          <text x="445" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Sat</text>
+          <text x="528" y="170" fill="#6B8FAF" font-size="11" text-anchor="middle" font-family="sans-serif">Sun</text>
+
+          <!-- Value labels on last point -->
+          <text x="536" y="50" fill="#00C896" font-size="10" font-family="sans-serif">6.2</text>
+          <text x="536" y="8"  fill="#EF4444" font-size="10" font-family="sans-serif">1.8!</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Alerts -->
+    <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;">Alerts</div>
+    <div style="background:#1A0D0D;border-radius:12px;padding:14px 18px;border:1px solid #3B1515;margin-bottom:8px;">
+      <div style="color:#EF4444;font-size:13px;font-weight:700;margin-bottom:4px;">⚠ Nitrogen Elevated</div>
+      <div style="color:#9CA3AF;font-size:12px;">Nitrogen above safe threshold (1.5 mg/L). Reduce feed input by 15% over next 48 hours.</div>
+    </div>
+    <div style="background:#0A1F15;border-radius:12px;padding:14px 18px;border:1px solid #0A3320;">
+      <div style="color:#00C896;font-size:13px;font-weight:700;margin-bottom:4px;">✓ DO Levels Healthy</div>
+      <div style="color:#9CA3AF;font-size:12px;">Dissolved oxygen within ideal range. No action needed.</div>
+    </div>
+
+  </div>
+</div>

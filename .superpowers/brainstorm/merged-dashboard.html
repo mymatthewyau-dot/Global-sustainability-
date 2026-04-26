@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aquaculture Dashboard — All Tabs Merged</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #071A2E;
+  color: #CBD5E1;
+  min-height: 100vh;
+}
+
+/* ── Outer wrapper ── */
+.dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px 24px 40px;
+}
+
+/* ── WQI Persistent Header ── */
+.wqi-header {
+  background: #0D2440;
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #163455;
+}
+.wqi-label { color: #6B8FAF; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 3px; }
+.wqi-score { color: #00C896; font-size: 28px; font-weight: 700; }
+.wqi-score span { font-size: 13px; color: #6B8FAF; font-weight: 400; }
+.wqi-badges { display: flex; gap: 10px; align-items: center; }
+.badge-connected {
+  background: #0A1F35; border-radius: 8px; padding: 7px 14px;
+  border: 1px solid #163455; display: flex; align-items: center; gap: 6px;
+}
+.badge-connected span { color: #00C896; font-size: 11px; font-weight: 600; }
+.badge-dot { width: 7px; height: 7px; background: #00C896; border-radius: 50%; box-shadow: 0 0 6px #00C896; }
+.badge-status { background: #0A3320; border-radius: 8px; padding: 7px 14px; border: 1px solid #00C896; }
+.badge-status span { color: #00C896; font-size: 13px; font-weight: 600; }
+
+/* ── Tab Navigation ── */
+.tab-nav { display: flex; gap: 8px; margin-bottom: 20px; }
+.tab-btn {
+  padding: 8px 20px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.15s; color: #6B8FAF; background: #163455;
+}
+.tab-btn.active { background: #00C896; color: #071A2E; }
+.tab-btn:hover:not(.active) { background: #1E4A6E; color: #CBD5E1; }
+
+/* ── Tab Panels ── */
+.tab-panel { display: none; }
+.tab-panel.visible { display: block; }
+
+/* ════════════════════════════════════════
+   TAB 1 — WATER QUALITY
+   ════════════════════════════════════════ */
+
+.farm-summary {
+  background: #0D2440; border-radius: 12px; padding: 18px;
+  border: 1px solid #163455; margin-bottom: 14px;
+}
+.section-eyebrow { color: #6B8FAF; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+
+.risk-card { background: #0D2440; border-radius: 12px; padding: 18px; border: 1px solid #163455; margin-bottom: 14px; }
+.risk-level { color: #F59E0B; font-size: 22px; font-weight: 700; margin-bottom: 14px; }
+.risk-bar-wrap { position: relative; margin-bottom: 10px; }
+.risk-bar { background: linear-gradient(90deg, #00C896 0%, #F59E0B 50%, #EF4444 100%); width: 100%; height: 14px; border-radius: 20px; opacity: 0.65; }
+.risk-thumb {
+  position: absolute; top: 50%; left: 55%; transform: translate(-50%, -50%);
+  width: 20px; height: 20px; background: #F59E0B; border-radius: 50%;
+  border: 3px solid #FFFFFF; box-shadow: 0 0 10px rgba(245,158,11,0.7);
+}
+.risk-labels { display: flex; justify-content: space-between; }
+.risk-labels span { font-size: 11px; }
+
+.params-grid { margin-bottom: 14px; }
+.param-row {
+  background: #0D2440; border-radius: 12px; padding: 14px 18px;
+  border: 1px solid #163455; margin-bottom: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.param-row.warn { border-color: #3B2800; }
+.param-name { color: #6B8FAF; font-size: 11px; margin-bottom: 3px; }
+.param-val { font-size: 20px; font-weight: 700; }
+.param-val.green { color: #00C896; }
+.param-val.amber { color: #F59E0B; }
+.param-val.white { color: #FFFFFF; }
+.param-val span { font-size: 11px; color: #6B8FAF; font-weight: 400; }
+.param-right { text-align: right; }
+.param-status { font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+.param-bar-track { background: #163455; border-radius: 6px; height: 6px; width: 140px; }
+.param-bar-fill { height: 6px; border-radius: 6px; }
+
+.manual-entry {
+  background: #0D2440; border-radius: 12px; padding: 16px 18px;
+  border: 1px solid #163455; margin-bottom: 14px;
+}
+.manual-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.manual-fields { display: flex; gap: 8px; margin-bottom: 10px; }
+.manual-field { flex: 1; }
+.manual-field-label { color: #6B8FAF; font-size: 10px; margin-bottom: 4px; }
+.manual-field-val {
+  background: #163455; border-radius: 8px; padding: 8px 12px;
+  border: 1px solid #1E4A6E; color: #FFFFFF; font-size: 13px;
+}
+.log-btn {
+  background: #00C896; border-radius: 8px; padding: 10px;
+  text-align: center; cursor: pointer;
+}
+.log-btn span { color: #071A2E; font-size: 13px; font-weight: 700; }
+
+.two-col-charts { display: flex; gap: 12px; margin-bottom: 14px; }
+.chart-card {
+  background: #0D2440; border-radius: 12px; padding: 18px;
+  border: 1px solid #163455; flex: 1; display: flex; flex-direction: column;
+}
+.chart-legend { display: flex; gap: 14px; margin-bottom: 12px; }
+.chart-legend span { font-size: 11px; }
+
+.readings-card {
+  background: #0D2440; border-radius: 12px; padding: 16px;
+  border: 1px solid #163455; flex: 1; display: flex; flex-direction: column;
+}
+.reading-row { background: #163455; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.reading-meta { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.reading-time { color: #FFFFFF; font-size: 11px; font-weight: 600; }
+.reading-badge { border-radius: 4px; padding: 2px 7px; font-size: 9px; }
+.badge-sensor { background: #0A1F35; color: #6B8FAF; }
+.badge-manual { background: #0A3320; color: #00C896; }
+.reading-vals { display: flex; gap: 10px; }
+.reading-vals span { color: #6B8FAF; font-size: 11px; }
+.view-more { text-align: center; padding-top: 4px; }
+.view-more a { color: #00C896; font-size: 11px; cursor: pointer; text-decoration: none; }
+
+.alerts-section { margin-top: 4px; }
+.alert-row { border-radius: 12px; padding: 14px 18px; margin-bottom: 8px; }
+.alert-danger { background: #1A0D0D; border: 1px solid #3B1515; }
+.alert-success { background: #0A1F15; border: 1px solid #0A3320; }
+.alert-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.alert-title.red { color: #EF4444; }
+.alert-title.green { color: #00C896; }
+.alert-msg { color: #9CA3AF; font-size: 12px; }
+
+/* ════════════════════════════════════════
+   TAB 2 — STOCKING DENSITY
+   ════════════════════════════════════════ */
+
+.stocking-layout {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  grid-template-rows: auto auto;
+  gap: 16px;
+}
+
+.pond-panel {
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px;
+}
+.pond-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
+
+.pond {
+  width: 100%;
+  height: 320px;
+  border-radius: 20px;
+  border: 2px solid #163455;
+  background: linear-gradient(180deg, #0A3060 0%, #071A2E 100%);
+  position: relative;
+  overflow: hidden;
+}
+.zone-tilapia { position: absolute; left: 0; top: 0; width: 50%; height: 100%; background: #00C89610; border-right: 1px dashed #00C89630; }
+.zone-salmon { position: absolute; left: 50%; top: 0; width: 33%; height: 100%; background: #FF8C6910; border-right: 1px dashed #FF8C6930; }
+.zone-oyster { position: absolute; left: 83%; top: 0; width: 17%; height: 100%; background: #C8A87A10; }
+.zone-label { position: absolute; top: 8px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; }
+
+.icon-wrap { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: default; }
+.icon-count { font-size: 10px; background: #071A2E99; border-radius: 10px; padding: 1px 6px; color: #E0EAF4; }
+
+.arrow-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.arrow-waste { stroke: #F4D03F; stroke-width: 2; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrowWaste); }
+.arrow-filter { stroke: #00C896; stroke-width: 2; stroke-dasharray: 6 4; fill: none; marker-end: url(#arrowFilter); }
+
+@keyframes ripple {
+  0% { opacity: 0.6; transform: scale(0.8); }
+  100% { opacity: 0; transform: scale(2); }
+}
+.ripple { position: absolute; width: 20px; height: 20px; border-radius: 50%; animation: ripple 2s infinite; }
+
+.donut-panel {
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.donut-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.legend { width: 100%; }
+.legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: #C8D8E8; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-right { margin-left: auto; font-size: 11px; color: #8BA3B8; }
+
+.key-panel {
+  grid-column: 1 / -1;
+  background: #0D2440;
+  border-radius: 16px;
+  border: 1px solid #163455;
+  padding: 16px 20px;
+  display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+}
+.key-panel h3 { font-size: 13px; color: #8BA3B8; text-transform: uppercase; letter-spacing: 0.06em; margin-right: 8px; }
+.key-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #C8D8E8; }
+.key-line { width: 40px; height: 2px; border-top: 2px dashed; }
+
+/* ════════════════════════════════════════
+   TAB 3 — ECO-LABEL PROGRESS
+   ════════════════════════════════════════ */
+
+.eyebrow { color: #6B8FAF; font-size: 9px; text-transform: uppercase; letter-spacing: 1.8px; margin-bottom: 6px; }
+
+.tab3-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.tab3-title { color: #FFFFFF; font-size: 17px; font-weight: 700; }
+.tab3-sub { color: #6B8FAF; font-size: 12px; margin-top: 2px; }
+.discover-btn {
+  background: linear-gradient(135deg, #00C896 0%, #007A5E 100%);
+  color: #071A2E; border: none; border-radius: 10px; padding: 10px 18px;
+  font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 7px;
+}
+
+.discover-panel {
+  background: #071A2E;
+  border: 1.5px solid #00C896;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.discover-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.discover-title { color: #00C896; font-size: 14px; font-weight: 700; }
+.discover-close { color: #6B8FAF; font-size: 12px; cursor: pointer; }
+
+.ai-note {
+  background: #071A2E; border: 1px solid #163455; border-radius: 8px;
+  padding: 10px 12px; margin-bottom: 12px; display: flex; gap: 8px; align-items: flex-start;
+}
+.ai-icon { color: #00C896; font-size: 14px; flex-shrink: 0; }
+.ai-text { color: #6B8FAF; font-size: 11px; line-height: 1.6; }
+.ai-text strong { color: #CBD5E1; }
+
+.suggest-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.suggest-card {
+  background: #0D2440; border: 1px solid #163455; border-radius: 10px; padding: 12px; cursor: pointer;
+}
+.suggest-card-name { color: #FFFFFF; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.suggest-card-org { color: #6B8FAF; font-size: 9px; margin-bottom: 8px; }
+.suggest-match { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.match-bar-track { flex: 1; background: #071A2E; border-radius: 20px; height: 5px; overflow: hidden; }
+.match-bar-fill { height: 100%; border-radius: 20px; }
+.match-pct { font-size: 10px; font-weight: 700; min-width: 30px; text-align: right; }
+.suggest-why { color: #6B8FAF; font-size: 9px; line-height: 1.5; margin-bottom: 8px; }
+.suggest-premium { font-size: 11px; font-weight: 700; }
+.suggest-premium-label { color: #6B8FAF; font-size: 9px; }
+.suggest-add-btn {
+  width: 100%; background: #163455; border: none; border-radius: 7px;
+  color: #CBD5E1; font-size: 10px; padding: 6px; cursor: pointer; margin-top: 6px; font-weight: 600;
+}
+.suggest-add-btn.hi { background: #0A3320; color: #00C896; }
+
+.labels-row { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.label-chip {
+  background: #0D2440; border: 1.5px solid #163455; border-radius: 10px;
+  padding: 10px 14px; cursor: pointer; min-width: 160px; flex: 1; position: relative;
+}
+.label-chip.active { border-color: #00C896; background: #0A2035; }
+.label-chip-name { color: #FFFFFF; font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.label-chip-region { color: #6B8FAF; font-size: 10px; margin-bottom: 8px; }
+.chip-track { background: #071A2E; border-radius: 20px; height: 5px; margin-bottom: 5px; overflow: hidden; }
+.chip-fill { height: 100%; border-radius: 20px; }
+.chip-footer { display: flex; justify-content: space-between; align-items: center; }
+.chip-pct { font-size: 11px; font-weight: 700; }
+.chip-status { font-size: 9px; color: #6B8FAF; }
+.active-dot {
+  position: absolute; top: 8px; right: 8px;
+  width: 7px; height: 7px; background: #00C896; border-radius: 50%; box-shadow: 0 0 6px #00C896;
+}
+.add-label-chip {
+  background: #071A2E; border: 1.5px dashed #163455; border-radius: 10px;
+  padding: 10px 18px; cursor: pointer; min-width: 120px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  color: #6B8FAF; font-size: 11px;
+}
+.add-icon { font-size: 20px; color: #163455; }
+
+.overall-progress {
+  background: #0D2440; border: 1px solid #163455; border-radius: 12px;
+  padding: 14px 18px; margin-bottom: 16px;
+}
+.op-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.op-label { color: #FFFFFF; font-size: 13px; font-weight: 600; }
+.op-pct { color: #00C896; font-size: 20px; font-weight: 800; }
+.op-track { background: #071A2E; border-radius: 20px; height: 12px; overflow: hidden; position: relative; }
+.op-fill { background: linear-gradient(90deg, #00C896, #00A67A); height: 100%; border-radius: 20px; }
+.op-milestone { position: absolute; top: 0; height: 100%; width: 2px; background: #FFFFFF; opacity: 0.3; }
+.op-sub { color: #6B8FAF; font-size: 10px; margin-top: 6px; }
+
+.main-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+.journey-card { background: #0D2440; border: 1px solid #163455; border-radius: 12px; padding: 18px; }
+.journey-step-row { display: flex; gap: 12px; margin-bottom: 4px; }
+.journey-col-left { display: flex; flex-direction: column; align-items: center; width: 28px; flex-shrink: 0; }
+.j-dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.j-dot.done { background: #0A3320; border: 2px solid #00C896; color: #00C896; font-size: 11px; font-weight: 700; }
+.j-dot.active-step { background: #0D2440; border: 2px solid #00C896; }
+.j-dot.pending { background: #071A2E; border: 1.5px solid #163455; }
+.j-dot.finish { background: #071A2E; border: 1.5px solid #163455; }
+.j-dot-inner { width: 9px; height: 9px; background: #00C896; border-radius: 50%; }
+.j-dot-inner.grey { width: 8px; height: 8px; background: #163455; }
+.j-line { width: 2px; background: #163455; flex: 1; min-height: 14px; margin: 3px 0; }
+.j-line.done { background: #00C896; opacity: 0.4; }
+.j-content { flex: 1; padding-bottom: 14px; }
+.j-title { color: #FFFFFF; font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.j-title.done { color: #6B8FAF; text-decoration: line-through; }
+.j-sub { color: #6B8FAF; font-size: 10px; margin-bottom: 5px; line-height: 1.5; }
+.j-sub.warn { color: #F59E0B; }
+.j-tag { display: inline-block; border-radius: 20px; font-size: 9px; padding: 2px 8px; }
+.j-tag.done { background: #0A3320; color: #00C896; }
+.j-tag.active-tag { background: #2D1A00; color: #F59E0B; }
+.j-tag.pending { background: #163455; color: #6B8FAF; }
+.j-tag.finish { background: #071A2E; color: #3B82F6; border: 1px solid #1E3A5F; }
+
+.fin-card {
+  background: #0D2440; border: 1px solid #163455; border-radius: 12px;
+  padding: 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.revenue-hero {
+  background: linear-gradient(135deg, #0A3320 0%, #082818 100%);
+  border: 1px solid #00C896; border-radius: 10px; padding: 16px; text-align: center;
+}
+.revenue-hero-label { color: #6B8FAF; font-size: 10px; margin-bottom: 4px; }
+.revenue-hero-amt { color: #00C896; font-size: 28px; font-weight: 800; }
+.revenue-hero-sub { color: #6B8FAF; font-size: 10px; margin-top: 2px; }
+.fin-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #163455; }
+.fin-row:last-child { border-bottom: none; }
+.fin-key { color: #6B8FAF; font-size: 11px; }
+.fin-val { color: #FFFFFF; font-size: 12px; font-weight: 600; }
+.fin-val.green { color: #00C896; }
+.fin-val.amber { color: #F59E0B; }
+.timeline-bar { background: #071A2E; border-radius: 6px; padding: 10px; }
+.timeline-label { color: #6B8FAF; font-size: 10px; margin-bottom: 6px; }
+.timeline-track { display: flex; gap: 3px; }
+.timeline-seg { height: 8px; border-radius: 3px; flex: 1; }
+.timeline-months { display: flex; justify-content: space-between; margin-top: 4px; }
+.timeline-month { color: #6B8FAF; font-size: 9px; }
+.timeline-now { color: #00C896; font-size: 9px; font-weight: 700; }
+
+.combined-box { background: #071A2E; border-radius: 8px; padding: 10px 12px; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.pulse { animation: pulse 1.5s infinite; }
+</style>
+</head>
+<body>
+<div class="dashboard">
+
+  <!-- ══ WQI PERSISTENT HEADER ══ -->
+  <div class="wqi-header">
+    <div>
+      <div class="wqi-label">Overall Water Quality Index</div>
+      <div class="wqi-score">72 <span>/ 100</span></div>
+    </div>
+    <div class="wqi-badges">
+      <div class="badge-connected">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00C896" stroke-width="2.5">
+          <path d="M6.5 6.5l11 11L12 24V0l5.5 5.5-11 11"/>
+        </svg>
+        <span>Connected</span>
+        <div class="badge-dot"></div>
+      </div>
+      <div class="badge-status"><span>Good</span></div>
+    </div>
+  </div>
+
+  <!-- ══ TAB NAVIGATION ══ -->
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('risk', this)">Risk</button>
+    <button class="tab-btn" onclick="switchTab('stocking', this)">Stocking</button>
+    <button class="tab-btn" onclick="switchTab('ecolabel', this)">Eco-label</button>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       TAB 1: WATER QUALITY / RISK
+       ══════════════════════════════════════ -->
+  <div id="panel-risk" class="tab-panel visible">
+
+    <!-- Farm Summary -->
+    <div class="farm-summary">
+      <div class="section-eyebrow">Farm Summary</div>
+      <div style="color:#FFFFFF;font-size:13px;line-height:1.8;">
+        Your farm is in <span style="color:#F59E0B;font-weight:600;">moderate condition</span>. DO is healthy at 6.2 mg/L. However,
+        <span style="color:#F59E0B;font-weight:600;">nitrogen has been rising</span> over the past 4 days and is above the safe threshold at 1.8 mg/L.
+        Phosphorus is stable. <span style="color:#00C896;font-weight:600;">Reduce feed input by 15% for 48 hours.</span>
+      </div>
+    </div>
+
+    <!-- Eutrophication Risk -->
+    <div class="risk-card">
+      <div class="section-eyebrow">Eutrophication Risk</div>
+      <div class="risk-level">MODERATE RISK</div>
+      <div class="risk-bar-wrap">
+        <div class="risk-bar"></div>
+        <div class="risk-thumb"></div>
+      </div>
+      <div class="risk-labels">
+        <span style="color:#00C896;">Safe</span>
+        <span style="color:#F59E0B;">Moderate</span>
+        <span style="color:#EF4444;">Critical</span>
+      </div>
+    </div>
+
+    <!-- Parameters -->
+    <div class="params-grid">
+      <div class="section-eyebrow">Parameters</div>
+      <div class="param-row">
+        <div><div class="param-name">Phosphorus</div><div class="param-val white">0.12 <span>mg/L</span></div></div>
+        <div class="param-right">
+          <div class="param-status" style="color:#00C896;">Normal</div>
+          <div class="param-bar-track"><div class="param-bar-fill" style="background:#00C896;width:38%;"></div></div>
+        </div>
+      </div>
+      <div class="param-row warn">
+        <div><div class="param-name">Nitrogen</div><div class="param-val amber">1.8 <span>mg/L</span></div></div>
+        <div class="param-right">
+          <div class="param-status" style="color:#F59E0B;">Elevated ↑</div>
+          <div class="param-bar-track"><div class="param-bar-fill" style="background:#F59E0B;width:72%;"></div></div>
+        </div>
+      </div>
+      <div class="param-row">
+        <div><div class="param-name">Dissolved Oxygen (DO)</div><div class="param-val green">6.2 <span>mg/L</span></div></div>
+        <div class="param-right">
+          <div class="param-status" style="color:#00C896;">Good</div>
+          <div class="param-bar-track"><div class="param-bar-fill" style="background:#00C896;width:80%;"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual Entry -->
+    <div class="manual-entry">
+      <div class="manual-header">
+        <div class="section-eyebrow" style="margin-bottom:0;">Manual Data Entry</div>
+        <div style="color:#6B8FAF;font-size:10px;">Last logged: 2h ago</div>
+      </div>
+      <div class="manual-fields">
+        <div class="manual-field"><div class="manual-field-label">Phosphorus (mg/L)</div><div class="manual-field-val">0.12</div></div>
+        <div class="manual-field"><div class="manual-field-label">Nitrogen (mg/L)</div><div class="manual-field-val">1.8</div></div>
+        <div class="manual-field"><div class="manual-field-label">DO (mg/L)</div><div class="manual-field-val">6.2</div></div>
+      </div>
+      <div class="log-btn"><span>+ Log Reading</span></div>
+    </div>
+
+    <!-- Chart + Recent Readings -->
+    <div class="two-col-charts">
+
+      <!-- 7-Day Trend Chart -->
+      <div class="chart-card">
+        <div class="section-eyebrow">7-Day Trend</div>
+        <div class="chart-legend">
+          <span style="color:#00C896;">— DO</span>
+          <span style="color:#F59E0B;">— Nitrogen</span>
+          <span style="color:#6B8FAF;">-- Phosphorus</span>
+        </div>
+        <div style="flex:1;">
+          <svg width="100%" height="230" viewBox="0 0 400 240" style="display:block;">
+            <line x1="38" y1="12"  x2="390" y2="12"  stroke="#163455" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <line x1="38" y1="54"  x2="390" y2="54"  stroke="#EF4444" stroke-width="1"   stroke-dasharray="5,4" opacity="0.55"/>
+            <line x1="38" y1="96"  x2="390" y2="96"  stroke="#163455" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <line x1="38" y1="138" x2="390" y2="138" stroke="#163455" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <line x1="38" y1="180" x2="390" y2="180" stroke="#163455" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <line x1="38" y1="210" x2="390" y2="210" stroke="#1E4A6E" stroke-width="1"/>
+            <text x="32" y="16"  fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">100%</text>
+            <text x="32" y="58"  fill="#EF4444" font-size="9" text-anchor="end" font-family="sans-serif">80%</text>
+            <text x="32" y="100" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">60%</text>
+            <text x="32" y="142" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">40%</text>
+            <text x="32" y="182" fill="#6B8FAF" font-size="9" text-anchor="end" font-family="sans-serif">20%</text>
+            <text x="392" y="58" fill="#EF4444" font-size="8" font-family="sans-serif">⚠</text>
+            <polyline points="50,131 100,125 155,125 210,117 265,109 320,101 375,91"
+              fill="none" stroke="#6B8FAF" stroke-width="2" stroke-dasharray="7,4" stroke-linejoin="round" stroke-linecap="round"/>
+            <polyline points="50,101 100,97 155,93 210,87 265,85 320,83 375,81"
+              fill="none" stroke="#00C896" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <polyline points="50,135 100,115 155,87 210,55 265,38 320,16 375,12"
+              fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="50"  cy="101" r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="100" cy="97"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="155" cy="93"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="210" cy="87"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="265" cy="85"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="320" cy="83"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="375" cy="81"  r="4" fill="#00C896" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="50"  cy="135" r="4" fill="#F59E0B" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="100" cy="115" r="4" fill="#F59E0B" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="155" cy="87"  r="4" fill="#F59E0B" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="210" cy="55"  r="4" fill="#F59E0B" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="265" cy="38"  r="4" fill="#EF4444" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="320" cy="16"  r="4" fill="#EF4444" stroke="#071A2E" stroke-width="1.5"/>
+            <circle cx="375" cy="12"  r="4" fill="#EF4444" stroke="#071A2E" stroke-width="1.5"/>
+            <text x="50"  y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Mon</text>
+            <text x="100" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Tue</text>
+            <text x="155" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Wed</text>
+            <text x="210" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Thu</text>
+            <text x="265" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Fri</text>
+            <text x="320" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Sat</text>
+            <text x="375" y="226" fill="#6B8FAF" font-size="10" text-anchor="middle" font-family="sans-serif">Sun</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Recent Readings -->
+      <div class="readings-card">
+        <div class="section-eyebrow" style="margin-bottom:12px;">Recent Readings</div>
+        <div class="reading-row">
+          <div class="reading-meta"><span class="reading-time">Today, 14:30</span><span class="reading-badge badge-sensor">Sensor</span></div>
+          <div class="reading-vals"><span>P <strong style="color:#fff">0.12</strong></span><span>N <strong style="color:#F59E0B">1.8</strong></span><span>DO <strong style="color:#00C896">6.2</strong></span></div>
+        </div>
+        <div class="reading-row">
+          <div class="reading-meta"><span class="reading-time">Today, 08:00</span><span class="reading-badge badge-manual">Manual</span></div>
+          <div class="reading-vals"><span>P <strong style="color:#fff">0.11</strong></span><span>N <strong style="color:#F59E0B">1.7</strong></span><span>DO <strong style="color:#00C896">6.1</strong></span></div>
+        </div>
+        <div class="reading-row">
+          <div class="reading-meta"><span class="reading-time">Yesterday, 18:00</span><span class="reading-badge badge-sensor">Sensor</span></div>
+          <div class="reading-vals"><span>P <strong style="color:#fff">0.11</strong></span><span>N <strong style="color:#F59E0B">1.6</strong></span><span>DO <strong style="color:#00C896">6.3</strong></span></div>
+        </div>
+        <div class="reading-row">
+          <div class="reading-meta"><span class="reading-time">Yesterday, 09:00</span><span class="reading-badge badge-manual">Manual</span></div>
+          <div class="reading-vals"><span>P <strong style="color:#fff">0.10</strong></span><span>N <strong style="color:#fff">1.4</strong></span><span>DO <strong style="color:#00C896">6.4</strong></span></div>
+        </div>
+        <div class="reading-row">
+          <div class="reading-meta"><span class="reading-time">2 days ago, 14:00</span><span class="reading-badge badge-sensor">Sensor</span></div>
+          <div class="reading-vals"><span>P <strong style="color:#fff">0.09</strong></span><span>N <strong style="color:#fff">1.2</strong></span><span>DO <strong style="color:#00C896">6.5</strong></span></div>
+        </div>
+        <div class="view-more"><a>View full history →</a></div>
+      </div>
+
+    </div><!-- end two-col-charts -->
+
+    <!-- Alerts -->
+    <div class="alerts-section">
+      <div class="section-eyebrow" style="margin-bottom:10px;">Alerts</div>
+      <div class="alert-row alert-danger">
+        <div class="alert-title red">⚠ Nitrogen Elevated</div>
+        <div class="alert-msg">Nitrogen above safe threshold (1.5 mg/L). Reduce feed input by 15% over next 48 hours.</div>
+      </div>
+      <div class="alert-row alert-success">
+        <div class="alert-title green">✓ DO Levels Healthy</div>
+        <div class="alert-msg">Dissolved oxygen within ideal range. No action needed.</div>
+      </div>
+    </div>
+
+  </div><!-- end panel-risk -->
+
+
+  <!-- ══════════════════════════════════════
+       TAB 2: STOCKING DENSITY
+       ══════════════════════════════════════ -->
+  <div id="panel-stocking" class="tab-panel">
+    <div style="color:#8BA3B8;font-size:13px;margin-bottom:16px;">3,000 Tilapia · 2,000 Salmon · 1,000 Oysters — ratio 3:2:1 · Arrows show ecological interactions</div>
+
+    <div class="stocking-layout">
+
+      <!-- Pond Panel -->
+      <div class="pond-panel">
+        <h3>Farm View (top-down) — proportional zones</h3>
+        <div class="pond">
+          <div class="zone-tilapia"></div>
+          <div class="zone-salmon"></div>
+          <div class="zone-oyster"></div>
+
+          <span class="zone-label" style="left:12px; color:#00C896;">Tilapia zone 50%</span>
+          <span class="zone-label" style="left:52%; color:#FF8C69;">Salmon 33%</span>
+          <span class="zone-label" style="left:84%; color:#C8A87A; writing-mode:vertical-rl; top:8px; font-size:9px;">Oysters 17%</span>
+
+          <!-- Tilapia 1 -->
+          <div class="icon-wrap" style="left:30px; top:80px;">
+            <svg width="72" height="54" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+              <ellipse cx="30" cy="22" rx="10" ry="6" fill="#7EEAE4" opacity="0.4"/>
+              <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <path d="M25,12 Q36,2 50,14" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <ellipse cx="24" cy="44" rx="9" ry="5" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5" transform="rotate(-25,24,44)"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+              <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+              <path d="M43,34 Q47,38 51,36" fill="none" stroke="#2B8A85" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M40,16 Q38,30 40,44" fill="none" stroke="#2B8A85" stroke-width="1.2" opacity="0.5"/>
+            </svg>
+            <span class="icon-count">3,000</span>
+          </div>
+
+          <!-- Tilapia 2 -->
+          <div class="icon-wrap" style="left:120px; top:180px;">
+            <svg width="64" height="48" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+              <ellipse cx="30" cy="22" rx="10" ry="6" fill="#7EEAE4" opacity="0.4"/>
+              <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <path d="M25,12 Q36,2 50,14" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+              <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+            </svg>
+          </div>
+
+          <!-- Tilapia 3 -->
+          <div class="icon-wrap" style="left:60px; top:220px; opacity:0.6; transform:scale(0.75);">
+            <svg width="64" height="48" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+              <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+            </svg>
+          </div>
+
+          <!-- Salmon 1 -->
+          <div class="icon-wrap" style="left:52%; top:60px; transform:translateX(-50%);">
+            <svg width="72" height="54" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+              <ellipse cx="30" cy="22" rx="10" ry="6" fill="#FFAD90" opacity="0.5"/>
+              <ellipse cx="34" cy="38" rx="18" ry="8" fill="#FFB3A0" opacity="0.4"/>
+              <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+              <path d="M25,12 Q36,2 50,14" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+              <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+              <path d="M43,34 Q47,38 51,36" fill="none" stroke="#C0553A" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="30" cy="26" r="2" fill="#E07050" opacity="0.5"/>
+              <circle cx="22" cy="30" r="1.5" fill="#E07050" opacity="0.5"/>
+            </svg>
+            <span class="icon-count">2,000</span>
+          </div>
+
+          <!-- Salmon 2 -->
+          <div class="icon-wrap" style="left:56%; top:190px;">
+            <svg width="60" height="45" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+              <ellipse cx="30" cy="22" rx="10" ry="6" fill="#FFAD90" opacity="0.5"/>
+              <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+              <circle cx="55" cy="24" r="1.5" fill="#fff"/>
+            </svg>
+          </div>
+
+          <!-- Oyster -->
+          <div class="icon-wrap" style="right:12px; top:100px;">
+            <svg width="64" height="54" viewBox="0 0 80 60">
+              <ellipse cx="40" cy="38" rx="32" ry="18" fill="#C8A87A" stroke="#8B6914" stroke-width="2"/>
+              <path d="M10,35 Q40,20 70,35" fill="none" stroke="#8B6914" stroke-width="1" opacity="0.5"/>
+              <path d="M15,40 Q40,28 65,40" fill="none" stroke="#8B6914" stroke-width="1" opacity="0.4"/>
+              <ellipse cx="40" cy="30" rx="28" ry="14" fill="#E8D5A0" stroke="#8B6914" stroke-width="2"/>
+              <ellipse cx="40" cy="30" rx="18" ry="9" fill="#F5EDD0"/>
+              <ellipse cx="40" cy="30" rx="10" ry="5" fill="#FBEECF" stroke="#C8A87A" stroke-width="1"/>
+              <circle cx="50" cy="27" r="5" fill="#fff" stroke="#8B6914" stroke-width="1"/>
+              <circle cx="51" cy="27" r="2.5" fill="#5D4037"/>
+              <circle cx="52" cy="26" r="1" fill="#fff"/>
+              <path d="M42,34 Q46,38 50,36" fill="none" stroke="#8B6914" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="icon-count">1,000</span>
+          </div>
+
+          <!-- Arrows -->
+          <svg class="arrow-svg" viewBox="0 0 600 320" preserveAspectRatio="none">
+            <defs>
+              <marker id="arrowWaste" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#F4D03F"/>
+              </marker>
+              <marker id="arrowFilter" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#00C896"/>
+              </marker>
+            </defs>
+            <path class="arrow-waste" d="M 160,120 Q 350,200 490,160"/>
+            <text x="290" y="190" style="fill:#F4D03F;font-size:11px;font-family:system-ui;">💩 waste &amp; nutrients</text>
+            <path class="arrow-waste" d="M 370,100 Q 440,140 490,140"/>
+            <path class="arrow-filter" d="M 480,200 Q 400,260 200,270"/>
+            <text x="270" y="285" style="fill:#00C896;font-size:11px;font-family:system-ui;">🌊 cleans water for fish</text>
+          </svg>
+
+          <!-- Ripple effects -->
+          <div class="ripple" style="right:40px; top:180px; background:#00C89630;"></div>
+          <div class="ripple" style="right:55px; top:195px; background:#00C89620; animation-delay:0.7s;"></div>
+        </div>
+      </div>
+
+      <!-- Donut Panel -->
+      <div class="donut-panel">
+        <h3>Ratio</h3>
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="52" fill="none" stroke="#00C896" stroke-width="22"
+            stroke-dasharray="163 327" stroke-dashoffset="0" transform="rotate(-90 70 70)"/>
+          <circle cx="70" cy="70" r="52" fill="none" stroke="#FF8C69" stroke-width="22"
+            stroke-dasharray="109 327" stroke-dashoffset="-163" transform="rotate(-90 70 70)"/>
+          <circle cx="70" cy="70" r="52" fill="none" stroke="#C8A87A" stroke-width="22"
+            stroke-dasharray="55 327" stroke-dashoffset="-272" transform="rotate(-90 70 70)"/>
+          <circle cx="70" cy="70" r="38" fill="#071A2E"/>
+          <text x="70" y="64" text-anchor="middle" font-size="13" fill="#E0EAF4" font-weight="700">3:2:1</text>
+          <text x="70" y="80" text-anchor="middle" font-size="10" fill="#8BA3B8">ratio</text>
+        </svg>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#00C896;"></div>
+            <svg width="28" height="22" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#4ECDC4" stroke="#2B8A85" stroke-width="2"/>
+              <polygon points="60,30 80,14 80,46" fill="#3DBDB5" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#2B8A85" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A5276"/>
+            </svg>
+            Tilapia <span class="legend-right">50%</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#FF8C69;"></div>
+            <svg width="28" height="22" viewBox="0 0 80 60">
+              <ellipse cx="36" cy="30" rx="26" ry="18" fill="#FF8C69" stroke="#C0553A" stroke-width="2"/>
+              <polygon points="60,30 80,14 80,46" fill="#E07050" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="52" cy="24" r="8" fill="#fff" stroke="#C0553A" stroke-width="1.5"/>
+              <circle cx="54" cy="25" r="4.5" fill="#1A3A5C"/>
+            </svg>
+            Salmon <span class="legend-right">33%</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:#C8A87A;"></div>
+            <svg width="28" height="22" viewBox="0 0 80 60">
+              <ellipse cx="40" cy="30" rx="28" ry="14" fill="#E8D5A0" stroke="#8B6914" stroke-width="2"/>
+              <ellipse cx="40" cy="30" rx="16" ry="8" fill="#F5EDD0"/>
+              <circle cx="50" cy="27" r="4" fill="#fff" stroke="#8B6914" stroke-width="1"/>
+              <circle cx="51" cy="27" r="2" fill="#5D4037"/>
+            </svg>
+            Oyster <span class="legend-right">17%</span>
+          </div>
+        </div>
+        <div style="width:100%; border-top:1px solid #163455; padding-top:10px;">
+          <div style="font-size:11px; color:#8BA3B8; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">Total Stock</div>
+          <div style="font-size:20px; font-weight:700; color:#00C896;">6,000</div>
+          <div style="font-size:11px; color:#8BA3B8;">individuals</div>
+        </div>
+      </div>
+
+      <!-- Key Panel -->
+      <div class="key-panel">
+        <h3>Interaction Key:</h3>
+        <div class="key-item">
+          <div class="key-line" style="border-color:#F4D03F;"></div>
+          <span>💩 Waste / nutrient flow</span>
+          <span style="color:#8BA3B8; font-size:12px;">Fish produce → oysters consume</span>
+        </div>
+        <div class="key-item">
+          <div class="key-line" style="border-color:#00C896;"></div>
+          <span>🌊 Water cleaning</span>
+          <span style="color:#8BA3B8; font-size:12px;">Oysters filter → fish benefit</span>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:16px;">
+          <div style="font-size:12px; color:#8BA3B8;">⚠️ When a zone has a problem,<br>affected species will <span style="color:#FF6B6B;">glow red</span></div>
+        </div>
+      </div>
+
+    </div><!-- end stocking-layout -->
+  </div><!-- end panel-stocking -->
+
+
+  <!-- ══════════════════════════════════════
+       TAB 3: ECO-LABEL PROGRESS
+       ══════════════════════════════════════ -->
+  <div id="panel-ecolabel" class="tab-panel">
+
+    <!-- Tab 3 header -->
+    <div class="tab3-header">
+      <div>
+        <div class="tab3-title">Eco-label Progress</div>
+        <div class="tab3-sub">Track your certification journey and unlock revenue premiums</div>
+      </div>
+      <button class="discover-btn" onclick="toggleDiscover()">
+        <span>✦</span> Discover Labels
+      </button>
+    </div>
+
+    <!-- Discover Panel -->
+    <div class="discover-panel" id="discover-panel">
+      <div class="discover-header">
+        <div class="discover-title">✦ &nbsp;Labels You Could Qualify For</div>
+        <div class="discover-close" onclick="toggleDiscover()">✕ close</div>
+      </div>
+      <div class="ai-note">
+        <div class="ai-icon">◎</div>
+        <div class="ai-text">
+          Based on your <strong>farm location (Asia-Pacific)</strong>, <strong>current WQI of 72</strong>, and <strong>IMTA species mix</strong>,
+          here are eco-labels matched to your profile. Match % is estimated from your live sensor data and activity log.
+        </div>
+      </div>
+      <div class="suggest-grid">
+
+        <div class="suggest-card">
+          <div class="suggest-card-name">ASC</div>
+          <div class="suggest-card-org">Aquaculture Stewardship Council</div>
+          <div class="suggest-match">
+            <div class="match-bar-track"><div class="match-bar-fill" style="background:#00C896;width:82%"></div></div>
+            <span class="match-pct" style="color:#00C896;">82%</span>
+          </div>
+          <div class="suggest-why">Your WQI and feed efficiency already meet 4 of 6 criteria. Strong fit for Asia-Pacific markets. Widely recognised — adds premium access to Japan &amp; EU buyers.</div>
+          <div class="suggest-premium-label">Revenue premium</div>
+          <div class="suggest-premium" style="color:#00C896;">+$12,400 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +18%</span></div>
+          <button class="suggest-add-btn hi">+ Add to my labels</button>
+        </div>
+
+        <div class="suggest-card">
+          <div class="suggest-card-name">GlobalG.A.P.</div>
+          <div class="suggest-card-org">Good Agricultural Practices</div>
+          <div class="suggest-match">
+            <div class="match-bar-track"><div class="match-bar-fill" style="background:#F59E0B;width:54%"></div></div>
+            <span class="match-pct" style="color:#F59E0B;">54%</span>
+          </div>
+          <div class="suggest-why">Requires traceability documentation you don't yet have. Once set up, opens EU supermarket supply chains. Good medium-term target after ASC.</div>
+          <div class="suggest-premium-label">Revenue premium</div>
+          <div class="suggest-premium" style="color:#F59E0B;">+$8,200 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +12%</span></div>
+          <button class="suggest-add-btn">+ Add to my labels</button>
+        </div>
+
+        <div class="suggest-card">
+          <div class="suggest-card-name">Friend of the Sea</div>
+          <div class="suggest-card-org">World Sustainability Organization</div>
+          <div class="suggest-match">
+            <div class="match-bar-track"><div class="match-bar-fill" style="background:#3B82F6;width:38%"></div></div>
+            <span class="match-pct" style="color:#3B82F6;">38%</span>
+          </div>
+          <div class="suggest-why">Lower fit — mainly targets wild-capture fisheries. Applicable if you expand to open-water cage farming. Worth revisiting in 12 months.</div>
+          <div class="suggest-premium-label">Revenue premium</div>
+          <div class="suggest-premium" style="color:#3B82F6;">+$5,600 / yr&nbsp;&nbsp;<span style="color:#6B8FAF;font-size:9px;">avg +8%</span></div>
+          <button class="suggest-add-btn">+ Add to my labels</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Active Labels Row -->
+    <div class="eyebrow" style="margin-bottom:10px;">Your Active Labels (2)</div>
+    <div class="labels-row">
+      <div class="label-chip active">
+        <div class="active-dot"></div>
+        <div class="label-chip-name">ASC Certification</div>
+        <div class="label-chip-region">Aquaculture Stewardship Council · Asia-Pacific</div>
+        <div class="chip-track"><div class="chip-fill" style="background:linear-gradient(90deg,#00C896,#00A67A);width:67%"></div></div>
+        <div class="chip-footer">
+          <span class="chip-pct" style="color:#00C896;">67%</span>
+          <span class="chip-status">4 of 6 criteria met</span>
+        </div>
+      </div>
+      <div class="label-chip">
+        <div class="label-chip-name">GlobalG.A.P.</div>
+        <div class="label-chip-region">Good Agricultural Practices · Global</div>
+        <div class="chip-track"><div class="chip-fill" style="background:linear-gradient(90deg,#F59E0B,#D97706);width:38%"></div></div>
+        <div class="chip-footer">
+          <span class="chip-pct" style="color:#F59E0B;">38%</span>
+          <span class="chip-status">2 of 7 criteria met</span>
+        </div>
+      </div>
+      <div class="add-label-chip">
+        <span class="add-icon">+</span>
+        <span>Add label</span>
+      </div>
+    </div>
+
+    <!-- Overall Progress Bar -->
+    <div class="overall-progress">
+      <div class="op-row">
+        <div>
+          <div class="op-label">ASC Certification — Overall Progress</div>
+          <div class="op-sub">4 criteria met · 2 remaining · Est. completion ~6 weeks</div>
+        </div>
+        <div class="op-pct">67%</div>
+      </div>
+      <div class="op-track">
+        <div class="op-fill" style="width:67%"></div>
+        <div class="op-milestone" style="left:33%"></div>
+        <div class="op-milestone" style="left:66%"></div>
+      </div>
+    </div>
+
+    <!-- Journey + Financials -->
+    <div class="main-cols">
+
+      <!-- LEFT: Certification Journey -->
+      <div class="journey-card">
+        <div class="eyebrow" style="margin-bottom:12px;">Certification Journey · ASC</div>
+
+        <!-- Step 1 done -->
+        <div class="journey-step-row">
+          <div class="journey-col-left"><div class="j-dot done">✓</div><div class="j-line done"></div></div>
+          <div class="j-content">
+            <div class="j-title done">Water Quality Baseline</div>
+            <div class="j-sub">WQI ≥ 70 sustained for 30 days</div>
+            <span class="j-tag done">Achieved</span>
+          </div>
+        </div>
+
+        <!-- Step 2 done -->
+        <div class="journey-step-row">
+          <div class="journey-col-left"><div class="j-dot done">✓</div><div class="j-line done"></div></div>
+          <div class="j-content">
+            <div class="j-title done">Feed Efficiency</div>
+            <div class="j-sub">FCR below 1.5</div>
+            <span class="j-tag done">Achieved</span>
+          </div>
+        </div>
+
+        <!-- Step 3 done -->
+        <div class="journey-step-row">
+          <div class="journey-col-left"><div class="j-dot done">✓</div><div class="j-line done"></div></div>
+          <div class="j-content">
+            <div class="j-title done">Ammonia Control</div>
+            <div class="j-sub">TAN below 0.5 mg/L for 14 days</div>
+            <span class="j-tag done">Achieved</span>
+          </div>
+        </div>
+
+        <!-- Step 4 done -->
+        <div class="journey-step-row">
+          <div class="journey-col-left"><div class="j-dot done">✓</div><div class="j-line done"></div></div>
+          <div class="j-content">
+            <div class="j-title done">IMTA System Active</div>
+            <div class="j-sub">Multi-species polyculture running ≥ 60 days</div>
+            <span class="j-tag done">Achieved</span>
+          </div>
+        </div>
+
+        <!-- Step 5 active -->
+        <div class="journey-step-row">
+          <div class="journey-col-left">
+            <div class="j-dot active-step"><div class="j-dot-inner pulse"></div></div>
+            <div class="j-line"></div>
+          </div>
+          <div class="j-content">
+            <div class="j-title">Chemical-Free Period</div>
+            <div class="j-sub warn">14 more days without antibiotic use</div>
+            <span class="j-tag active-tag">In Progress</span>
+          </div>
+        </div>
+
+        <!-- Step 6 upcoming -->
+        <div class="journey-step-row">
+          <div class="journey-col-left">
+            <div class="j-dot pending"><div class="j-dot-inner grey"></div></div>
+            <div class="j-line"></div>
+          </div>
+          <div class="j-content">
+            <div class="j-title">Biodiversity Score ≥ 3</div>
+            <div class="j-sub">Add 1 more extractive species (e.g. seaweed)</div>
+            <span class="j-tag pending">Upcoming</span>
+          </div>
+        </div>
+
+        <!-- Finish line -->
+        <div class="journey-step-row">
+          <div class="journey-col-left">
+            <div class="j-dot finish" style="border-color:#3B82F6;"><span style="font-size:11px;">🏁</span></div>
+          </div>
+          <div class="j-content">
+            <div class="j-title" style="color:#3B82F6;">Submit ASC Application</div>
+            <div class="j-sub">Unlock +$12,400/yr premium across certified markets</div>
+            <span class="j-tag finish">Finish Line</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Financial Return -->
+      <div class="fin-card">
+        <div class="eyebrow">Financial Return · ASC</div>
+
+        <div class="revenue-hero">
+          <div class="revenue-hero-label">Estimated Annual Revenue Premium</div>
+          <div class="revenue-hero-amt">+$12,400</div>
+          <div class="revenue-hero-sub">+18% above uncertified market price · Asia-Pacific avg</div>
+        </div>
+
+        <div>
+          <div class="fin-row"><span class="fin-key">Certification cost (one-time)</span><span class="fin-val amber">~$2,800</span></div>
+          <div class="fin-row"><span class="fin-key">Annual audit fee</span><span class="fin-val amber">~$900 / yr</span></div>
+          <div class="fin-row"><span class="fin-key">Break-even point</span><span class="fin-val">~3.5 months</span></div>
+          <div class="fin-row"><span class="fin-key">Net benefit (Year 1)</span><span class="fin-val green">+$8,700</span></div>
+          <div class="fin-row"><span class="fin-key">Net benefit (Year 2+)</span><span class="fin-val green">+$11,500 / yr</span></div>
+        </div>
+
+        <div class="timeline-bar">
+          <div class="timeline-label">Estimated Timeline to Certification</div>
+          <div class="timeline-track">
+            <div class="timeline-seg" style="background:#00C896;width:55%"></div>
+            <div class="timeline-seg" style="background:#F59E0B;width:20%"></div>
+            <div class="timeline-seg" style="background:#163455;width:25%"></div>
+          </div>
+          <div class="timeline-months">
+            <span class="timeline-month">Now</span>
+            <span class="timeline-now">← You are here</span>
+            <span class="timeline-month">~6 wks</span>
+          </div>
+        </div>
+
+        <div class="combined-box">
+          <div class="eyebrow" style="margin-bottom:4px;">Combined potential (all active labels)</div>
+          <div style="color:#00C896;font-size:18px;font-weight:800;">+$20,600 / yr</div>
+          <div style="color:#6B8FAF;font-size:10px;margin-top:2px;">ASC ($12,400) + GlobalG.A.P. ($8,200) if both certified</div>
+        </div>
+      </div>
+
+    </div><!-- end main-cols -->
+  </div><!-- end panel-ecolabel -->
+
+</div><!-- end dashboard -->
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('visible');
+  btn.classList.add('active');
+}
+
+function toggleDiscover() {
+  const panel = document.getElementById('discover-panel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>

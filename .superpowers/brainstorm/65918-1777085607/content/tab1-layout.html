@@ -1,0 +1,141 @@
+<h2>Tab 1 — How does WQI fit with Eutrophication Risk?</h2>
+<p class="subtitle">You said WQI stays. Where does it live relative to the eutrophication risk scale?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="wqi-header" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;">
+      <!-- Always-visible WQI bar above tabs -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;border:1px solid #163455;">
+        <span style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1px;">Overall WQI</span>
+        <span style="color:#00C896;font-size:18px;font-weight:700;">72 <span style="font-size:11px;color:#6B8FAF;">/ 100 — Good</span></span>
+      </div>
+      <!-- Tab bar -->
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <div style="background:#00C896;color:#071A2E;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Eco-label</div>
+      </div>
+      <!-- Tab 1 content: only eutrophication risk -->
+      <div style="background:#0D2440;border-radius:8px;padding:12px;border:1px solid #163455;">
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Nitrification Risk Scale</div>
+        <div style="color:#FFFFFF;font-size:16px;font-weight:700;margin-bottom:8px;">MODERATE RISK</div>
+        <div style="background:#163455;border-radius:6px;height:8px;">
+          <div style="background:linear-gradient(90deg,#00C896,#F59E0B);width:55%;height:8px;border-radius:6px;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="color:#00C896;font-size:9px;">Low</span>
+          <span style="color:#F59E0B;font-size:9px;">Moderate</span>
+          <span style="color:#EF4444;font-size:9px;">High</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <div style="background:#163455;border-radius:6px;padding:6px 8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">Phosphorus</div>
+            <div style="color:#FFFFFF;font-size:12px;font-weight:600;">0.12 mg/L</div>
+          </div>
+          <div style="background:#163455;border-radius:6px;padding:6px 8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">Nitrogen</div>
+            <div style="color:#FFFFFF;font-size:12px;font-weight:600;">1.8 mg/L</div>
+          </div>
+          <div style="background:#163455;border-radius:6px;padding:6px 8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">DO</div>
+            <div style="color:#00C896;font-size:12px;font-weight:600;">6.2 mg/L</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — WQI always visible above tabs</h3>
+      <p>WQI score lives in a persistent header strip above all tabs. Tab 1 is purely the eutrophication/nitrification risk scale + the 3 parameters.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="wqi-inside" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;">
+      <!-- Tab bar -->
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <div style="background:#00C896;color:#071A2E;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Eco-label</div>
+      </div>
+      <!-- Tab 1: WQI + Eutrophication side by side -->
+      <div style="display:flex;gap:8px;">
+        <div style="background:#0D2440;border-radius:8px;padding:12px;border:1px solid #163455;flex:1;text-align:center;">
+          <div style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">WQI Score</div>
+          <div style="color:#00C896;font-size:28px;font-weight:700;">72</div>
+          <div style="color:#6B8FAF;font-size:9px;">Good</div>
+        </div>
+        <div style="background:#0D2440;border-radius:8px;padding:12px;border:1px solid #163455;flex:2;">
+          <div style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Nitrification Risk</div>
+          <div style="color:#F59E0B;font-size:13px;font-weight:700;">MODERATE</div>
+          <div style="background:#163455;border-radius:6px;height:6px;margin-top:6px;">
+            <div style="background:linear-gradient(90deg,#00C896,#F59E0B);width:55%;height:6px;border-radius:6px;"></div>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:8px;">
+            <div style="background:#163455;border-radius:4px;padding:4px 6px;flex:1;text-align:center;">
+              <div style="color:#6B8FAF;font-size:8px;">P</div>
+              <div style="color:#FFFFFF;font-size:10px;font-weight:600;">0.12</div>
+            </div>
+            <div style="background:#163455;border-radius:4px;padding:4px 6px;flex:1;text-align:center;">
+              <div style="color:#6B8FAF;font-size:8px;">N</div>
+              <div style="color:#FFFFFF;font-size:10px;font-weight:600;">1.8</div>
+            </div>
+            <div style="background:#163455;border-radius:4px;padding:4px 6px;flex:1;text-align:center;">
+              <div style="color:#6B8FAF;font-size:8px;">DO</div>
+              <div style="color:#00C896;font-size:10px;font-weight:600;">6.2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — WQI inside Tab 1, side by side</h3>
+      <p>WQI and eutrophication risk sit next to each other inside Tab 1. Compact view showing both at a glance.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="wqi-background" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;">
+      <!-- Tab bar -->
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <div style="background:#00C896;color:#071A2E;padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:4px 10px;border-radius:6px;font-size:10px;">Eco-label</div>
+      </div>
+      <!-- Tab 1: Only eutrophication, WQI is just background calc -->
+      <div style="background:#0D2440;border-radius:8px;padding:12px;border:1px solid #163455;">
+        <div style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Nitrification Risk</div>
+        <div style="color:#F59E0B;font-size:16px;font-weight:700;margin-bottom:6px;">MODERATE RISK</div>
+        <div style="position:relative;">
+          <div style="background:#163455;border-radius:20px;height:14px;">
+            <div style="background:linear-gradient(90deg,#00C896 0%,#F59E0B 50%,#EF4444 100%);width:100%;height:14px;border-radius:20px;opacity:0.4;"></div>
+            <div style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:12px;height:12px;background:#F59E0B;border-radius:50%;border:2px solid #FFFFFF;"></div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span style="color:#00C896;font-size:9px;">Safe</span>
+          <span style="color:#EF4444;font-size:9px;">Critical</span>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px;">
+          <div style="background:#163455;border-radius:6px;padding:8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">Phosphorus</div>
+            <div style="color:#FFFFFF;font-size:13px;font-weight:600;">0.12 mg/L</div>
+          </div>
+          <div style="background:#163455;border-radius:6px;padding:8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">Nitrogen</div>
+            <div style="color:#FFFFFF;font-size:13px;font-weight:600;">1.8 mg/L</div>
+          </div>
+          <div style="background:#163455;border-radius:6px;padding:8px;flex:1;">
+            <div style="color:#6B8FAF;font-size:9px;">DO</div>
+            <div style="color:#00C896;font-size:13px;font-weight:600;">6.2 mg/L</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — WQI background only, not shown</h3>
+      <p>WQI still calculated behind the scenes (used for eco-label scoring etc.) but Tab 1 shows ONLY the eutrophication risk scale. Cleaner, more focused.</p>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,146 @@
+<h2>Question 2 of ~6: How should the ratio map look?</h2>
+<p class="subtitle">For a farm with 3000 tilapia, 2000 salmon, 1000 oysters (ratio 3:2:1) — which visual style feels right?</p>
+
+<style>
+  .preview-box {
+    background: #071A2E;
+    border-radius: 12px;
+    border: 1px solid #163455;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .species-label {
+    font-size: 11px;
+    color: #8BA3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  /* Cartoon fish SVG styles */
+  .fish-svg { display: inline-block; }
+
+  /* Option A: Icon grid array */
+  .icon-grid { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .icon-row { display: flex; gap: 4px; align-items: center; margin-bottom: 6px; }
+  .species-row-label { font-size: 10px; color: #8BA3B8; width: 60px; }
+
+  /* Option B: Proportional sections */
+  .pool-container { width: 100%; height: 80px; border-radius: 10px; overflow: hidden; display: flex; border: 2px solid #163455; }
+  .pool-section { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; }
+
+  /* Option C: Pond scatter view */
+  .pond { width: 100%; height: 100px; border-radius: 50px; border: 2px solid #163455; background: #0D2440; position: relative; overflow: hidden; }
+
+  /* Option D: Donut-style */
+  .donut-wrap { display: flex; align-items: center; gap: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #8BA3B8; margin-bottom: 4px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>
+
+<div class="options">
+
+  <!-- Option A: Row-based icon array -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Icon Row Array</h3>
+      <p>Each species gets a row of icons — count scaled to ratio (3 tilapia icons, 2 salmon, 1 oyster)</p>
+      <div class="preview-box">
+        <div class="icon-row">
+          <span class="species-row-label">Tilapia</span>
+          <!-- 3 fish -->
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/><path d="M14,8 Q10,15 14,22" fill="none" stroke="#2B8A85" stroke-width="1"/><ellipse cx="12" cy="20" rx="4" ry="2.5" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1" transform="rotate(-20,12,20)"/></svg>
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/><path d="M14,8 Q10,15 14,22" fill="none" stroke="#2B8A85" stroke-width="1"/><ellipse cx="12" cy="20" rx="4" ry="2.5" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1" transform="rotate(-20,12,20)"/></svg>
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/><path d="M14,8 Q10,15 14,22" fill="none" stroke="#2B8A85" stroke-width="1"/><ellipse cx="12" cy="20" rx="4" ry="2.5" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1" transform="rotate(-20,12,20)"/></svg>
+        </div>
+        <div class="icon-row">
+          <span class="species-row-label">Salmon</span>
+          <!-- 2 salmon (orange) -->
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#C0553A" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A3A5C"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/><path d="M14,8 Q10,15 14,22" fill="none" stroke="#C0553A" stroke-width="1"/><ellipse cx="12" cy="20" rx="4" ry="2.5" fill="#FF8C69" stroke="#C0553A" stroke-width="1" transform="rotate(-20,12,20)"/></svg>
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#C0553A" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A3A5C"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/><path d="M14,8 Q10,15 14,22" fill="none" stroke="#2B8A85" stroke-width="1"/><ellipse cx="12" cy="20" rx="4" ry="2.5" fill="#FF8C69" stroke="#C0553A" stroke-width="1" transform="rotate(-20,12,20)"/></svg>
+        </div>
+        <div class="icon-row">
+          <span class="species-row-label">Oyster</span>
+          <!-- 1 oyster shell -->
+          <svg width="28" height="22" viewBox="0 0 40 30"><ellipse cx="20" cy="17" rx="15" ry="10" fill="#C8A87A" stroke="#8B6914" stroke-width="1.5"/><ellipse cx="20" cy="14" rx="13" ry="8" fill="#E8D5A0" stroke="#8B6914" stroke-width="1"/><ellipse cx="20" cy="14" rx="6" ry="4" fill="#F0E6C0"/><path d="M8,17 Q20,10 32,17" fill="none" stroke="#8B6914" stroke-width="1"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Proportional pool sections -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Proportional Pool View</h3>
+      <p>A shared "tank" divided into sections sized by population — each section shows the species icon</p>
+      <div class="preview-box">
+        <div class="pool-container">
+          <div class="pool-section" style="width:50%; background:#00C89622; border-right:1px solid #163455;">
+            <svg width="32" height="25" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/></svg>
+            <span style="font-size:9px;color:#00C896;">50% Tilapia</span>
+          </div>
+          <div class="pool-section" style="width:33%; background:#FF8C6922; border-right:1px solid #163455;">
+            <svg width="32" height="25" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#C0553A" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A3A5C"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/></svg>
+            <span style="font-size:9px;color:#FF8C69;">33% Salmon</span>
+          </div>
+          <div class="pool-section" style="width:17%; background:#C8A87A22;">
+            <svg width="28" height="20" viewBox="0 0 40 30"><ellipse cx="20" cy="17" rx="15" ry="10" fill="#C8A87A" stroke="#8B6914" stroke-width="1.5"/><ellipse cx="20" cy="14" rx="13" ry="8" fill="#E8D5A0" stroke="#8B6914" stroke-width="1"/></svg>
+            <span style="font-size:9px;color:#C8A87A;">17% Oyster</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Scatter pond (top-down view) -->
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Top-Down Pond Scatter</h3>
+      <p>A pond/tank viewed from above — icons scattered proportionally inside, like looking down at the farm</p>
+      <div class="preview-box">
+        <div class="pond">
+          <!-- Tilapia scattered (3x more) -->
+          <svg width="26" height="20" style="position:absolute;left:15px;top:10px;" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/></svg>
+          <svg width="26" height="20" style="position:absolute;left:70px;top:25px;" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/></svg>
+          <svg width="26" height="20" style="position:absolute;left:130px;top:12px;" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#2B8A85" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A5276"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/></svg>
+          <!-- Salmon (2x) -->
+          <svg width="26" height="20" style="position:absolute;left:40px;top:55px;" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#C0553A" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A3A5C"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/></svg>
+          <svg width="26" height="20" style="position:absolute;left:100px;top:60px;" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><circle cx="26" cy="12" r="4" fill="#fff" stroke="#C0553A" stroke-width="1"/><circle cx="27" cy="12" r="2" fill="#1A3A5C"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/></svg>
+          <!-- Oyster (1x) -->
+          <svg width="26" height="20" style="position:absolute;left:160px;top:50px;" viewBox="0 0 40 30"><ellipse cx="20" cy="17" rx="15" ry="10" fill="#C8A87A" stroke="#8B6914" stroke-width="1.5"/><ellipse cx="20" cy="14" rx="13" ry="8" fill="#E8D5A0" stroke="#8B6914" stroke-width="1"/><ellipse cx="20" cy="14" rx="6" ry="4" fill="#F0E6C0"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option D: Icon grid + donut -->
+  <div class="option" data-choice="d" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>Donut Chart + Icon Legend</h3>
+      <p>Percentage donut chart with species icons as the legend — clean and data-forward</p>
+      <div class="preview-box">
+        <div class="donut-wrap">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <!-- Tilapia 50% -->
+            <circle cx="40" cy="40" r="30" fill="none" stroke="#00C896" stroke-width="14" stroke-dasharray="94 188" stroke-dashoffset="0" transform="rotate(-90 40 40)"/>
+            <!-- Salmon 33% -->
+            <circle cx="40" cy="40" r="30" fill="none" stroke="#FF8C69" stroke-width="14" stroke-dasharray="62 188" stroke-dashoffset="-94" transform="rotate(-90 40 40)"/>
+            <!-- Oyster 17% -->
+            <circle cx="40" cy="40" r="30" fill="none" stroke="#C8A87A" stroke-width="14" stroke-dasharray="32 188" stroke-dashoffset="-156" transform="rotate(-90 40 40)"/>
+            <circle cx="40" cy="40" r="22" fill="#071A2E"/>
+            <text x="40" y="44" text-anchor="middle" font-size="9" fill="#8BA3B8">3:2:1</text>
+          </svg>
+          <div>
+            <div class="legend-item"><div class="legend-dot" style="background:#00C896;"></div><svg width="20" height="16" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.5"/><polygon points="30,14 40,8 40,22" fill="#4ECDC4" stroke="#2B8A85" stroke-width="1.2"/></svg> Tilapia 50%</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#FF8C69;"></div><svg width="20" height="16" viewBox="0 0 40 30"><ellipse cx="18" cy="15" rx="13" ry="9" fill="#FF8C69" stroke="#C0553A" stroke-width="1.5"/><polygon points="30,14 40,8 40,22" fill="#FF8C69" stroke="#C0553A" stroke-width="1.2"/></svg> Salmon 33%</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#C8A87A;"></div><svg width="20" height="16" viewBox="0 0 40 30"><ellipse cx="20" cy="17" rx="15" ry="10" fill="#C8A87A" stroke="#8B6914" stroke-width="1.5"/><ellipse cx="20" cy="14" rx="13" ry="8" fill="#E8D5A0" stroke="#8B6914" stroke-width="1"/></svg> Oyster 17%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

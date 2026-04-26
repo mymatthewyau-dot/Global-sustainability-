@@ -1,0 +1,176 @@
+<h2>Tab 1 — Fuller Layout Options</h2>
+<p class="subtitle">WQI header stays. What fills the rest of the page below the risk scale?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="params-plus-alerts" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;font-size:11px;">
+      <!-- WQI Header -->
+      <div style="background:#0D2440;border-radius:8px;padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid #163455;">
+        <span style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;">Overall WQI</span>
+        <span style="color:#00C896;font-size:14px;font-weight:700;">72 <span style="font-size:9px;color:#6B8FAF;">/ 100 — Good</span></span>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="background:#00C896;color:#071A2E;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Eco-label</div>
+      </div>
+      <!-- Risk Scale -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px;border:1px solid #163455;margin-bottom:8px;">
+        <div style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Nitrification Risk</div>
+        <div style="color:#F59E0B;font-size:14px;font-weight:700;margin-bottom:6px;">MODERATE</div>
+        <div style="background:#163455;border-radius:20px;height:10px;position:relative;">
+          <div style="background:linear-gradient(90deg,#00C896 0%,#F59E0B 50%,#EF4444 100%);width:100%;height:10px;border-radius:20px;opacity:0.5;"></div>
+          <div style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:10px;height:10px;background:#F59E0B;border-radius:50%;border:2px solid #fff;"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:3px;">
+          <span style="color:#00C896;font-size:8px;">Safe</span><span style="color:#EF4444;font-size:8px;">Critical</span>
+        </div>
+      </div>
+      <!-- 3 Parameter Cards -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">Phosphorus</div>
+          <div style="color:#FFFFFF;font-size:13px;font-weight:700;">0.12</div>
+          <div style="color:#6B8FAF;font-size:7px;">mg/L · Normal</div>
+          <div style="background:#163455;border-radius:3px;height:3px;margin-top:4px;"><div style="background:#00C896;width:40%;height:3px;border-radius:3px;"></div></div>
+        </div>
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">Nitrogen</div>
+          <div style="color:#F59E0B;font-size:13px;font-weight:700;">1.8</div>
+          <div style="color:#6B8FAF;font-size:7px;">mg/L · Elevated</div>
+          <div style="background:#163455;border-radius:3px;height:3px;margin-top:4px;"><div style="background:#F59E0B;width:70%;height:3px;border-radius:3px;"></div></div>
+        </div>
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">DO</div>
+          <div style="color:#00C896;font-size:13px;font-weight:700;">6.2</div>
+          <div style="color:#6B8FAF;font-size:7px;">mg/L · Good</div>
+          <div style="background:#163455;border-radius:3px;height:3px;margin-top:4px;"><div style="background:#00C896;width:80%;height:3px;border-radius:3px;"></div></div>
+        </div>
+      </div>
+      <!-- Alert Cards -->
+      <div style="background:#1A0D0D;border-radius:8px;padding:8px;border:1px solid #3B1515;margin-bottom:5px;">
+        <div style="color:#EF4444;font-size:9px;font-weight:700;">⚠ Alert — Nitrogen Elevated</div>
+        <div style="color:#9CA3AF;font-size:8px;margin-top:2px;">Nitrogen above 1.5 mg/L. Consider reducing feed input.</div>
+      </div>
+      <div style="background:#0D1A14;border-radius:8px;padding:8px;border:1px solid #163455;">
+        <div style="color:#00C896;font-size:9px;font-weight:700;">✓ DO Levels Healthy</div>
+        <div style="color:#9CA3AF;font-size:8px;margin-top:2px;">Dissolved oxygen within ideal range for current stock.</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Risk + 3 Parameters + Smart Alerts</h3>
+      <p>Risk scale at top, then the 3 sensor readings with mini progress bars, then AI-generated alert cards explaining what the readings mean and what to do.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="params-plus-trend" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;font-size:11px;">
+      <!-- WQI Header -->
+      <div style="background:#0D2440;border-radius:8px;padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid #163455;">
+        <span style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;">Overall WQI</span>
+        <span style="color:#00C896;font-size:14px;font-weight:700;">72 <span style="font-size:9px;color:#6B8FAF;">/ 100 — Good</span></span>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="background:#00C896;color:#071A2E;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Eco-label</div>
+      </div>
+      <!-- Risk Scale -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px;border:1px solid #163455;margin-bottom:8px;">
+        <div style="color:#F59E0B;font-size:14px;font-weight:700;margin-bottom:6px;">MODERATE RISK</div>
+        <div style="background:#163455;border-radius:20px;height:10px;position:relative;">
+          <div style="background:linear-gradient(90deg,#00C896,#F59E0B,#EF4444);width:100%;height:10px;border-radius:20px;opacity:0.5;"></div>
+          <div style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:10px;height:10px;background:#F59E0B;border-radius:50%;border:2px solid #fff;"></div>
+        </div>
+      </div>
+      <!-- 3 Parameters -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">Phosphorus</div>
+          <div style="color:#FFFFFF;font-size:12px;font-weight:700;">0.12 mg/L</div>
+        </div>
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">Nitrogen</div>
+          <div style="color:#F59E0B;font-size:12px;font-weight:700;">1.8 mg/L</div>
+        </div>
+        <div style="background:#0D2440;border-radius:8px;padding:8px;flex:1;border:1px solid #163455;">
+          <div style="color:#6B8FAF;font-size:8px;">DO</div>
+          <div style="color:#00C896;font-size:12px;font-weight:700;">6.2 mg/L</div>
+        </div>
+      </div>
+      <!-- Mini trend chart placeholder -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px;border:1px solid #163455;">
+        <div style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">7-Day Trend</div>
+        <svg width="100%" height="50" viewBox="0 0 200 50">
+          <polyline points="0,40 30,35 60,38 90,20 120,25 150,15 180,18 200,12" fill="none" stroke="#00C896" stroke-width="2"/>
+          <polyline points="0,20 30,25 60,30 90,38 120,40 150,42 180,38 200,40" fill="none" stroke="#F59E0B" stroke-width="2"/>
+          <polyline points="0,10 30,12 60,8 90,15 120,10 150,14 180,12 200,18" fill="none" stroke="#6B8FAF" stroke-width="1.5" stroke-dasharray="4,2"/>
+        </svg>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <span style="color:#00C896;font-size:8px;">— DO</span>
+          <span style="color:#F59E0B;font-size:8px;">— N</span>
+          <span style="color:#6B8FAF;font-size:8px;">-- P</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Risk + Parameters + 7-Day Trend Chart</h3>
+      <p>Risk scale, then the 3 parameter readings, then a mini line chart showing how all 3 have trended over the past 7 days. Good for spotting patterns.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="both" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#071A2E;padding:16px;border-radius:8px;font-family:sans-serif;font-size:11px;">
+      <!-- WQI Header -->
+      <div style="background:#0D2440;border-radius:8px;padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid #163455;">
+        <span style="color:#6B8FAF;font-size:9px;text-transform:uppercase;letter-spacing:1px;">Overall WQI</span>
+        <span style="color:#00C896;font-size:14px;font-weight:700;">72 <span style="font-size:9px;color:#6B8FAF;">/ 100</span></span>
+      </div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:6px;margin-bottom:8px;">
+        <div style="background:#00C896;color:#071A2E;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;">Risk</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Stocking</div>
+        <div style="background:#163455;color:#6B8FAF;padding:3px 8px;border-radius:5px;font-size:9px;">Eco-label</div>
+      </div>
+      <!-- Risk + params in one row -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px;border:1px solid #163455;margin-bottom:6px;">
+        <div style="color:#F59E0B;font-size:12px;font-weight:700;margin-bottom:4px;">MODERATE RISK</div>
+        <div style="background:#163455;border-radius:20px;height:8px;position:relative;margin-bottom:6px;">
+          <div style="background:linear-gradient(90deg,#00C896,#F59E0B,#EF4444);width:100%;height:8px;border-radius:20px;opacity:0.5;"></div>
+          <div style="position:absolute;top:50%;left:55%;transform:translate(-50%,-50%);width:8px;height:8px;background:#F59E0B;border-radius:50%;border:2px solid #fff;"></div>
+        </div>
+        <div style="display:flex;gap:5px;">
+          <div style="background:#163455;border-radius:5px;padding:5px 7px;flex:1;">
+            <div style="color:#6B8FAF;font-size:7px;">P</div><div style="color:#FFFFFF;font-size:10px;font-weight:700;">0.12</div>
+          </div>
+          <div style="background:#163455;border-radius:5px;padding:5px 7px;flex:1;">
+            <div style="color:#6B8FAF;font-size:7px;">N</div><div style="color:#F59E0B;font-size:10px;font-weight:700;">1.8</div>
+          </div>
+          <div style="background:#163455;border-radius:5px;padding:5px 7px;flex:1;">
+            <div style="color:#6B8FAF;font-size:7px;">DO</div><div style="color:#00C896;font-size:10px;font-weight:700;">6.2</div>
+          </div>
+        </div>
+      </div>
+      <!-- Trend -->
+      <div style="background:#0D2440;border-radius:8px;padding:8px;border:1px solid #163455;margin-bottom:6px;">
+        <div style="color:#6B8FAF;font-size:8px;margin-bottom:4px;">7-Day Trend</div>
+        <svg width="100%" height="35" viewBox="0 0 200 35">
+          <polyline points="0,28 30,24 60,26 90,14 120,18 150,10 180,12 200,8" fill="none" stroke="#00C896" stroke-width="1.5"/>
+          <polyline points="0,14 30,18 60,22 90,28 120,30 150,30 180,26 200,28" fill="none" stroke="#F59E0B" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <!-- Alert -->
+      <div style="background:#1A0D0D;border-radius:8px;padding:7px;border:1px solid #3B1515;">
+        <div style="color:#EF4444;font-size:8px;font-weight:700;">⚠ Nitrogen Elevated — Reduce feed input</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Everything: Risk + Parameters + Trend + Alert</h3>
+      <p>All sections combined. Risk scale → 3 parameters → 7-day trend chart → smart alert card. Fullest page, most information density.</p>
+    </div>
+  </div>
+
+</div>

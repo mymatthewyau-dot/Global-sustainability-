@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tab 3 — Layout Approaches</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #04111F; font-family: 'Segoe UI', system-ui, sans-serif; color: #CBD5E1; padding: 24px; }
+  h1 { color: #00C896; font-size: 18px; margin-bottom: 6px; }
+  .subtitle { color: #6B8FAF; font-size: 13px; margin-bottom: 28px; }
+
+  .section-label {
+    color: #00C896;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #163455;
+  }
+
+  .approach-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+  .approach {
+    background: #071A2E;
+    border: 1px solid #163455;
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .approach-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+  }
+  .approach-desc {
+    font-size: 11px;
+    color: #6B8FAF;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .badge-rec {
+    display: inline-block;
+    background: #0A3320;
+    color: #00C896;
+    border: 1px solid #00C896;
+    border-radius: 20px;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+  }
+  .badge-alt {
+    display: inline-block;
+    background: #163455;
+    color: #6B8FAF;
+    border: 1px solid #1E4A7A;
+    border-radius: 20px;
+    font-size: 10px;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+  }
+
+  /* ─── APPROACH A: Single Focused Label ─── */
+  .card { background: #0D2440; border-radius: 10px; padding: 14px; border: 1px solid #163455; margin-bottom: 10px; }
+  .card-label { color: #6B8FAF; font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .card-title { color: #FFFFFF; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+
+  .progress-track { background: #0A1428; border-radius: 20px; height: 10px; margin-bottom: 6px; overflow: hidden; }
+  .progress-fill-a { background: linear-gradient(90deg, #00C896, #00A67A); height: 100%; border-radius: 20px; width: 67%; }
+  .progress-fill-b { background: linear-gradient(90deg, #F59E0B, #D97706); height: 100%; border-radius: 20px; width: 38%; }
+  .progress-fill-c { background: linear-gradient(90deg, #EF4444, #DC2626); height: 100%; border-radius: 20px; width: 15%; }
+
+  .progress-labels { display: flex; justify-content: space-between; }
+  .progress-pct { color: #00C896; font-size: 11px; font-weight: 700; }
+  .progress-pct-amber { color: #F59E0B; font-size: 11px; font-weight: 700; }
+  .progress-pct-red { color: #EF4444; font-size: 11px; font-weight: 700; }
+  .progress-of { color: #6B8FAF; font-size: 11px; }
+
+  .milestone-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .milestone-dot-done { width: 8px; height: 8px; background: #00C896; border-radius: 50%; flex-shrink: 0; }
+  .milestone-dot-pending { width: 8px; height: 8px; background: #163455; border: 1.5px solid #1E4A7A; border-radius: 50%; flex-shrink: 0; }
+  .milestone-text { color: #CBD5E1; font-size: 11px; }
+  .milestone-text-done { color: #6B8FAF; font-size: 11px; text-decoration: line-through; }
+
+  .revenue-pill { background: #0A3320; border: 1px solid #00C896; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+  .revenue-label { color: #6B8FAF; font-size: 10px; }
+  .revenue-amount { color: #00C896; font-size: 16px; font-weight: 700; }
+
+  /* ─── APPROACH B: Multi-label grid ─── */
+  .label-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .label-card { background: #0D2440; border-radius: 8px; padding: 10px; border: 1px solid #163455; cursor: pointer; }
+  .label-card.active { border-color: #00C896; }
+  .label-card-name { color: #FFFFFF; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+  .label-card-region { color: #6B8FAF; font-size: 9px; }
+  .label-card-pct { color: #00C896; font-size: 13px; font-weight: 700; }
+  .label-card-pct-amber { color: #F59E0B; font-size: 13px; font-weight: 700; }
+
+  /* ─── APPROACH C: Journey / Roadmap ─── */
+  .journey-step { display: flex; gap: 12px; margin-bottom: 8px; align-items: flex-start; }
+  .journey-dot-done { width: 24px; height: 24px; background: #00C896; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #071A2E; font-size: 10px; font-weight: 700; }
+  .journey-dot-active { width: 24px; height: 24px; background: #163455; border: 2px solid #00C896; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .journey-dot-pending { width: 24px; height: 24px; background: #0D2440; border: 1.5px solid #163455; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .journey-dot-inner { width: 8px; height: 8px; background: #00C896; border-radius: 50%; }
+  .journey-dot-inner-gray { width: 8px; height: 8px; background: #163455; border-radius: 50%; }
+  .journey-line { width: 2px; height: 10px; background: #163455; margin: 0 auto 0 11px; }
+  .journey-content { flex: 1; }
+  .journey-title { color: #FFFFFF; font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+  .journey-sub { color: #6B8FAF; font-size: 10px; }
+  .journey-tag { display: inline-block; background: #0A3320; color: #00C896; border-radius: 20px; font-size: 9px; padding: 1px 7px; }
+  .journey-tag-pending { display: inline-block; background: #163455; color: #6B8FAF; border-radius: 20px; font-size: 9px; padding: 1px 7px; }
+
+  .trade-offs { margin-top: 10px; }
+  .trade-off-row { display: flex; align-items: flex-start; gap: 6px; font-size: 10px; color: #6B8FAF; margin-bottom: 3px; }
+  .pro { color: #00C896; }
+  .con { color: #EF4444; }
+
+  .divider { height: 1px; background: #163455; margin: 6px 0; }
+</style>
+</head>
+<body>
+
+<h1>Tab 3 — Eco-label Progress: Layout Approaches</h1>
+<p class="subtitle">Question 1 of N: How should the top-level structure work?</p>
+
+<div class="approach-grid">
+
+  <!-- ─── APPROACH A ─── -->
+  <div class="approach">
+    <div class="approach-title">A — Single Label Focus</div>
+    <p class="approach-desc">Show one eco-label at a time. Farmer picks the label they're targeting; everything (progress bar, milestones, financials) is scoped to that label.</p>
+    <span class="badge-rec">Recommended</span>
+
+    <!-- Simulated mockup -->
+    <div style="background:#071A2E;border-radius:10px;padding:12px;">
+
+      <!-- Label selector -->
+      <div class="card-label">Targeting</div>
+      <div style="background:#0D2440;border:1.5px solid #00C896;border-radius:8px;padding:10px 12px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="color:#FFFFFF;font-size:12px;font-weight:600;">ASC Certification</div>
+          <div style="color:#6B8FAF;font-size:10px;">Aquaculture Stewardship Council • Asia-Pacific</div>
+        </div>
+        <div style="color:#6B8FAF;font-size:10px;">▼ change</div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="card-label" style="margin-bottom:6px;">Overall Progress</div>
+      <div class="progress-track"><div class="progress-fill-a"></div></div>
+      <div class="progress-labels" style="margin-bottom:12px;">
+        <span class="progress-pct">67%</span>
+        <span class="progress-of">4 of 6 criteria met</span>
+      </div>
+
+      <!-- Milestones -->
+      <div class="card-label" style="margin-bottom:8px;">Milestones</div>
+      <div class="milestone-row"><div class="milestone-dot-done"></div><span class="milestone-text-done">WQI above 70 for 30 days</span></div>
+      <div class="milestone-row"><div class="milestone-dot-done"></div><span class="milestone-text-done">Ammonia below 0.5 mg/L</span></div>
+      <div class="milestone-row"><div class="milestone-dot-done"></div><span class="milestone-text-done">Feed conversion ratio &lt; 1.5</span></div>
+      <div class="milestone-row"><div class="milestone-dot-pending"></div><span class="milestone-text">Zero antibiotic use (14 more days)</span></div>
+      <div class="milestone-row"><div class="milestone-dot-pending"></div><span class="milestone-text">Species biodiversity score ≥ 3</span></div>
+
+      <div class="divider"></div>
+
+      <!-- Revenue -->
+      <div class="revenue-pill" style="margin-top:8px;">
+        <div>
+          <div class="revenue-label">Estimated Revenue Premium</div>
+          <div class="revenue-amount">+$12,400 / yr</div>
+        </div>
+        <div style="color:#6B8FAF;font-size:10px;text-align:right;">+18% avg<br>market premium</div>
+      </div>
+    </div>
+
+    <div class="trade-offs">
+      <div class="trade-off-row"><span class="pro">+</span> Clarity — one focus at a time</div>
+      <div class="trade-off-row"><span class="pro">+</span> Deep milestone detail per label</div>
+      <div class="trade-off-row"><span class="con">−</span> Farmer must manually explore others</div>
+    </div>
+  </div>
+
+  <!-- ─── APPROACH B ─── -->
+  <div class="approach">
+    <div class="approach-title">B — Multi-Label Overview</div>
+    <p class="approach-desc">Show all eligible eco-labels as a grid of cards. Each card shows readiness %. Tap one to expand milestones + financial detail below.</p>
+    <span class="badge-alt">Alternative</span>
+
+    <div style="background:#071A2E;border-radius:10px;padding:12px;">
+
+      <div class="card-label" style="margin-bottom:8px;">Eligible Eco-labels (4 found)</div>
+
+      <div class="label-grid">
+        <div class="label-card active">
+          <div class="label-card-name">ASC</div>
+          <div class="label-card-region">Asia-Pacific</div>
+          <div class="label-card-pct">67%</div>
+          <div class="progress-track" style="height:4px;margin-top:6px;"><div class="progress-fill-a" style="width:67%"></div></div>
+        </div>
+        <div class="label-card">
+          <div class="label-card-name">GlobalG.A.P.</div>
+          <div class="label-card-region">Global</div>
+          <div class="label-card-pct-amber">38%</div>
+          <div class="progress-track" style="height:4px;margin-top:6px;"><div class="progress-fill-b" style="width:38%"></div></div>
+        </div>
+        <div class="label-card">
+          <div class="label-card-name">BAP</div>
+          <div class="label-card-region">Americas</div>
+          <div class="label-card-pct" style="color:#6B8FAF;">15%</div>
+          <div class="progress-track" style="height:4px;margin-top:6px;"><div class="progress-fill-c" style="width:15%"></div></div>
+        </div>
+        <div class="label-card">
+          <div class="label-card-name">MSC</div>
+          <div class="label-card-region">Europe</div>
+          <div class="label-card-pct" style="color:#6B8FAF;">52%</div>
+          <div class="progress-track" style="height:4px;margin-top:6px;"><div style="background:linear-gradient(90deg,#6B8FAF,#4A7A9B);height:100%;border-radius:20px;width:52%"></div></div>
+        </div>
+      </div>
+
+      <!-- Expanded detail for selected -->
+      <div style="background:#0D2440;border-radius:8px;padding:10px;border:1px solid #163455;margin-top:8px;">
+        <div style="color:#FFFFFF;font-size:11px;font-weight:600;margin-bottom:6px;">ASC — Next 2 Steps</div>
+        <div class="milestone-row"><div class="milestone-dot-pending"></div><span class="milestone-text" style="font-size:10px;">Zero antibiotic use (14 more days)</span></div>
+        <div class="milestone-row"><div class="milestone-dot-pending"></div><span class="milestone-text" style="font-size:10px;">Species biodiversity score ≥ 3</span></div>
+        <div class="revenue-pill" style="margin-top:8px;">
+          <div>
+            <div class="revenue-label">Revenue Premium (ASC)</div>
+            <div class="revenue-amount" style="font-size:13px;">+$12,400 / yr</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="trade-offs">
+      <div class="trade-off-row"><span class="pro">+</span> See all options at a glance</div>
+      <div class="trade-off-row"><span class="pro">+</span> Easy comparison across labels</div>
+      <div class="trade-off-row"><span class="con">−</span> Busier, more cognitive load</div>
+      <div class="trade-off-row"><span class="con">−</span> Milestone detail is secondary</div>
+    </div>
+  </div>
+
+  <!-- ─── APPROACH C ─── -->
+  <div class="approach">
+    <div class="approach-title">C — Journey / Roadmap</div>
+    <p class="approach-desc">Linear step-by-step roadmap toward certification. Frames the whole tab as a journey: where you are, what's next, what the finish line looks like.</p>
+    <span class="badge-alt">Alternative</span>
+
+    <div style="background:#071A2E;border-radius:10px;padding:12px;">
+
+      <div class="card-label" style="margin-bottom:10px;">Your ASC Certification Journey</div>
+
+      <div class="journey-step">
+        <div class="journey-dot-done">✓</div>
+        <div class="journey-content">
+          <div class="journey-title">Water Quality Baseline</div>
+          <div class="journey-sub">WQI ≥ 70 sustained for 30 days</div>
+          <span class="journey-tag">Achieved</span>
+        </div>
+      </div>
+      <div class="journey-line"></div>
+
+      <div class="journey-step">
+        <div class="journey-dot-done">✓</div>
+        <div class="journey-content">
+          <div class="journey-title">Feed Efficiency</div>
+          <div class="journey-sub">FCR below 1.5</div>
+          <span class="journey-tag">Achieved</span>
+        </div>
+      </div>
+      <div class="journey-line"></div>
+
+      <div class="journey-step">
+        <div class="journey-dot-active"><div class="journey-dot-inner"></div></div>
+        <div class="journey-content">
+          <div class="journey-title">Chemical-Free Period</div>
+          <div class="journey-sub" style="color:#F59E0B;">14 more days without antibiotics</div>
+          <span class="journey-tag" style="background:#2D1A00;color:#F59E0B;">In Progress</span>
+        </div>
+      </div>
+      <div class="journey-line"></div>
+
+      <div class="journey-step">
+        <div class="journey-dot-pending"><div class="journey-dot-inner-gray"></div></div>
+        <div class="journey-content">
+          <div class="journey-title">Biodiversity Score</div>
+          <div class="journey-sub">Add 1 more species</div>
+          <span class="journey-tag-pending">Upcoming</span>
+        </div>
+      </div>
+      <div class="journey-line"></div>
+
+      <div class="journey-step">
+        <div class="journey-dot-pending"><div class="journey-dot-inner-gray"></div></div>
+        <div class="journey-content">
+          <div class="journey-title">ASC Audit &amp; Certification</div>
+          <div class="journey-sub">Submit application → +$12,400/yr premium</div>
+          <span class="journey-tag-pending">Finish Line</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="trade-offs">
+      <div class="trade-off-row"><span class="pro">+</span> Motivating, narrative feel</div>
+      <div class="trade-off-row"><span class="pro">+</span> Clear "what's next" always visible</div>
+      <div class="trade-off-row"><span class="con">−</span> Shows only one label at a time</div>
+      <div class="trade-off-row"><span class="con">−</span> Hides the full picture (criteria count)</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
