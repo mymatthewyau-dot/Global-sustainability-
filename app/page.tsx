@@ -64,7 +64,9 @@ function DashboardContent() {
     return generateStockingRecommendations(latestReading);
   }, [latestReading]);
 
-  if (isLoading || !farm) {
+  if (!farm) return null;
+
+  if (isLoading) {
     return (
       <div style={{ minHeight: '100vh', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>

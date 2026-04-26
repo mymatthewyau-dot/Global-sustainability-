@@ -28,11 +28,14 @@ export function FarmProvider({ children }: { children: ReactNode }) {
       }
     : null;
 
-  const { isLoading, error, data } = db.useQuery(farmQuery as any) as {
+  const { isLoading: queryLoading, error, data } = db.useQuery(farmQuery as any) as {
     isLoading: boolean;
     error?: any;
     data?: { farms?: any[] };
   };
+
+  // When there is no user, skip the query — don't let isLoading hang forever
+  const isLoading = user ? queryLoading : false;
 
   const farm = data?.farms?.[0]
     ? {
