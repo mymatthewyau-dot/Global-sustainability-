@@ -1,11 +1,20 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { format, formatDistanceToNow, differenceInDays, differenceInHours } from 'date-fns';
+import { useState } from 'react';
+import { format, formatDistanceToNow } from 'date-fns';
 import { db, id } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
 import { SensorReading, WQIScore } from '@/types';
 import { calculateWQI } from '@/lib/wqi-calculator';
+import { SIX_MONTH_HISTORY, LATEST_READING } from '@/lib/cci-data';
+import {
+  calculateCCI,
+  getTrophicState,
+  getTrophicColor,
+  getTrophicRiskLabel,
+  getDOStatus,
+  getDOStatusColor,
+} from '@/lib/cci-calculator';
 
 interface RiskTabProps {
   latestReading: SensorReading | null;
@@ -33,13 +42,6 @@ function getParamStatus(param: 'do' | 'phosphorus' | 'nitrogen', value: number):
   return { label: 'Critical', color: '#EF4444', barPct: Math.min(100, (value / 6) * 100) };
 }
 
-function getEutrophicationRisk(reading: SensorReading): { level: string; color: string; thumbPct: number } {
-  if (reading.phosphorus > 0.2 || reading.nitrogen > 5)
-    return { level: 'HIGH RISK', color: '#EF4444', thumbPct: 85 };
-  if (reading.phosphorus > 0.1 || reading.nitrogen > 2)
-    return { level: 'MODERATE RISK', color: '#F59E0B', thumbPct: 55 };
-  return { level: 'LOW RISK', color: '#00C896', thumbPct: 15 };
-}
 
 function getFarmSummary(reading: SensorReading): string {
   const doStatus = reading.dissolvedOxygen >= 5
@@ -56,90 +58,36 @@ function getFarmSummary(reading: SensorReading): string {
   return `Your farm is in ${condition}. ${doStatus}. ${nStatus[0].toUpperCase() + nStatus.slice(1)} and ${pStatus}.`;
 }
 
-// ── Trend chart helpers ────────────────────────────────────────────────────────
+// ── SixMonthTrendChart component ──────────────────────────────────────────────
 
-function getTrendLabel(readings: SensorReading[]): string {
-  if (readings.length < 2) return 'Trend';
-  const oldest = new Date(readings[readings.length - 1].timestamp);
-  const newest = new Date(readings[0].timestamp);
-  const days = differenceInDays(newest, oldest);
-  const hours = differenceInHours(newest, oldest);
-  if (days >= 6) return '7-Day Trend';
-  if (days >= 2) return `${days + 1}-Day Trend`;
-  if (hours >= 1) return `${hours}h Trend`;
-  return 'Recent Trend';
-}
-
-function getXLabel(r: SensorReading, spanDays: number): string {
-  const d = new Date(r.timestamp);
-  if (spanDays >= 2) return format(d, 'EEE');      // Mon, Tue …
-  if (spanDays >= 1) return format(d, 'HH:mm');    // 14:30
-  return format(d, 'HH:mm');
-}
-
-// ── TrendChart component ───────────────────────────────────────────────────────
-
-function TrendChart({ readings }: { readings: SensorReading[] }) {
+function SixMonthTrendChart() {
   const W = 340, H = 200;
-  const pad = { top: 12, right: 10, bottom: 28, left: 36 };
+  const pad = { top: 16, right: 12, bottom: 30, left: 36 };
   const chartW = W - pad.left - pad.right;
   const chartH = H - pad.top - pad.bottom;
+  const data = SIX_MONTH_HISTORY;
+  const n = data.length;
 
-  // Use up to 14 most-recent readings, oldest first for left→right
-  const pts = readings.slice(0, 14).reverse();
-  const n = pts.length;
-
-  const spanDays = n >= 2
-    ? differenceInDays(new Date(pts[n - 1].timestamp), new Date(pts[0].timestamp))
-    : 0;
-
-  const label = getTrendLabel(readings);
-
-  // Scales (fixed ranges so lines are comparable across sessions)
-  const doMax = 10, nMax = 6, pMax = 0.3;
-
-  const xOf = (i: number) => pad.left + (n > 1 ? (i / (n - 1)) * chartW : chartW / 2);
-  const yOf = (v: number, max: number) => pad.top + chartH - Math.min(1, v / max) * chartH;
-
-  const line = (vals: number[], max: number) =>
-    pts.map((r, i) => `${xOf(i)},${yOf(vals[i], max)}`).join(' ');
-
-  const doVals  = pts.map((r) => r.dissolvedOxygen);
-  const nVals   = pts.map((r) => r.nitrogen);
-  const pVals   = pts.map((r) => r.phosphorus);
-
-  // x-axis labels: pick up to 5 evenly spaced
-  const xLabels = pts
-    .map((r, i) => ({ i, label: getXLabel(r, spanDays) }))
-    .filter((_, i, arr) => {
-      if (arr.length <= 5) return true;
-      const step = Math.ceil(arr.length / 5);
-      return i % step === 0 || i === arr.length - 1;
-    });
-
-  // y-axis ticks (DO scale on left)
-  const yTicks = [0, 2.5, 5, 7.5, 10];
-
-  if (n < 1) {
-    return (
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B8FAF', fontSize: 11 }}>
-        Log a reading to see trends
-      </div>
-    );
-  }
+  const xLabels = data.filter((_, i) => i % 4 === 0 || i === n - 1);
+  const xOf = (i: number) => pad.left + (i / (n - 1)) * chartW;
+  const yOf = (v: number) => pad.top + chartH - (v / 100) * chartH;
+  const polyPts = (key: 'nScore' | 'pScore' | 'doScore') =>
+    data.map((d, i) => `${xOf(i)},${yOf(d[key])}`).join(' ');
+  const yTicks = [0, 25, 50, 75, 100];
 
   return (
     <div>
-      <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>{label}</div>
+      <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>
+        6-Month Trend — Apr to Oct (Weekly)
+      </div>
       <div style={{ display: 'flex', gap: 14, marginBottom: 10 }}>
-        <span style={{ fontSize: 11, color: '#00C896' }}>— DO</span>
-        <span style={{ fontSize: 11, color: '#F59E0B' }}>— Nitrogen</span>
-        <span style={{ fontSize: 11, color: '#6B8FAF' }}>-- Phosphorus</span>
+        <span style={{ fontSize: 11, color: '#00C896' }}>— DO Score</span>
+        <span style={{ fontSize: 11, color: '#F59E0B' }}>— N Score</span>
+        <span style={{ fontSize: 11, color: '#8B5CF6' }}>— P Score</span>
       </div>
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
-        {/* Grid lines */}
         {yTicks.map((v) => {
-          const y = yOf(v, doMax);
+          const y = yOf(v);
           return (
             <g key={v}>
               <line x1={pad.left} y1={y} x2={W - pad.right} y2={y} stroke="#163455" strokeWidth="0.5" strokeDasharray="3,3" />
@@ -147,61 +95,100 @@ function TrendChart({ readings }: { readings: SensorReading[] }) {
             </g>
           );
         })}
-        {/* Nitrogen safe threshold (2 mg/L mapped on DO scale for reference) */}
-        <line x1={pad.left} y1={yOf(2, doMax)} x2={W - pad.right} y2={yOf(2, doMax)} stroke="#EF4444" strokeWidth="1" strokeDasharray="5,4" opacity="0.45" />
-        <text x={W - pad.right + 2} y={yOf(2, doMax) + 3} fill="#EF4444" fontSize="7" fontFamily="sans-serif">⚠</text>
-        {/* Baseline axis */}
         <line x1={pad.left} y1={pad.top + chartH} x2={W - pad.right} y2={pad.top + chartH} stroke="#1E4A6E" strokeWidth="1" />
-
-        {n >= 2 && (
-          <>
-            {/* Phosphorus (dashed, scaled 0–0.3 on same canvas) */}
-            <polyline
-              points={pts.map((r, i) => `${xOf(i)},${yOf(r.phosphorus, pMax)}`).join(' ')}
-              fill="none" stroke="#6B8FAF" strokeWidth="1.5" strokeDasharray="5,3"
-              strokeLinejoin="round" strokeLinecap="round"
-            />
-            {/* Nitrogen (scaled 0–6) */}
-            <polyline
-              points={line(nVals, nMax)}
-              fill="none" stroke="#F59E0B" strokeWidth="2"
-              strokeLinejoin="round" strokeLinecap="round"
-            />
-            {/* DO (scaled 0–10) */}
-            <polyline
-              points={line(doVals, doMax)}
-              fill="none" stroke="#00C896" strokeWidth="2.5"
-              strokeLinejoin="round" strokeLinecap="round"
-            />
-            {/* Data-point circles */}
-            {pts.map((r, i) => {
-              const nColor = r.nitrogen > 2 ? '#EF4444' : '#F59E0B';
-              return (
-                <g key={i}>
-                  <circle cx={xOf(i)} cy={yOf(r.dissolvedOxygen, doMax)} r="3.5" fill="#00C896" stroke="#071A2E" strokeWidth="1.5" />
-                  <circle cx={xOf(i)} cy={yOf(r.nitrogen, nMax)} r="3.5" fill={nColor} stroke="#071A2E" strokeWidth="1.5" />
-                </g>
-              );
-            })}
-          </>
-        )}
-        {n === 1 && (
-          <>
-            <circle cx={xOf(0)} cy={yOf(doVals[0], doMax)} r="4" fill="#00C896" stroke="#071A2E" strokeWidth="1.5" />
-            <circle cx={xOf(0)} cy={yOf(nVals[0], nMax)} r="4" fill="#F59E0B" stroke="#071A2E" strokeWidth="1.5" />
-            <text x={xOf(0)} y={pad.top + chartH + 18} fill="#6B8FAF" fontSize="9" textAnchor="middle" fontFamily="sans-serif">Now</text>
-          </>
-        )}
-        {/* X-axis labels */}
-        {n >= 2 && xLabels.map(({ i, label: lbl }) => (
-          <text key={i} x={xOf(i)} y={H - 4} fill="#6B8FAF" fontSize="9" textAnchor="middle" fontFamily="sans-serif">{lbl}</text>
-        ))}
+        <polyline points={polyPts('pScore')} fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeDasharray="5,3" strokeLinejoin="round" strokeLinecap="round" />
+        <polyline points={polyPts('nScore')} fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+        <polyline points={polyPts('doScore')} fill="none" stroke="#00C896" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        {(['doScore', 'nScore', 'pScore'] as const).map((key, ki) => {
+          const last = data[n - 1];
+          const v = last[key] as number;
+          const colors = ['#00C896', '#F59E0B', '#8B5CF6'];
+          return <circle key={key} cx={xOf(n - 1)} cy={yOf(v)} r="4" fill={colors[ki]} stroke="#071A2E" strokeWidth="1.5" />;
+        })}
+        {xLabels.map((d) => {
+          const i = data.indexOf(d);
+          return (
+            <text key={d.date} x={xOf(i)} y={H - 4} fill="#6B8FAF" fontSize="9" textAnchor="middle" fontFamily="sans-serif">
+              {d.label}
+            </text>
+          );
+        })}
       </svg>
-      {n === 1 && (
-        <div style={{ color: '#6B8FAF', fontSize: 10, marginTop: 6, textAlign: 'center' }}>
-          Log more readings to see a trend line
+    </div>
+  );
+}
+
+function CCICircularityWidget() {
+  const { nScore, pScore, doScore } = LATEST_READING;
+  const cci = calculateCCI(nScore, pScore, doScore);
+  const trophicState = getTrophicState(nScore, pScore);
+  const trophicColor = getTrophicColor(trophicState);
+  const doStatus = getDOStatus(doScore);
+  const doColor = getDOStatusColor(doStatus);
+
+  const R = 44, cx = 60, cy = 60, strokeW = 9;
+  const sectorAngle = (2 * Math.PI) / 3;
+
+  const segments: { key: string; score: number; color: string }[] = [
+    { key: 'DO', score: doScore, color: '#00C896' },
+    { key: 'N',  score: nScore,  color: '#F59E0B' },
+    { key: 'P',  score: pScore,  color: '#8B5CF6' },
+  ];
+
+  function arcPath(score: number, idx: number) {
+    const startAngle = -Math.PI / 2 + idx * sectorAngle + 0.04;
+    const endAngle   = startAngle + sectorAngle * (score / 100) - 0.04;
+    const x1 = cx + R * Math.cos(startAngle);
+    const y1 = cy + R * Math.sin(startAngle);
+    const x2 = cx + R * Math.cos(endAngle);
+    const y2 = cy + R * Math.sin(endAngle);
+    const large = endAngle - startAngle > Math.PI ? 1 : 0;
+    return `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2}`;
+  }
+
+  function arcBg(idx: number) {
+    const startAngle = -Math.PI / 2 + idx * sectorAngle + 0.04;
+    const endAngle   = -Math.PI / 2 + (idx + 1) * sectorAngle - 0.04;
+    const x1 = cx + R * Math.cos(startAngle);
+    const y1 = cy + R * Math.sin(startAngle);
+    const x2 = cx + R * Math.cos(endAngle);
+    const y2 = cy + R * Math.sin(endAngle);
+    return `M ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2}`;
+  }
+
+  return (
+    <div style={{ background: '#0D2440', borderRadius: 12, padding: 16, border: '1px solid #163455', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 160 }}>
+      <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>CCI Score</div>
+      <svg width={120} height={120} viewBox="0 0 120 120">
+        {segments.map((seg, i) => (
+          <path key={`bg-${seg.key}`} d={arcBg(i)} fill="none" stroke="#163455" strokeWidth={strokeW} strokeLinecap="round" />
+        ))}
+        {segments.map((seg, i) => (
+          <path key={`arc-${seg.key}`} d={arcPath(seg.score, i)} fill="none" stroke={seg.color} strokeWidth={strokeW} strokeLinecap="round" />
+        ))}
+        <text x={cx} y={cy - 4} fill="#FFFFFF" fontSize="14" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">
+          {cci.total}%
+        </text>
+        <text x={cx} y={cy + 10} fill="#6B8FAF" fontSize="7" textAnchor="middle" fontFamily="sans-serif">CCI</text>
+        {cci.exceedsASC && (
+          <text x={cx} y={cy + 22} fill="#00C896" fontSize="6" textAnchor="middle" fontFamily="sans-serif">✓ ASC</text>
+        )}
+      </svg>
+      <div style={{ marginTop: 10, width: '100%' }}>
+        {segments.map((seg) => (
+          <div key={seg.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: seg.color }} />
+              <span style={{ color: '#6B8FAF', fontSize: 10 }}>{seg.key}</span>
+            </div>
+            <span style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 600 }}>{seg.score}</span>
+          </div>
+        ))}
+        <div style={{ borderTop: '1px solid #163455', paddingTop: 6, marginTop: 4 }}>
+          <div style={{ color: trophicColor, fontSize: 9, fontWeight: 600 }}>{trophicState}</div>
+          <div style={{ color: doColor, fontSize: 9, marginTop: 2 }}>DO: {doStatus}</div>
         </div>
-      )}
+      </div>
     </div>
   );
 }
@@ -253,8 +240,6 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
     }
   };
 
-  const recent5 = readings.slice(0, 5);
-
   // ── No data state ────────────────────────────────────────────────────────────
   if (!latestReading) {
     return (
@@ -286,7 +271,6 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
     );
   }
 
-  const eutroph = getEutrophicationRisk(latestReading);
   const doStatus = getParamStatus('do',          latestReading.dissolvedOxygen);
   const pStatus  = getParamStatus('phosphorus',  latestReading.phosphorus);
   const nStatus  = getParamStatus('nitrogen',    latestReading.nitrogen);
@@ -314,20 +298,62 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </div>
       </div>
 
-      {/* Eutrophication Risk */}
-      <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 14 }}>
-        <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>Eutrophication Risk</div>
-        <div style={{ color: eutroph.color, fontSize: 22, fontWeight: 700, marginBottom: 14 }}>{eutroph.level}</div>
-        <div style={{ position: 'relative', marginBottom: 10 }}>
-          <div style={{ background: 'linear-gradient(90deg,#00C896 0%,#F59E0B 50%,#EF4444 100%)', width: '100%', height: 14, borderRadius: 20, opacity: 0.65 }} />
-          <div style={{ position: 'absolute', top: '50%', left: `${eutroph.thumbPct}%`, transform: 'translate(-50%,-50%)', width: 20, height: 20, background: eutroph.color, borderRadius: '50%', border: '3px solid #FFFFFF', boxShadow: `0 0 10px ${eutroph.color}88` }} />
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11, color: '#00C896' }}>Safe</span>
-          <span style={{ fontSize: 11, color: '#F59E0B' }}>Moderate</span>
-          <span style={{ fontSize: 11, color: '#EF4444' }}>Critical</span>
-        </div>
-      </div>
+      {/* Eutrophication Risk — Trophic State */}
+      {(() => {
+        const trophicState = getTrophicState(LATEST_READING.nScore, LATEST_READING.pScore);
+        const trophicColor = getTrophicColor(trophicState);
+        const riskLabel    = getTrophicRiskLabel(trophicState);
+        const doStatus     = getDOStatus(LATEST_READING.doScore);
+        const doColor      = getDOStatusColor(doStatus);
+        const thumbPct = trophicState === 'Oligotrophic' ? 10 : trophicState === 'Mesotrophic' ? 38 : trophicState === 'Eutrophic' ? 65 : 88;
+        return (
+          <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 14 }}>
+            <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>Eutrophication Risk</div>
+            <div style={{ color: trophicColor, fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{riskLabel}</div>
+            <div style={{ color: '#6B8FAF', fontSize: 11, marginBottom: 14 }}>Trophic State: <span style={{ color: trophicColor, fontWeight: 600 }}>{trophicState}</span></div>
+            <div style={{ position: 'relative', marginBottom: 10 }}>
+              <div style={{ background: 'linear-gradient(90deg,#00C896 0%,#3B82F6 33%,#F59E0B 66%,#EF4444 100%)', width: '100%', height: 14, borderRadius: 20, opacity: 0.7 }} />
+              <div style={{ position: 'absolute', top: '50%', left: `${thumbPct}%`, transform: 'translate(-50%,-50%)', width: 20, height: 20, background: trophicColor, borderRadius: '50%', border: '3px solid #FFFFFF', boxShadow: `0 0 10px ${trophicColor}88` }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+              <span style={{ fontSize: 10, color: '#00C896' }}>Oligotrophic</span>
+              <span style={{ fontSize: 10, color: '#3B82F6' }}>Mesotrophic</span>
+              <span style={{ fontSize: 10, color: '#F59E0B' }}>Eutrophic</span>
+              <span style={{ fontSize: 10, color: '#EF4444' }}>Hyper-eutrophic</span>
+            </div>
+            <div style={{ background: '#071A2E', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+              <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 8 }}>Reference Thresholds</div>
+              {[
+                { state: 'Oligotrophic',    n: '< 0.3 mg/L',   p: '< 0.008 mg/L', cond: 'Clear, healthy water',        color: '#00C896' },
+                { state: 'Mesotrophic',     n: '0.3–0.5 mg/L', p: '~0.027 mg/L',  cond: 'Moderate nutrients, balanced', color: '#3B82F6' },
+                { state: 'Eutrophic',       n: '0.5–1.5 mg/L', p: '~0.084 mg/L',  cond: 'Algal blooms, O₂ depletion',  color: '#F59E0B' },
+                { state: 'Hyper-eutrophic', n: '> 1.5 mg/L',   p: '> 0.1 mg/L',   cond: 'Severe blooms, dead zones',   color: '#EF4444' },
+              ].map((row) => (
+                <div key={row.state} style={{
+                  display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0',
+                  borderBottom: '1px solid #163455', opacity: row.state === trophicState ? 1 : 0.45,
+                }}>
+                  <div style={{ width: 3, height: 16, background: row.color, borderRadius: 2, flexShrink: 0 }} />
+                  <span style={{ color: row.color, fontSize: 9, fontWeight: 700, minWidth: 90 }}>{row.state}</span>
+                  <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 72 }}>N: {row.n}</span>
+                  <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 80 }}>P: {row.p}</span>
+                  <span style={{ color: '#9CA3AF', fontSize: 9 }}>{row.cond}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: '#071A2E', borderRadius: 8, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 10, height: 10, borderRadius: '50%', background: doColor, boxShadow: `0 0 6px ${doColor}` }} />
+              <div>
+                <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1px' }}>DO Consequence</div>
+                <div style={{ color: doColor, fontSize: 11, fontWeight: 600 }}>{doStatus} — Score {LATEST_READING.doScore}/100</div>
+                <div style={{ color: '#6B8FAF', fontSize: 9, marginTop: 2 }}>
+                  Normal: DO &gt; 6–8 mg/L · Hypoxia: &lt; 2 mg/L · Anoxia: ≈ 0–0.5 mg/L
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Parameters */}
       <div style={{ marginBottom: 14 }}>
@@ -382,36 +408,12 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </form>
       </div>
 
-      {/* Trend Chart + Recent Readings */}
+      {/* 6-Month Trend + CCI Circularity Widget */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
-        {/* Trend Chart */}
-        <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <TrendChart readings={readings} />
+        <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', flex: 1 }}>
+          <SixMonthTrendChart />
         </div>
-
-        {/* Recent Readings */}
-        <div style={{ background: '#0D2440', borderRadius: 12, padding: 16, border: '1px solid #163455', flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 12 }}>Recent Readings</div>
-          {recent5.length === 0 ? (
-            <div style={{ color: '#6B8FAF', fontSize: 11 }}>No readings yet.</div>
-          ) : (
-            recent5.map((r) => (
-              <div key={r.id ?? r.timestamp} style={{ background: '#163455', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <span style={{ color: '#FFFFFF', fontSize: 11, fontWeight: 600 }}>
-                    {format(new Date(r.timestamp), 'MMM d, HH:mm')}
-                  </span>
-                  <span style={{ background: '#0A1F35', color: '#6B8FAF', borderRadius: 4, padding: '2px 7px', fontSize: 9 }}>Manual</span>
-                </div>
-                <div style={{ display: 'flex', gap: 10 }}>
-                  <span style={{ color: '#6B8FAF', fontSize: 11 }}>P <strong style={{ color: '#fff' }}>{r.phosphorus}</strong></span>
-                  <span style={{ color: '#6B8FAF', fontSize: 11 }}>N <strong style={{ color: r.nitrogen > 2 ? '#F59E0B' : '#fff' }}>{r.nitrogen}</strong></span>
-                  <span style={{ color: '#6B8FAF', fontSize: 11 }}>DO <strong style={{ color: '#00C896' }}>{r.dissolvedOxygen}</strong></span>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+        <CCICircularityWidget />
       </div>
 
       {/* Alerts */}
