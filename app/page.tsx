@@ -1,51 +1,50 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { WQIScore, SensorReading, Recommendation } from '@/types';
-import WQIGauge from '@/components/WQIGauge';
-import WaterQualityChart from '@/components/WaterQualityChart';
-import WQIBreakdown from '@/components/WQIBreakdown';
-import RecommendationsList from '@/components/RecommendationsList';
-import SensorDataTable from '@/components/SensorDataTable';
-import AuthButton from '@/components/AuthButton';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import ActivityLogger from '@/components/ActivityLogger';
-import ActivityHistory from '@/components/ActivityHistory';
-import TrendAnalysis from '@/components/TrendAnalysis';
-import SensorDataLogger from '@/components/SensorDataLogger';
-import EutrophicationRisk from '@/components/EutrophicationRisk';
-import { format } from 'date-fns';
+import AuthButton from '@/components/AuthButton';
+import RiskTab from '@/components/tabs/RiskTab';
+import StockingTab from '@/components/tabs/StockingTab';
+import EcoLabelTab from '@/components/tabs/EcoLabelTab';
 import { db } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
 import { calculateWQI } from '@/lib/wqi-calculator';
-import { generateRecommendations } from '@/lib/recommendations';
+import { generateStockingRecommendations } from '@/lib/stocking-recommendations';
 import { convertToSensorReading } from '@/lib/sensor-data-instant';
+import { SensorReading, WQIScore } from '@/types';
+
+const TABS = ['Risk', 'Stocking', 'Eco-label'] as const;
+type Tab = typeof TABS[number];
+
+const BG     = '#071A2E';
+const CARD   = '#0D2440';
+const BORDER = '#163455';
+const MUTED  = '#6B8FAF';
+const GREEN  = '#00C896';
+const AMBER  = '#F59E0B';
+const RED    = '#EF4444';
+const BLUE   = '#3B82F6';
+
+function wqiColor(score: number): string {
+  if (score >= 90) return GREEN;
+  if (score >= 70) return BLUE;
+  if (score >= 50) return AMBER;
+  return RED;
+}
 
 function DashboardContent() {
   const { farm } = useFarm();
-  const [activeTab, setActiveTab] = useState<'sensor' | 'recommendations' | 'activity' | 'trends'>('sensor');
-  const [isSimulating, setIsSimulating] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('Risk');
 
-  // Real-time query for sensor readings
   const sensorQuery = farm
-    ? {
-        sensorReadings: {
-          $: {
-            where: {
-              farmId: farm.id,
-            },
-          },
-        },
-      }
+    ? { sensorReadings: { $: { where: { farmId: farm.id } } } }
     : null;
 
-  const { isLoading, error, data } = db.useQuery(sensorQuery as any) as {
+  const { isLoading, data } = db.useQuery(sensorQuery as any) as {
     isLoading: boolean;
-    error?: any;
     data?: { sensorReadings?: any[] };
   };
 
-  // Convert InstantDB data to SensorReading format and sort by timestamp
   const readings: SensorReading[] = useMemo(() => {
     if (!data?.sensorReadings) return [];
     return data.sensorReadings
@@ -53,268 +52,98 @@ function DashboardContent() {
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }, [data]);
 
-  // Get latest reading
-  const latestReading = readings[0] || null;
+  const latestReading = readings[0] ?? null;
 
-  // Get readings from last 24 hours
-  const readings24h = useMemo(() => {
-    const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
-    return readings.filter(
-      (r) => new Date(r.timestamp).getTime() >= twentyFourHoursAgo
-    );
-  }, [readings]);
-
-  // Calculate WQI for latest reading
   const wqi: WQIScore | null = useMemo(() => {
     if (!latestReading) return null;
     return calculateWQI(latestReading);
   }, [latestReading]);
 
-  // Generate recommendations based on latest reading
-  const recommendations: Recommendation[] = useMemo(() => {
-    if (!latestReading || !wqi) return [];
-    return generateRecommendations(latestReading, wqi);
-  }, [latestReading, wqi]);
-
-  const simulateNewScan = async () => {
-    if (!farm) return;
-    
-    try {
-      setIsSimulating(true);
-      
-      // Generate mock sensor reading
-      const { generateMockSensorReading, addSensorReading } = await import('@/lib/sensor-data-instant');
-      const { calculateWQI } = await import('@/lib/wqi-calculator');
-      
-      const reading = generateMockSensorReading(farm.id);
-      const wqiScore = calculateWQI(reading);
-      
-      await addSensorReading({ ...reading, wqiScore: wqiScore.overall });
-      
-      // Data will automatically update via real-time query
-    } catch (error) {
-      console.error('Error simulating scan:', error);
-    } finally {
-      setIsSimulating(false);
-    }
-  };
+  const stockingRecs = useMemo(() => {
+    if (!latestReading) return [];
+    return generateStockingRecommendations(latestReading);
+  }, [latestReading]);
 
   if (isLoading || !farm) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading water quality data...</p>
+      <div style={{ minHeight: '100vh', background: BG, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: 48, height: 48, border: `3px solid ${GREEN}`, borderTopColor: 'transparent', borderRadius: '50%', margin: '0 auto 16px', animation: 'spin 0.8s linear infinite' }} />
+          <p style={{ color: MUTED, fontSize: 14 }}>Loading water quality data…</p>
         </div>
-      </div>
-    );
-  }
-
-  if (!latestReading || !wqi) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  {farm.name}
-                </h1>
-                <p className="text-sm sm:text-base text-gray-600 mt-1">
-                  Water Quality Monitoring Dashboard
-                </p>
-              </div>
-              <AuthButton />
-            </div>
-          </div>
-        </header>
-
-        <div className="flex items-center justify-center p-4 mt-20">
-          <div className="text-center bg-white rounded-lg shadow p-8 max-w-md">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">No Data Available</h2>
-            <p className="text-gray-600 mb-6">No sensor data has been recorded yet for {farm.name}.</p>
-            <button
-              onClick={simulateNewScan}
-              disabled={isSimulating}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSimulating ? 'Generating...' : 'Generate Initial Data'}
-            </button>
-          </div>
-        </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                {farm.name}
-              </h1>
-              <p className="text-sm sm:text-base text-gray-600 mt-1">
-                Water Quality Monitoring Dashboard
-                {farm.location && ` • ${farm.location}`}
-              </p>
+    <div style={{ minHeight: '100vh', background: BG, fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#CBD5E1' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px 24px 40px' }}>
+
+        {/* WQI Persistent Header */}
+        <div style={{ background: CARD, borderRadius: 12, padding: '14px 20px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: `1px solid ${BORDER}` }}>
+          <div>
+            <div style={{ color: MUTED, fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 3 }}>Overall Water Quality Index</div>
+            <div style={{ color: wqi ? wqiColor(wqi.overall) : MUTED, fontSize: 28, fontWeight: 700 }}>
+              {wqi ? wqi.overall : '—'} <span style={{ fontSize: 13, color: MUTED, fontWeight: 400 }}>/ 100</span>
             </div>
-            <div className="mt-2 sm:mt-0 flex items-center gap-4">
-              <div className="text-sm text-gray-600">
-                <p>Last scan: {format(new Date(latestReading.timestamp), 'PPpp')}</p>
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <div style={{ background: '#0A1F35', borderRadius: 8, padding: '7px 14px', border: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 7, height: 7, background: GREEN, borderRadius: '50%', boxShadow: `0 0 6px ${GREEN}` }} />
+              <span style={{ color: GREEN, fontSize: 11, fontWeight: 600 }}>Connected</span>
+            </div>
+            {wqi && (
+              <div style={{ background: '#0A3320', borderRadius: 8, padding: '7px 14px', border: `1px solid ${GREEN}` }}>
+                <span style={{ color: GREEN, fontSize: 13, fontWeight: 600 }}>{wqi.category}</span>
               </div>
-              <AuthButton />
-            </div>
+            )}
+            <AuthButton />
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Tab Navigation */}
-        <div className="mb-6 bg-white rounded-lg shadow">
-          <div className="border-b border-gray-200">
-            <nav className="flex -mb-px">
-              <button
-                onClick={() => setActiveTab('sensor')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'sensor'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">📊</span>
-                Sensor Data
-              </button>
-              <button
-                onClick={() => setActiveTab('recommendations')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'recommendations'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">💡</span>
-                Recommendations
-              </button>
-              <button
-                onClick={() => setActiveTab('activity')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'activity'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">📝</span>
-                Activity Log
-              </button>
-              <button
-                onClick={() => setActiveTab('trends')}
-                className={`flex-1 sm:flex-none px-4 sm:px-8 py-4 text-sm sm:text-base font-medium border-b-2 transition-colors ${
-                  activeTab === 'trends'
-                    ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <span className="mr-2">📈</span>
-                Trends
-              </button>
-            </nav>
-          </div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: '8px 20px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: 'none', transition: 'all 0.15s',
+                background: activeTab === tab ? GREEN : BORDER,
+                color: activeTab === tab ? BG : MUTED,
+              }}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'sensor' && (
-          <div className="space-y-6 mb-6">
-            {/* WQI Gauge Section */}
-            <div>
-              <div className="bg-white rounded-lg shadow p-4 sm:p-6">
-                <div className="flex flex-col items-center">
-                  <WQIGauge wqi={wqi} />
-                </div>
-              </div>
-            </div>
-
-            {/* Manual Input and Current Readings */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Manual Sensor Input Form */}
-              <div>
-                <SensorDataLogger />
-              </div>
-
-              {/* Current Sensor Data */}
-              <div>
-                <SensorDataTable reading={latestReading} />
-              </div>
-            </div>
-
-            {/* Eutrophication Risk Assessment */}
-            <div>
-              <EutrophicationRisk reading={latestReading} />
-            </div>
-
-            {/* Water Quality Trends */}
-            <div>
-              <WaterQualityChart readings={readings24h.length > 0 ? readings24h : [latestReading]} />
-            </div>
-
-            {/* WQI Breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="lg:col-span-2">
-                <WQIBreakdown wqi={wqi} />
-              </div>
-            </div>
-          </div>
+        {activeTab === 'Risk' && (
+          <RiskTab
+            latestReading={latestReading}
+            readings={readings}
+            wqi={wqi}
+            farmId={farm.id}
+          />
+        )}
+        {activeTab === 'Stocking' && (
+          <StockingTab
+            latestReading={latestReading}
+            recommendations={stockingRecs}
+            initialStockingDensity={farm.initialStockingDensity ?? 0}
+          />
+        )}
+        {activeTab === 'Eco-label' && (
+          <EcoLabelTab
+            latestReading={latestReading}
+            wqi={wqi}
+            farm={farm}
+          />
         )}
 
-        {activeTab === 'recommendations' && (
-          <div className="mb-6">
-            <RecommendationsList reading={latestReading} />
-          </div>
-        )}
-
-        {activeTab === 'activity' && (
-          <div className="mb-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <ActivityLogger />
-              <ActivityHistory />
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'trends' && (
-          <div className="mb-6">
-            <TrendAnalysis />
-          </div>
-        )}
-
-        {/* Footer with Simulate Button */}
-        <footer className="bg-white rounded-lg shadow p-4 sm:p-6 text-center">
-          <p className="text-sm text-gray-600 mb-4">
-            Simulated data for prototype demonstration • Real-time sync enabled
-          </p>
-          <button
-            onClick={simulateNewScan}
-            disabled={isSimulating}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            {isSimulating ? (
-              <>
-                <span className="inline-block animate-spin mr-2">⏳</span>
-                Simulating...
-              </>
-            ) : (
-              <>
-                <span className="mr-2">🔄</span>
-                Run New Scan
-              </>
-            )}
-          </button>
-        </footer>
-      </main>
+      </div>
     </div>
   );
 }
@@ -326,4 +155,3 @@ export default function Dashboard() {
     </ProtectedRoute>
   );
 }
-

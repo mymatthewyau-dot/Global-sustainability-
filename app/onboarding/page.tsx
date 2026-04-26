@@ -8,6 +8,7 @@ export default function OnboardingPage() {
   const [farmName, setFarmName] = useState('');
   const [location, setLocation] = useState('');
   const [imtaStartDate, setImtaStartDate] = useState('');
+  const [initialStockingDensity, setInitialStockingDensity] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -59,6 +60,7 @@ export default function OnboardingPage() {
           name: farmName,
           location: location || undefined,
           imtaStartDate: imtaTimestamp,
+          initialStockingDensity: parseFloat(initialStockingDensity),
           createdAt: now,
           ownerId: user!.id,
         }),
@@ -146,6 +148,29 @@ export default function OnboardingPage() {
             />
             <p className="text-xs text-gray-500 mt-1">
               When did you start using Integrated Multi-Trophic Aquaculture?
+            </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="initialStockingDensity"
+              className="block text-sm font-medium text-gray-700 mb-2"
+            >
+              Initial Stocking Density (rough estimate) <span className="text-red-500">*</span>
+            </label>
+            <input
+              id="initialStockingDensity"
+              type="number"
+              min="0"
+              step="0.1"
+              value={initialStockingDensity}
+              onChange={(e) => setInitialStockingDensity(e.target.value)}
+              required
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              placeholder="e.g. 25"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Fish per cubic metre (m³) — a rough estimate is fine
             </p>
           </div>
 

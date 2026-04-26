@@ -42,6 +42,7 @@ export function FarmProvider({ children }: { children: ReactNode }) {
         imtaStartDate: new Date(data.farms[0].imtaStartDate).toISOString(),
         createdAt: new Date(data.farms[0].createdAt).toISOString(),
         ownerId: data.farms[0].ownerId,
+        initialStockingDensity: data.farms[0].initialStockingDensity ?? 0,
       }
     : null;
 

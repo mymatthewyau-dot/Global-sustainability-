@@ -2,13 +2,10 @@ export interface SensorReading {
   id?: string;
   farmId?: string;
   timestamp: string;
-  temperature: number; // °C
-  ph: number;
-  do: number; // Dissolved Oxygen, mg/L
-  tss: number; // Total Suspended Solids, mg/L
-  salinity: number; // ppt
-  ammonia: number; // TAN (Total Ammonia Nitrogen), mg/L
-  alkalinity: number; // mg/L CaCO₃
+  dissolvedOxygen: number;   // mg/L
+  phosphorus: number;         // mg/L — Total Phosphorus
+  nitrogen: number;           // mg/L — Total Nitrogen
+  stockingDensity: number;    // fish/m³
   wqiScore?: number;
 }
 
@@ -25,49 +22,42 @@ export interface WQIScore {
   overall: number;
   category: 'Excellent' | 'Good' | 'Moderate' | 'Poor';
   breakdown: WQIParameterBreakdown[];
-  trendAnalysis: string;
   lastUpdated: string;
 }
 
-export interface Recommendation {
-  category: 'Feeding' | 'Species' | 'Maintenance';
+export interface StockingRecommendation {
   action: string;
   reason: string;
   priority: 'High' | 'Medium' | 'Low';
-  dataLink?: string; // Link to specific parameter causing this recommendation
-}
-
-export interface SensorHistory {
-  readings: SensorReading[];
+  direction: 'reduce' | 'increase' | 'maintain';
+  percentChange?: number;
 }
 
 export interface Farm {
   id: string;
   name: string;
   location?: string;
-  imtaStartDate: string; // ISO date string
-  createdAt: string; // ISO date string
-  ownerId: string; // InstantDB auth user ID
+  imtaStartDate: string;
+  createdAt: string;
+  ownerId: string;
+  initialStockingDensity: number;
 }
 
-export interface Activity {
+export interface LabelCriterion {
+  name: string;
+  met: boolean;
+  detail: string;
+}
+
+export interface LabelScore {
   id: string;
-  farmId: string;
-  timestamp: string;
-  type: 'feed' | 'species_added' | 'species_removed' | 'maintenance';
-  species?: string;
-  feedAmount?: number; // kg
-  feedType?: string;
-  notes?: string;
+  name: string;
+  fullName: string;
+  score: number;
+  criteria: LabelCriterion[];
+  revenuePremium: number;
+  revenuePct: number;
+  certCost: number;
+  annualAudit: number;
+  region: string;
 }
-
-export interface Milestone {
-  id: string;
-  farmId: string;
-  achievedAt: string;
-  type: 'wqi_improved_10' | 'wqi_improved_25' | 'wqi_improved_50' | '30_days_tracked' | '60_days_tracked' | '90_days_tracked';
-  baselineWqi: number;
-  currentWqi: number;
-  improvementPercent: number;
-}
-

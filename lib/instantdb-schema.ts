@@ -12,59 +12,21 @@ export const schema = {
   },
   sensorReadings: {
     id: { type: 'string' },
-    userId: { type: 'string' },
-    timestamp: { type: 'string' },
-    temperature: { type: 'number' },
-    ph: { type: 'number' },
-    do: { type: 'number' },
-    tss: { type: 'number' }, // Total Suspended Solids (mg/L)
-    salinity: { type: 'number' },
-    ammonia: { type: 'number' }, // TAN (mg/L)
-    alkalinity: { type: 'number' }, // mg/L CaCO₃
-    createdAt: { type: 'number' },
+    farmId: { type: 'string' },
+    timestamp: { type: 'number' },
+    dissolvedOxygen: { type: 'number' },  // mg/L
+    phosphorus: { type: 'number' },        // mg/L — Total Phosphorus
+    nitrogen: { type: 'number' },          // mg/L — Total Nitrogen
+    stockingDensity: { type: 'number' },   // fish/m³
+    wqiScore: { type: 'number' },
   },
-  wqiScores: {
+  farms: {
     id: { type: 'string' },
-    userId: { type: 'string' },
-    readingId: { type: 'string' },
-    overall: { type: 'number' },
-    category: { type: 'string' },
-    trendAnalysis: { type: 'string' },
-    createdAt: { type: 'number' },
-  },
-  feedHistory: {
-    id: { type: 'string' },
-    userId: { type: 'string' },
-    feedType: { type: 'string' },
-    quantity: { type: 'number' },
-    timestamp: { type: 'string' },
-    notes: { type: 'string' },
-    createdAt: { type: 'number' },
-  },
-  speciesAdded: {
-    id: { type: 'string' },
-    userId: { type: 'string' },
-    speciesName: { type: 'string' },
-    quantity: { type: 'number' },
-    dateAdded: { type: 'string' },
-    notes: { type: 'string' },
-    createdAt: { type: 'number' },
-  },
-  milestones: {
-    id: { type: 'string' },
-    userId: { type: 'string' },
-    milestoneType: { type: 'string' },
-    description: { type: 'string' },
-    dateAchieved: { type: 'string' },
-    metrics: { type: 'string' },
-    createdAt: { type: 'number' },
-  },
-  aquafarms: {
-    id: { type: 'string' },
-    userId: { type: 'string' },
+    ownerId: { type: 'string' },
     name: { type: 'string' },
     location: { type: 'string' },
-    imtaStartDate: { type: 'string' },
+    imtaStartDate: { type: 'number' },
+    initialStockingDensity: { type: 'number' },
     createdAt: { type: 'number' },
   },
 };
