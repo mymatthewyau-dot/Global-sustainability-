@@ -59,3 +59,40 @@ export function getTrophicRiskLabel(state: TrophicState): string {
   if (state === 'Eutrophic')       return 'MODERATE-HIGH RISK';
   return 'HIGH RISK — ALGAL BLOOM LIKELY';
 }
+
+// Eutrophication risk weights: P primary (limiting nutrient), N secondary, DO consequence
+export const EUTROPHICATION_WEIGHTS = { p: 0.40, n: 0.35, do: 0.25 } as const;
+
+// Raw NO₃-N mg/L → 0-100 goodness score (higher = less eutrophic)
+// Thresholds: Oligotrophic <0.3 · Mesotrophic 0.3-0.5 · Eutrophic 0.5-1.5 · Hyper >1.5
+export function nMgLToScore(n: number): number {
+  if (n <= 0)   return 100;
+  if (n <= 0.3) return Math.round(100 - (n / 0.3) * 30);
+  if (n <= 0.5) return Math.round(70  - ((n - 0.3) / 0.2) * 20);
+  if (n <= 1.5) return Math.round(50  - ((n - 0.5) / 1.0) * 30);
+  if (n <= 3.0) return Math.round(20  - ((n - 1.5) / 1.5) * 20);
+  return 0;
+}
+
+// Raw TP mg/L → 0-100 goodness score
+// Thresholds: Oligotrophic <0.008 · Mesotrophic 0.008-0.027 · Eutrophic 0.027-0.1 · Hyper >0.1
+export function pMgLToScore(p: number): number {
+  if (p <= 0)     return 100;
+  if (p <= 0.008) return Math.round(100 - (p / 0.008) * 30);
+  if (p <= 0.027) return Math.round(70  - ((p - 0.008) / 0.019) * 20);
+  if (p <= 0.084) return Math.round(50  - ((p - 0.027) / 0.057) * 20);
+  if (p <= 0.1)   return Math.round(30  - ((p - 0.084) / 0.016) * 10);
+  if (p <= 0.3)   return Math.round(20  - ((p - 0.1)   / 0.2)   * 20);
+  return 0;
+}
+
+// Raw DO mg/L → 0-100 goodness score
+// Thresholds: Normal >6-8 mg/L · Hypoxia <2 mg/L · Anoxia <0.5 mg/L
+export function doMgLToScore(doVal: number): number {
+  if (doVal >= 8)   return 100;
+  if (doVal >= 6)   return Math.round(75 + ((doVal - 6)   / 2)   * 25);
+  if (doVal >= 4)   return Math.round(50 + ((doVal - 4)   / 2)   * 25);
+  if (doVal >= 2)   return Math.round(25 + ((doVal - 2)   / 2)   * 25);
+  if (doVal >= 0.5) return Math.round(5  + ((doVal - 0.5) / 1.5) * 20);
+  return Math.round((doVal / 0.5) * 5);
+}

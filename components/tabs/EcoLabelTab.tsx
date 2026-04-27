@@ -3,6 +3,8 @@
 import { useState, useMemo } from 'react';
 import { SensorReading, WQIScore, Farm, LabelScore } from '@/types';
 import { scoreEcoLabels } from '@/lib/eco-label-scoring';
+import { LATEST_READING } from '@/lib/cci-data';
+import { calculateCCI, CCI_WEIGHTS, ASC_THRESHOLD } from '@/lib/cci-calculator';
 
 const CARD   = '#0D2440';
 const BG     = '#071A2E';
@@ -24,6 +26,136 @@ interface Props {
   latestReading: SensorReading | null;
   wqi: WQIScore | null;
   farm: Farm;
+}
+
+function CCIEligibilityWidget() {
+  const { nScore, pScore, doScore } = LATEST_READING;
+  const cci = calculateCCI(nScore, pScore, doScore);
+  const nComp  = parseFloat((CCI_WEIGHTS.n  * nScore).toFixed(1));
+  const pComp  = parseFloat((CCI_WEIGHTS.p  * pScore).toFixed(1));
+  const doComp = parseFloat((CCI_WEIGHTS.do * doScore).toFixed(1));
+  const eligible = cci.exceedsASC;
+
+  return (
+    <div style={{
+      background: eligible ? 'linear-gradient(135deg,#071E12 0%,#071A2E 100%)' : '#0D2440',
+      border: `1.5px solid ${eligible ? GREEN : BORDER}`,
+      borderRadius: 14,
+      padding: 20,
+      marginBottom: 16,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
+        {/* Left: formula breakdown */}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <div style={{ color: GREEN, fontSize: 13, fontWeight: 700 }}>♻ Circularity Index (CCI)</div>
+            {eligible && (
+              <span style={{ background: '#0A3320', border: `1px solid ${GREEN}`, borderRadius: 20, color: GREEN, fontSize: 10, fontWeight: 700, padding: '2px 10px' }}>
+                ✓ Exceeds ASC Threshold
+              </span>
+            )}
+          </div>
+          <div style={{ color: MUTED, fontSize: 10, marginBottom: 10 }}>
+            Weights: N={Math.round(CCI_WEIGHTS.n * 100)}% · P={Math.round(CCI_WEIGHTS.p * 100)}% · DO={Math.round(CCI_WEIGHTS.do * 100)}%
+          </div>
+
+          {/* Calculation rows */}
+          <div style={{ background: BG, borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
+            {[
+              { label: 'N  (Nitrogen)',          weight: CCI_WEIGHTS.n,  score: nScore,  comp: nComp,  color: '#F59E0B' },
+              { label: 'P  (Phosphorus)',         weight: CCI_WEIGHTS.p,  score: pScore,  comp: pComp,  color: '#8B5CF6' },
+              { label: 'DO (Dissolved Oxygen)',   weight: CCI_WEIGHTS.do, score: doScore, comp: doComp, color: '#00C896' },
+            ].map(({ label, weight, score, comp, color }) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 0', borderBottom: `1px solid ${BORDER}` }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, minWidth: 170 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                  <span style={{ color: '#CBD5E1', fontSize: 11 }}>{label}</span>
+                </div>
+                <span style={{ color: MUTED, fontSize: 11 }}>
+                  {(weight * 100).toFixed(0)}% × {score}
+                </span>
+                <span style={{ color: color, fontSize: 12, fontWeight: 700, minWidth: 36, textAlign: 'right' }}>
+                  = {comp}
+                </span>
+              </div>
+            ))}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 8 }}>
+              <span style={{ color: MUTED, fontSize: 11 }}>
+                {nComp} + {pComp} + {doComp}
+              </span>
+              <span style={{ color: eligible ? GREEN : AMBER, fontSize: 18, fontWeight: 800 }}>
+                = {cci.total}%
+              </span>
+            </div>
+          </div>
+
+          {/* Threshold bar */}
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ position: 'relative', background: '#163455', borderRadius: 20, height: 10, overflow: 'visible' }}>
+              <div style={{
+                background: `linear-gradient(90deg,${eligible ? GREEN : AMBER},${eligible ? '#007A5E' : '#B45309'})`,
+                width: `${Math.min(100, cci.total)}%`,
+                height: '100%',
+                borderRadius: 20,
+              }} />
+              {/* 48% threshold marker */}
+              <div style={{
+                position: 'absolute', top: -4, left: `${ASC_THRESHOLD}%`,
+                width: 2, height: 18, background: '#FFFFFF', opacity: 0.6, borderRadius: 1,
+              }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+              <span style={{ color: MUTED, fontSize: 10 }}>0%</span>
+              <span style={{ color: '#FFFFFF', fontSize: 10 }}>
+                ASC threshold: <strong style={{ color: eligible ? GREEN : AMBER }}>{ASC_THRESHOLD}%</strong>
+              </span>
+              <span style={{ color: MUTED, fontSize: 10 }}>100%</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right: big score + verdict */}
+        <div style={{ textAlign: 'center', minWidth: 110 }}>
+          <div style={{ color: MUTED, fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 6 }}>Peak CCI</div>
+          <div style={{
+            color: eligible ? GREEN : AMBER,
+            fontSize: 42, fontWeight: 800, lineHeight: 1,
+            textShadow: eligible ? `0 0 24px ${GREEN}55` : undefined,
+          }}>
+            {cci.total}%
+          </div>
+          <div style={{ color: MUTED, fontSize: 9, marginTop: 4 }}>Winter/Spring</div>
+          {eligible && (
+            <div style={{ marginTop: 12, background: '#0A3320', border: `1px solid ${GREEN}`, borderRadius: 8, padding: '8px 10px' }}>
+              <div style={{ color: GREEN, fontSize: 10, fontWeight: 700, lineHeight: 1.4 }}>
+                ✓ Reliably exceeds 50%<br />✓ Exceeds 48% ASC Score 2 threshold
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* CTA */}
+      {eligible && (
+        <div style={{ marginTop: 14, background: '#071A2E', border: `1px solid ${GREEN}44`, borderRadius: 10, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ fontSize: 22 }}>🏅</div>
+          <div>
+            <div style={{ color: '#FFFFFF', fontSize: 13, fontWeight: 700, marginBottom: 2 }}>
+              Your farm is eligible to apply for an Eco-label
+            </div>
+            <div style={{ color: MUTED, fontSize: 11 }}>
+              CCI of {cci.total}% exceeds the ASC Score 2 threshold of {ASC_THRESHOLD}%. Track your certification journey below.
+            </div>
+          </div>
+          <div style={{ marginLeft: 'auto', flexShrink: 0 }}>
+            <span style={{ background: `linear-gradient(135deg,${GREEN} 0%,#007A5E 100%)`, color: BG, borderRadius: 8, padding: '8px 14px', fontSize: 11, fontWeight: 700 }}>
+              Start Application →
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
@@ -70,6 +202,9 @@ export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
           <span>✦</span> Discover Labels
         </button>
       </div>
+
+      {/* CCI Eligibility Widget */}
+      <CCIEligibilityWidget />
 
       {/* Discover Panel */}
       {discoverOpen && (

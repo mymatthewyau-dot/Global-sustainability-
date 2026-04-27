@@ -105,10 +105,10 @@ function ImtaFarmSVG() {
       <line x1="280" y1="22" x2="280" y2="38" stroke="#FF8C6928" strokeWidth="1" strokeDasharray="4 3" />
 
       {/* Zone labels */}
-      <text x="34"  y="24" textAnchor="middle" fill="#2ECC71" fontSize="7.5" fontFamily="system-ui" fontWeight="700">SEAWEED</text>
+      <text x="34"  y="24" textAnchor="middle" fill="#2ECC71" fontSize="7.5" fontFamily="system-ui" fontWeight="700">S. hemiphyllum</text>
       <text x="110" y="24" textAnchor="middle" fill="#00C896"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">FED SPECIES</text>
-      <text x="222" y="24" textAnchor="middle" fill="#FF8C69"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">ORGANIC EXT.</text>
-      <text x="315" y="24" textAnchor="middle" fill="#2ECC71"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">SEAWEED</text>
+      <text x="222" y="24" textAnchor="middle" fill="#FF8C69"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">Oyster (Crassostrea)</text>
+      <text x="315" y="24" textAnchor="middle" fill="#2ECC71"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">S. hemiphyllum</text>
 
       {/* Left seaweed */}
       <use href="#W" x="15" y="38" width="18" height="52" />
@@ -341,42 +341,70 @@ export default function StockingTab({ latestReading, recommendations, initialSto
         <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14 }}>
           <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>Parameter → Root Cause</div>
 
-          <div style={{ padding: '8px 0', borderBottom: '1px solid #163455' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 3, color: doStatus.color }}>
-              {doStatus.color === '#00C896' ? '🟢' : doStatus.color === '#F59E0B' ? '🟡' : '🔴'} Dissolved Oxygen ({dissolvedOxygen} mg/L)
+          {/* Column headers */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, marginBottom: 6, padding: '0 0 4px', borderBottom: '1px solid #163455' }}>
+            {['Parameter', 'Current', 'Change', 'Why'].map((h) => (
+              <div key={h} style={{ fontSize: 9, color: '#6B8FAF', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>{h}</div>
+            ))}
+          </div>
+
+          {/* N row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🟡 N</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: excess fish feed input</div>
             </div>
-            <div style={{ fontSize: 10, color: '#8BA3B8', marginBottom: 2 }}>
-              {dissolvedOxygen >= 5 ? 'Optimal — no density concern' : dissolvedOxygen >= 4 ? 'Moderate — high stocking is reducing DO' : 'Critical — density must be reduced'}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#F59E0B' }}>{nitrogen} mg/L</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Elevated</div>
+              {paramBar(nitrogen, 6, '#F59E0B')}
             </div>
-            {paramBar(dissolvedOxygen, 10, doStatus.color)}
-            <div style={{ fontSize: 10, marginTop: 3, color: doStatus.color }}>
-              {dissolvedOxygen >= 5 ? '✓ Acceptable range (≥5 mg/L)' : '⚠ Below optimal threshold (5 mg/L)'}
+            <div>
+              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>↓ Reduce daily feed ration</div>
+              <div style={{ fontSize: 9, color: '#00C896', marginTop: 2 }}>Saves PHP 280/day</div>
+            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
+              Overfeeding is the primary DIN source; cutting it reduces dissolved inorganic nitrogen across all trophic layers
             </div>
           </div>
 
-          <div style={{ padding: '8px 0', borderBottom: '1px solid #163455' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 3, color: phosphorus > 0.1 ? '#F59E0B' : '#00C896' }}>
-              {phosphorus > 0.2 ? '🔴' : phosphorus > 0.1 ? '🟡' : '🟢'} Phosphorus ({phosphorus} mg/L)
+          {/* P row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🟡 P</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: vacant longline — no oyster filtration</div>
             </div>
-            <div style={{ fontSize: 10, color: '#8BA3B8', marginBottom: 2 }}>
-              {phosphorus > 0.2 ? 'High — excess waste load. Reduce density.' : phosphorus > 0.1 ? 'Elevated — moderate reduction advised' : 'Optimal — waste load under control'}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#F59E0B' }}>{phosphorus} mg/L</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Elevated</div>
+              {paramBar(phosphorus, 0.3, '#F59E0B')}
             </div>
-            {paramBar(phosphorus, 0.3, phosphorus > 0.1 ? '#F59E0B' : '#00C896')}
-            <div style={{ fontSize: 10, marginTop: 3, color: phosphorus > 0.1 ? '#F59E0B' : '#00C896' }}>
-              {phosphorus > 0.1 ? '⚠ Above safe limit (0.1 mg/L)' : '✓ Within safe range (≤0.1 mg/L)'}
+            <div>
+              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>→ Redistribute oysters to fill empty longlines</div>
+              <div style={{ fontSize: 9, color: '#00C896', marginTop: 2 }}>No extra cost · 2–3 days</div>
+            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
+              Oysters are the organic extractive layer; an unmanned corridor lets particulate P accumulate unchecked
             </div>
           </div>
 
-          <div style={{ padding: '8px 0' }}>
-            <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 3, color: nitrogen > 2 ? '#F59E0B' : '#00C896' }}>
-              {nitrogen > 5 ? '🔴' : nitrogen > 2 ? '🟡' : '🟢'} Nitrogen ({nitrogen} mg/L)
+          {/* DO row */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>🔴 DO</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: seaweed longlines depleted (5 ropes)</div>
             </div>
-            <div style={{ fontSize: 10, color: '#8BA3B8', marginBottom: 2 }}>
-              {nitrogen > 5 ? 'High — nitrogen accumulating from fish waste' : nitrogen > 2 ? 'Elevated — ease nutrient load via density reduction' : 'Optimal — nitrogen well managed'}
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#EF4444' }}>{dissolvedOxygen} mg/L</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Critical</div>
+              {paramBar(dissolvedOxygen, 10, '#EF4444')}
             </div>
-            {paramBar(nitrogen, 6, nitrogen > 2 ? (nitrogen > 5 ? '#EF4444' : '#F59E0B') : '#00C896')}
-            <div style={{ fontSize: 10, marginTop: 3, color: nitrogen > 2 ? '#F59E0B' : '#00C896' }}>
-              {nitrogen > 2 ? '⚠ Above safe threshold (2 mg/L)' : '✓ Within safe range (≤2 mg/L)'}
+            <div>
+              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>↑ Reseed 5 ropes with S. hemiphyllum</div>
+              <div style={{ fontSize: 9, color: '#F59E0B', marginTop: 2 }}>PHP 21,000 total (USD 365)</div>
+            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
+              Seaweed is the inorganic extractive layer; without it, photosynthetic O₂ production collapses and eutrophication accelerates
             </div>
           </div>
         </div>
@@ -384,23 +412,51 @@ export default function StockingTab({ latestReading, recommendations, initialSto
         {/* Recommendations */}
         <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14 }}>
           <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>Recommendations</div>
-          {recommendations.map((rec, i) => {
-            const tag = priorityTagStyle(rec.priority);
-            return (
-              <div key={i} style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: i < recommendations.length - 1 ? '1px solid #163455' : 'none' }}>
-                <div style={{ fontSize: 18, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1 }}>
-                  {rec.direction === 'reduce' ? '↓' : rec.direction === 'increase' ? '↑' : '→'}
-                </div>
-                <div>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: priorityColor(rec.priority), marginBottom: 2 }}>{rec.action}</div>
-                  <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45 }}>{rec.reason}</div>
-                  <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 4, fontWeight: 600, background: tag.bg, color: tag.color }}>
-                    {rec.priority} priority{rec.percentChange ? ` · −${rec.percentChange}%` : ''}
-                  </span>
-                </div>
+
+          {/* Recommendation 1: Reduce feed ration */}
+          <div style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid #163455' }}>
+            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#EF4444' }}>↓</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>Reduce daily feed ration</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                Overfeeding is the primary dissolved inorganic nitrogen (DIN) source. Cutting input reduces the N load propagating across the IMTA system.
               </div>
-            );
-          })}
+              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>Saves PHP 280/day · Offsets germling cost in ~75 days</div>
+              <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#FF6B6B22', color: '#FF6B6B' }}>
+                High priority · Targets: N
+              </span>
+            </div>
+          </div>
+
+          {/* Recommendation 2: Redistribute oysters */}
+          <div style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid #163455' }}>
+            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#F59E0B' }}>→</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>Redistribute oysters to vacant longline corridor</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                Unmanned longlines allow particulate phosphorus to accumulate. Oyster (Crassostrea) redistribution restores the organic extractive layer at no extra procurement cost.
+              </div>
+              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>No additional cost · 2–3 working days · Uses existing banca boats</div>
+              <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#F4D03F22', color: '#F4D03F' }}>
+                Medium priority · Targets: P
+              </span>
+            </div>
+          </div>
+
+          {/* Recommendation 3: Reseed seaweed */}
+          <div style={{ display: 'flex', gap: 10, padding: '8px 0' }}>
+            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#EF4444' }}>↑</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>Reseed 5 ropes with S. hemiphyllum germlings</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                Depleted seaweed longlines collapse photosynthetic O₂ production, causing the DO deficit. Certified S. hemiphyllum germlings from the BFAR hatchery at Dagupan restore the inorganic extractive layer.
+              </div>
+              <div style={{ fontSize: 10, color: '#F59E0B', marginBottom: 4 }}>PHP 4,200/rope · PHP 21,000 total (≈ USD 365)</div>
+              <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#FF6B6B22', color: '#FF6B6B' }}>
+                High priority · Targets: DO
+              </span>
+            </div>
+          </div>
         </div>
 
       </div>

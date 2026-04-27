@@ -342,6 +342,46 @@ body {
 
 .combined-box { background: #071A2E; border-radius: 8px; padding: 10px 12px; }
 
+/* ── CCI Eligibility Widget ── */
+.cci-widget {
+  background: linear-gradient(135deg, #071E12 0%, #071A2E 100%);
+  border: 1.5px solid #00C896;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.cci-inner { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.cci-left { flex: 1; }
+.cci-heading { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.cci-title { color: #00C896; font-size: 13px; font-weight: 700; }
+.cci-badge { background: #0A3320; border: 1px solid #00C896; border-radius: 20px; color: #00C896; font-size: 10px; font-weight: 700; padding: 2px 10px; }
+.cci-weights { color: #6B8FAF; font-size: 10px; margin-bottom: 10px; }
+.cci-table { background: #071A2E; border-radius: 10px; padding: 12px 14px; margin-bottom: 12px; }
+.cci-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #163455; }
+.cci-row:last-child { border-bottom: none; padding-top: 8px; }
+.cci-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: 6px; }
+.cci-param { display: flex; align-items: center; min-width: 160px; color: #CBD5E1; font-size: 11px; }
+.cci-formula { color: #6B8FAF; font-size: 11px; }
+.cci-comp { font-size: 12px; font-weight: 700; min-width: 36px; text-align: right; }
+.cci-sum { color: #6B8FAF; font-size: 11px; }
+.cci-total { color: #00C896; font-size: 18px; font-weight: 800; }
+.cci-bar-wrap { margin-bottom: 10px; }
+.cci-bar-track { position: relative; background: #163455; border-radius: 20px; height: 10px; }
+.cci-bar-fill { background: linear-gradient(90deg, #00C896, #007A5E); height: 100%; border-radius: 20px; }
+.cci-threshold-line { position: absolute; top: -3px; width: 2px; height: 16px; background: #FFFFFF; opacity: 0.6; border-radius: 1px; }
+.cci-bar-labels { display: flex; justify-content: space-between; margin-top: 5px; font-size: 10px; color: #6B8FAF; }
+.cci-right { text-align: center; min-width: 110px; }
+.cci-right-label { color: #6B8FAF; font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+.cci-score-big { color: #00C896; font-size: 42px; font-weight: 800; line-height: 1; text-shadow: 0 0 24px rgba(0,200,150,0.3); }
+.cci-season { color: #6B8FAF; font-size: 9px; margin-top: 4px; }
+.cci-verdict-box { margin-top: 12px; background: #0A3320; border: 1px solid #00C896; border-radius: 8px; padding: 8px 10px; }
+.cci-verdict-text { color: #00C896; font-size: 10px; font-weight: 700; line-height: 1.5; }
+.cci-cta { margin-top: 14px; background: #071A2E; border: 1px solid rgba(0,200,150,0.27); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 12px; }
+.cci-cta-icon { font-size: 22px; }
+.cci-cta-title { color: #FFFFFF; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.cci-cta-sub { color: #6B8FAF; font-size: 11px; }
+.cci-cta-btn { margin-left: auto; flex-shrink: 0; background: linear-gradient(135deg, #00C896 0%, #007A5E 100%); color: #071A2E; border-radius: 8px; padding: 8px 14px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
@@ -620,10 +660,10 @@ body {
           <line x1="164" y1="22" x2="164" y2="38" stroke="#00C89628" stroke-width="1" stroke-dasharray="4 3"/>
           <line x1="280" y1="22" x2="280" y2="38" stroke="#FF8C6928" stroke-width="1" stroke-dasharray="4 3"/>
           <!-- zone labels -->
-          <text x="34" y="24" text-anchor="middle" fill="#2ECC71" font-size="7.5" font-family="system-ui" font-weight="700">SEAWEED</text>
+          <text x="34" y="24" text-anchor="middle" fill="#2ECC71" font-size="6.5" font-family="system-ui" font-weight="700">S. hemiphyllum</text>
           <text x="110" y="24" text-anchor="middle" fill="#00C896" font-size="7.5" font-family="system-ui" font-weight="700">FED SPECIES</text>
-          <text x="222" y="24" text-anchor="middle" fill="#FF8C69" font-size="7.5" font-family="system-ui" font-weight="700">ORGANIC EXT.</text>
-          <text x="315" y="24" text-anchor="middle" fill="#2ECC71" font-size="7.5" font-family="system-ui" font-weight="700">SEAWEED</text>
+          <text x="222" y="24" text-anchor="middle" fill="#FF8C69" font-size="6.5" font-family="system-ui" font-weight="700">Oyster (Crassostrea)</text>
+          <text x="315" y="24" text-anchor="middle" fill="#2ECC71" font-size="6.5" font-family="system-ui" font-weight="700">S. hemiphyllum</text>
           <!-- left seaweed -->
           <use href="#W" x="15" y="38" width="18" height="52"/>
           <use href="#W" x="30" y="55" width="16" height="45"/>
@@ -745,36 +785,105 @@ body {
     <div class="analysis-grid">
       <div class="s2-panel">
         <div class="s2-section-title">Parameter → Root Cause</div>
-        <div class="cause-row">
-          <div class="cause-param" style="color:#FF6B6B;">🔴 Ammonia ↑ (3.8 mg/L)</div>
-          <div class="cause-meta">60% tilapia · 35% salmon · 5% external</div>
-          <div class="cause-bar"><div class="bar-seg" style="width:60%;background:#4ECDC4;"></div><div class="bar-seg" style="width:35%;background:#FF8C69;"></div><div class="bar-seg" style="width:5%;background:#8BA3B8;opacity:0.5;"></div></div>
-          <div class="cause-verdict" style="color:#00C896;">✓ Species-driven — fixable by adding seaweed + reducing feed protein</div>
+
+        <!-- Column headers -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding-bottom:6px;border-bottom:1px solid #163455;margin-bottom:2px;">
+          <div style="font-size:9px;color:#6B8FAF;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Parameter</div>
+          <div style="font-size:9px;color:#6B8FAF;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Current</div>
+          <div style="font-size:9px;color:#6B8FAF;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Change</div>
+          <div style="font-size:9px;color:#6B8FAF;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Why</div>
         </div>
-        <div class="cause-row">
-          <div class="cause-param" style="color:#F4D03F;">🟡 DO low (5.1 mg/L)</div>
-          <div class="cause-meta">75% species respiration · 25% temp/season</div>
-          <div class="cause-bar"><div class="bar-seg" style="width:45%;background:#4ECDC4;"></div><div class="bar-seg" style="width:30%;background:#FF8C69;"></div><div class="bar-seg" style="width:25%;background:#8BA3B8;opacity:0.5;"></div></div>
-          <div class="cause-verdict" style="color:#F4D03F;">⚠ Partially fixable — reduce density or add aeration</div>
+
+        <!-- N row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:8px 0;border-bottom:1px solid #163455;align-items:start;">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:2px;">🟡 N</div>
+            <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Root cause: excess fish feed input</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#F59E0B;">1.8 mg/L</div>
+            <div style="font-size:9px;color:#8BA3B8;margin-top:2px;">Elevated</div>
+            <div class="cause-bar" style="margin-top:4px;"><div class="bar-seg" style="width:60%;background:#F59E0B;"></div></div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#CBD5E1;line-height:1.4;">↓ Reduce daily feed ration</div>
+            <div style="font-size:9px;color:#00C896;margin-top:2px;">Saves PHP 280/day</div>
+          </div>
+          <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Overfeeding is the primary DIN source; cutting it reduces dissolved inorganic nitrogen across all trophic layers</div>
         </div>
-        <div class="cause-row">
-          <div class="cause-param" style="color:#8BA3B8;">⚪ TSS elevated</div>
-          <div class="cause-meta">15% species · 85% external / seasonal</div>
-          <div class="cause-bar"><div class="bar-seg" style="width:15%;background:#4ECDC4;opacity:0.6;"></div><div class="bar-seg" style="width:85%;background:#8BA3B8;opacity:0.4;"></div></div>
-          <div class="cause-verdict" style="color:#8BA3B8;">⚠ Mostly external — mechanical filtration needed</div>
+
+        <!-- P row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:8px 0;border-bottom:1px solid #163455;align-items:start;">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#F59E0B;margin-bottom:2px;">🟡 P</div>
+            <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Root cause: vacant longline — no oyster filtration</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#F59E0B;">0.12 mg/L</div>
+            <div style="font-size:9px;color:#8BA3B8;margin-top:2px;">Elevated</div>
+            <div class="cause-bar" style="margin-top:4px;"><div class="bar-seg" style="width:40%;background:#F59E0B;"></div></div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#CBD5E1;line-height:1.4;">→ Redistribute oysters to vacant longlines</div>
+            <div style="font-size:9px;color:#00C896;margin-top:2px;">No extra cost · 2–3 days</div>
+          </div>
+          <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Oysters are the organic extractive layer; an unmanned corridor lets particulate P accumulate unchecked</div>
         </div>
-        <div class="cause-row">
-          <div class="cause-param" style="color:#00C896;">🟢 pH stable (7.8)</div>
-          <div class="cause-meta">Oysters buffering alkalinity · 70% oyster contribution</div>
-          <div class="cause-bar"><div class="bar-seg" style="width:70%;background:#C8A87A;"></div><div class="bar-seg" style="width:30%;background:#00C896;opacity:0.6;"></div></div>
-          <div class="cause-verdict" style="color:#00C896;">✓ Oysters working well — increase count to maintain at scale</div>
+
+        <!-- DO row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;padding:8px 0;align-items:start;">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#EF4444;margin-bottom:2px;">🔴 DO</div>
+            <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Root cause: seaweed longlines depleted (5 ropes)</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;color:#EF4444;">3.2 mg/L</div>
+            <div style="font-size:9px;color:#8BA3B8;margin-top:2px;">Critical</div>
+            <div class="cause-bar" style="margin-top:4px;"><div class="bar-seg" style="width:32%;background:#EF4444;"></div></div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:#CBD5E1;line-height:1.4;">↑ Reseed 5 ropes S. hemiphyllum</div>
+            <div style="font-size:9px;color:#F59E0B;margin-top:2px;">PHP 21,000 total (≈ USD 365)</div>
+          </div>
+          <div style="font-size:9px;color:#8BA3B8;line-height:1.4;">Seaweed is the inorganic extractive layer; without it, photosynthetic O₂ production collapses and eutrophication accelerates</div>
         </div>
       </div>
+
       <div class="s2-panel">
         <div class="s2-section-title">Recommendations</div>
-        <div class="rec-item"><div class="rec-icon">🌿</div><div><div class="rec-title">Introduce Seaweed (Gracilaria sp.)</div><div class="rec-desc">Add inorganic extractive species to both flanks. Absorbs dissolved ammonia and nitrates directly. Target: 200–300 rope meters along farm edges.</div><span class="rec-tag tag-high">High priority · addresses ammonia</span></div></div>
-        <div class="rec-item"><div class="rec-icon">🦪</div><div><div class="rec-title">Add ~1,500 more Oysters</div><div class="rec-desc">Current 1:5 oyster:fish ratio is too low. Target 1:3 to handle organic particle load. Place on vertical ropes in center zone.</div><span class="rec-tag tag-high">High priority · reduces TSS + ammonia</span></div></div>
-        <div class="rec-item"><div class="rec-icon">🍽️</div><div><div class="rec-title">Switch to Low-Protein Feed (28% → 24%)</div><div class="rec-desc">Lower protein content directly reduces nitrogen excretion. No composition change required. Immediate 15–20% ammonia reduction expected.</div><span class="rec-tag tag-med">Medium priority · quick win</span></div></div>
+
+        <!-- Rec 1: Reduce feed -->
+        <div class="rec-item">
+          <div class="rec-icon" style="color:#EF4444;">↓</div>
+          <div>
+            <div class="rec-title">Reduce daily feed ration</div>
+            <div class="rec-desc">Overfeeding is the primary dissolved inorganic nitrogen (DIN) source. Cutting input reduces the N load propagating across the IMTA system.</div>
+            <div style="font-size:10px;color:#00C896;margin:3px 0;">Saves PHP 280/day · Offsets germling cost in ~75 days</div>
+            <span class="rec-tag tag-high">High priority · Targets: N</span>
+          </div>
+        </div>
+
+        <!-- Rec 2: Redistribute oysters -->
+        <div class="rec-item">
+          <div class="rec-icon" style="color:#F59E0B;">→</div>
+          <div>
+            <div class="rec-title">Redistribute oysters to vacant longline corridor</div>
+            <div class="rec-desc">Unmanned longlines allow particulate phosphorus to accumulate. Oyster (Crassostrea) redistribution restores the organic extractive layer at no extra procurement cost.</div>
+            <div style="font-size:10px;color:#00C896;margin:3px 0;">No additional cost · 2–3 working days · Uses existing banca boats</div>
+            <span class="rec-tag tag-med">Medium priority · Targets: P</span>
+          </div>
+        </div>
+
+        <!-- Rec 3: Reseed seaweed -->
+        <div class="rec-item" style="border-bottom:none;">
+          <div class="rec-icon" style="color:#EF4444;">↑</div>
+          <div>
+            <div class="rec-title">Reseed 5 ropes with S. hemiphyllum germlings</div>
+            <div class="rec-desc">Depleted seaweed longlines collapse photosynthetic O₂ production, causing the DO deficit. Certified germlings from the BFAR hatchery at Dagupan restore the inorganic extractive layer.</div>
+            <div style="font-size:10px;color:#F59E0B;margin:3px 0;">PHP 4,200/rope · PHP 21,000 total (≈ USD 365)</div>
+            <span class="rec-tag tag-high">High priority · Targets: DO</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -795,6 +904,79 @@ body {
       <button class="discover-btn" onclick="toggleDiscover()">
         <span>✦</span> Discover Labels
       </button>
+    </div>
+
+    <!-- CCI Eligibility Widget -->
+    <div class="cci-widget">
+      <div class="cci-inner">
+        <!-- Left: formula breakdown -->
+        <div class="cci-left">
+          <div class="cci-heading">
+            <div class="cci-title">♻ Circularity Index (CCI)</div>
+            <span class="cci-badge">✓ Exceeds ASC Threshold</span>
+          </div>
+          <div class="cci-weights">Weights: N=40% · P=35% · DO=25%</div>
+
+          <div class="cci-table">
+            <!-- N row -->
+            <div class="cci-row">
+              <div class="cci-param"><div class="cci-dot" style="background:#F59E0B;"></div>N &nbsp;(Nitrogen)</div>
+              <span class="cci-formula">40% × 58</span>
+              <span class="cci-comp" style="color:#F59E0B;">= 23.2</span>
+            </div>
+            <!-- P row -->
+            <div class="cci-row">
+              <div class="cci-param"><div class="cci-dot" style="background:#8B5CF6;"></div>P &nbsp;(Phosphorus)</div>
+              <span class="cci-formula">35% × 24</span>
+              <span class="cci-comp" style="color:#8B5CF6;">= 8.4</span>
+            </div>
+            <!-- DO row -->
+            <div class="cci-row">
+              <div class="cci-param"><div class="cci-dot" style="background:#00C896;"></div>DO (Dissolved Oxygen)</div>
+              <span class="cci-formula">25% × 78</span>
+              <span class="cci-comp" style="color:#00C896;">= 19.5</span>
+            </div>
+            <!-- Total -->
+            <div class="cci-row">
+              <span class="cci-sum">23.2 + 8.4 + 19.5</span>
+              <span class="cci-total">= 51.1%</span>
+            </div>
+          </div>
+
+          <!-- Threshold bar -->
+          <div class="cci-bar-wrap">
+            <div class="cci-bar-track">
+              <div class="cci-bar-fill" style="width:51.1%;"></div>
+              <div class="cci-threshold-line" style="left:48%;"></div>
+            </div>
+            <div class="cci-bar-labels">
+              <span>0%</span>
+              <span>ASC threshold: <strong style="color:#00C896;">48%</strong></span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: big score -->
+        <div class="cci-right">
+          <div class="cci-right-label">Peak CCI</div>
+          <div class="cci-score-big">51.1%</div>
+          <div class="cci-season">Winter/Spring</div>
+          <div class="cci-verdict-box">
+            <div class="cci-verdict-text">✓ Reliably exceeds 50%<br>✓ Exceeds 48% ASC Score 2 threshold</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cci-cta">
+        <div class="cci-cta-icon">🏅</div>
+        <div>
+          <div class="cci-cta-title">Your farm is eligible to apply for an Eco-label</div>
+          <div class="cci-cta-sub">CCI of 51.1% exceeds the ASC Score 2 threshold of 48%. Track your certification journey below.</div>
+        </div>
+        <div class="cci-cta-btn">Start Application →</div>
+      </div>
     </div>
 
     <!-- Discover Panel -->

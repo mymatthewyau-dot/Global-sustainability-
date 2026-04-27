@@ -13,7 +13,7 @@ import { generateStockingRecommendations } from '@/lib/stocking-recommendations'
 import { convertToSensorReading } from '@/lib/sensor-data-instant';
 import { SensorReading, WQIScore } from '@/types';
 
-const TABS = ['Risk', 'Stocking', 'Eco-label'] as const;
+const TABS = ['Eutrophication', 'Stocking', 'Eco-label'] as const;
 type Tab = typeof TABS[number];
 
 const BG     = '#071A2E';
@@ -34,7 +34,7 @@ function wqiColor(score: number): string {
 
 function DashboardContent() {
   const { farm } = useFarm();
-  const [activeTab, setActiveTab] = useState<Tab>('Risk');
+  const [activeTab, setActiveTab] = useState<Tab>('Eutrophication');
 
   const sensorQuery = farm
     ? { sensorReadings: { $: { where: { farmId: farm.id } } } }
@@ -122,7 +122,7 @@ function DashboardContent() {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'Risk' && (
+        {activeTab === 'Eutrophication' && (
           <RiskTab
             latestReading={latestReading}
             readings={readings}

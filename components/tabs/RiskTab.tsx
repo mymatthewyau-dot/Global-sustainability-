@@ -6,14 +6,19 @@ import { db, id } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
 import { SensorReading, WQIScore } from '@/types';
 import { calculateWQI } from '@/lib/wqi-calculator';
-import { SIX_MONTH_HISTORY, LATEST_READING } from '@/lib/cci-data';
+import { SIX_MONTH_HISTORY } from '@/lib/cci-data';
 import {
-  calculateCCI,
+  EUTROPHICATION_WEIGHTS,
+  nMgLToScore,
+  pMgLToScore,
+  doMgLToScore,
   getTrophicState,
   getTrophicColor,
   getTrophicRiskLabel,
   getDOStatus,
   getDOStatusColor,
+  TrophicState,
+  DOStatus,
 } from '@/lib/cci-calculator';
 
 interface RiskTabProps {
@@ -23,42 +28,47 @@ interface RiskTabProps {
   farmId: string;
 }
 
-function getParamStatus(param: 'do' | 'phosphorus' | 'nitrogen', value: number): { label: string; color: string; barPct: number } {
+// Research-aligned thresholds for progress bars
+function getParamStatus(
+  param: 'do' | 'phosphorus' | 'nitrogen',
+  value: number,
+): { label: string; color: string; barPct: number } {
   if (param === 'do') {
-    if (value >= 5.0) return { label: 'Good', color: '#00C896', barPct: Math.min(100, (value / 10) * 100) };
-    if (value >= 4.0) return { label: 'Moderate', color: '#F59E0B', barPct: (value / 10) * 100 };
-    if (value >= 3.0) return { label: 'Low', color: '#F59E0B', barPct: (value / 10) * 100 };
-    return { label: 'Critical', color: '#EF4444', barPct: (value / 10) * 100 };
+    if (value >= 6) return { label: 'Normal',         color: '#00C896', barPct: Math.min(100, (value / 10) * 100) };
+    if (value >= 4) return { label: 'Moderate',       color: '#F59E0B', barPct: (value / 10) * 100 };
+    if (value >= 2) return { label: 'Hypoxic',        color: '#F97316', barPct: (value / 10) * 100 };
+    return            { label: 'Anoxic – Critical',   color: '#EF4444', barPct: (value / 10) * 100 };
   }
   if (param === 'phosphorus') {
-    if (value <= 0.05) return { label: 'Optimal', color: '#00C896', barPct: Math.min(100, (value / 0.3) * 100) };
-    if (value <= 0.10) return { label: 'Elevated', color: '#F59E0B', barPct: (value / 0.3) * 100 };
-    if (value <= 0.20) return { label: 'Elevated ↑', color: '#F59E0B', barPct: (value / 0.3) * 100 };
-    return { label: 'Critical', color: '#EF4444', barPct: Math.min(100, (value / 0.3) * 100) };
+    // Oligotrophic <0.008 · Mesotrophic <0.027 · Eutrophic <0.1 · Hyper ≥0.1
+    if (value < 0.008) return { label: 'Oligotrophic',   color: '#00C896', barPct: Math.min(100, (value / 0.3) * 100) };
+    if (value < 0.027) return { label: 'Mesotrophic',    color: '#3B82F6', barPct: Math.min(100, (value / 0.3) * 100) };
+    if (value < 0.1)   return { label: 'Eutrophic',      color: '#F59E0B', barPct: Math.min(100, (value / 0.3) * 100) };
+    return               { label: 'Hyper-eutrophic',     color: '#EF4444', barPct: Math.min(100, (value / 0.3) * 100) };
   }
-  if (value <= 1.0) return { label: 'Optimal', color: '#00C896', barPct: Math.min(100, (value / 6) * 100) };
-  if (value <= 2.0) return { label: 'Elevated', color: '#F59E0B', barPct: (value / 6) * 100 };
-  if (value <= 5.0) return { label: 'Elevated ↑', color: '#F59E0B', barPct: (value / 6) * 100 };
-  return { label: 'Critical', color: '#EF4444', barPct: Math.min(100, (value / 6) * 100) };
+  // nitrogen (NO₃-N): Oligotrophic <0.3 · Mesotrophic 0.3-0.5 · Eutrophic 0.5-1.5 · Hyper >1.5
+  if (value < 0.3) return  { label: 'Oligotrophic',    color: '#00C896', barPct: Math.min(100, (value / 3) * 100) };
+  if (value < 0.5) return  { label: 'Mesotrophic',     color: '#3B82F6', barPct: Math.min(100, (value / 3) * 100) };
+  if (value < 1.5) return  { label: 'Eutrophic',       color: '#F59E0B', barPct: Math.min(100, (value / 3) * 100) };
+  return                   { label: 'Hyper-eutrophic',  color: '#EF4444', barPct: Math.min(100, (value / 3) * 100) };
 }
-
 
 function getFarmSummary(reading: SensorReading): string {
-  const doStatus = reading.dissolvedOxygen >= 5
+  const doStr   = reading.dissolvedOxygen >= 6
     ? `DO is healthy at ${reading.dissolvedOxygen} mg/L`
     : `DO is low at ${reading.dissolvedOxygen} mg/L`;
-  const nStatus = reading.nitrogen > 2
+  const nStr    = reading.nitrogen >= 0.5
     ? `nitrogen is elevated at ${reading.nitrogen} mg/L`
     : `nitrogen is normal at ${reading.nitrogen} mg/L`;
-  const pStatus = reading.phosphorus > 0.1 ? 'phosphorus is elevated' : 'phosphorus is stable';
+  const pStr    = reading.phosphorus >= 0.027 ? 'phosphorus is elevated' : 'phosphorus is stable';
   const condition =
-    reading.phosphorus > 0.2 || reading.nitrogen > 5 || reading.dissolvedOxygen < 3 ? 'poor condition'
-    : reading.phosphorus > 0.1 || reading.nitrogen > 2 || reading.dissolvedOxygen < 4 ? 'moderate condition'
+    reading.phosphorus >= 0.1   || reading.nitrogen >= 1.5  || reading.dissolvedOxygen < 2 ? 'poor condition'
+    : reading.phosphorus >= 0.027 || reading.nitrogen >= 0.5  || reading.dissolvedOxygen < 6 ? 'moderate condition'
     : 'good condition';
-  return `Your farm is in ${condition}. ${doStatus}. ${nStatus[0].toUpperCase() + nStatus.slice(1)} and ${pStatus}.`;
+  return `Your farm is in ${condition}. ${doStr}. ${nStr[0].toUpperCase() + nStr.slice(1)} and ${pStr}.`;
 }
 
-// ── SixMonthTrendChart component ──────────────────────────────────────────────
+// ── 6-Month Trend Chart ────────────────────────────────────────────────────────
 
 function SixMonthTrendChart() {
   const W = 340, H = 200;
@@ -118,76 +128,57 @@ function SixMonthTrendChart() {
   );
 }
 
-function CCICircularityWidget() {
-  const { nScore, pScore, doScore } = LATEST_READING;
-  const cci = calculateCCI(nScore, pScore, doScore);
-  const trophicState = getTrophicState(nScore, pScore);
-  const trophicColor = getTrophicColor(trophicState);
-  const doStatus = getDOStatus(doScore);
-  const doColor = getDOStatusColor(doStatus);
+// ── Eutrophication Circularity Widget (individual parameter) ───────────────────
 
-  const R = 44, cx = 60, cy = 60, strokeW = 9;
-  const sectorAngle = (2 * Math.PI) / 3;
+interface EutrParamData {
+  key: string;
+  score: number;
+  weight: number;
+  color: string;
+  stateLabel: string;
+  mgL: number;
+  unit: string;
+  targetScore: number;
+  targetLabel: string;
+}
 
-  const segments: { key: string; score: number; color: string }[] = [
-    { key: 'DO', score: doScore, color: '#00C896' },
-    { key: 'N',  score: nScore,  color: '#F59E0B' },
-    { key: 'P',  score: pScore,  color: '#8B5CF6' },
-  ];
+function EutrophicationParamWidget({ data }: { data: EutrParamData }) {
+  const cx = 45, cy = 45, R = 32, sw = 7;
+  const startA = -Math.PI / 2;
 
-  function arcPath(score: number, idx: number) {
-    const startAngle = -Math.PI / 2 + idx * sectorAngle + 0.04;
-    const endAngle   = startAngle + sectorAngle * (score / 100) - 0.04;
-    const x1 = cx + R * Math.cos(startAngle);
-    const y1 = cy + R * Math.sin(startAngle);
-    const x2 = cx + R * Math.cos(endAngle);
-    const y2 = cy + R * Math.sin(endAngle);
-    const large = endAngle - startAngle > Math.PI ? 1 : 0;
-    return `M ${x1} ${y1} A ${R} ${R} 0 ${large} 1 ${x2} ${y2}`;
-  }
+  const arc = (pct: number) => {
+    const p = Math.max(0.5, Math.min(99.5, pct));
+    const sweep = 2 * Math.PI * (p / 100);
+    const sx = cx + R * Math.cos(startA), sy = cy + R * Math.sin(startA);
+    const ex = cx + R * Math.cos(startA + sweep), ey = cy + R * Math.sin(startA + sweep);
+    return `M ${sx} ${sy} A ${R} ${R} 0 ${sweep > Math.PI ? 1 : 0} 1 ${ex} ${ey}`;
+  };
 
-  function arcBg(idx: number) {
-    const startAngle = -Math.PI / 2 + idx * sectorAngle + 0.04;
-    const endAngle   = -Math.PI / 2 + (idx + 1) * sectorAngle - 0.04;
-    const x1 = cx + R * Math.cos(startAngle);
-    const y1 = cy + R * Math.sin(startAngle);
-    const x2 = cx + R * Math.cos(endAngle);
-    const y2 = cy + R * Math.sin(endAngle);
-    return `M ${x1} ${y1} A ${R} ${R} 0 0 1 ${x2} ${y2}`;
-  }
+  const delta = data.targetScore - data.score;
 
   return (
-    <div style={{ background: '#0D2440', borderRadius: 12, padding: 16, border: '1px solid #163455', display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 160 }}>
-      <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>CCI Score</div>
-      <svg width={120} height={120} viewBox="0 0 120 120">
-        {segments.map((seg, i) => (
-          <path key={`bg-${seg.key}`} d={arcBg(i)} fill="none" stroke="#163455" strokeWidth={strokeW} strokeLinecap="round" />
-        ))}
-        {segments.map((seg, i) => (
-          <path key={`arc-${seg.key}`} d={arcPath(seg.score, i)} fill="none" stroke={seg.color} strokeWidth={strokeW} strokeLinecap="round" />
-        ))}
-        <text x={cx} y={cy - 4} fill="#FFFFFF" fontSize="14" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">
-          {cci.total}%
-        </text>
-        <text x={cx} y={cy + 10} fill="#6B8FAF" fontSize="7" textAnchor="middle" fontFamily="sans-serif">CCI</text>
-        {cci.exceedsASC && (
-          <text x={cx} y={cy + 22} fill="#00C896" fontSize="6" textAnchor="middle" fontFamily="sans-serif">✓ ASC</text>
-        )}
+    <div style={{
+      background: '#0D2440', borderRadius: 12, padding: 14,
+      border: '1px solid #163455', flex: 1, minWidth: 0,
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 8 }}>
+        <span style={{ color: '#FFFFFF', fontSize: 11, fontWeight: 700 }}>{data.key}</span>
+        <span style={{ background: data.color + '22', color: data.color, fontSize: 9, borderRadius: 10, padding: '2px 6px', fontWeight: 700 }}>
+          {Math.round(data.weight * 100)}%
+        </span>
+      </div>
+      <svg width={90} height={90} viewBox="0 0 90 90">
+        <circle cx={cx} cy={cy} r={R} fill="none" stroke="#163455" strokeWidth={sw} />
+        <path d={arc(data.targetScore)} fill="none" stroke={data.color} strokeWidth={sw} strokeOpacity={0.2} strokeLinecap="round" />
+        <path d={arc(data.score)} fill="none" stroke={data.color} strokeWidth={sw} strokeLinecap="round" />
+        <text x={cx} y={cy - 2} fill="#FFFFFF" fontSize="13" fontWeight="700" textAnchor="middle" fontFamily="sans-serif">{data.score}</text>
+        <text x={cx} y={cy + 10} fill="#6B8FAF" fontSize="7" textAnchor="middle" fontFamily="sans-serif">/100</text>
       </svg>
-      <div style={{ marginTop: 10, width: '100%' }}>
-        {segments.map((seg) => (
-          <div key={seg.key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: seg.color }} />
-              <span style={{ color: '#6B8FAF', fontSize: 10 }}>{seg.key}</span>
-            </div>
-            <span style={{ color: '#FFFFFF', fontSize: 10, fontWeight: 600 }}>{seg.score}</span>
-          </div>
-        ))}
-        <div style={{ borderTop: '1px solid #163455', paddingTop: 6, marginTop: 4 }}>
-          <div style={{ color: trophicColor, fontSize: 9, fontWeight: 600 }}>{trophicState}</div>
-          <div style={{ color: doColor, fontSize: 9, marginTop: 2 }}>DO: {doStatus}</div>
-        </div>
+      <div style={{ color: data.color, fontSize: 10, fontWeight: 600, marginTop: 6 }}>{data.stateLabel}</div>
+      <div style={{ color: '#6B8FAF', fontSize: 10, marginTop: 3 }}>{data.mgL} {data.unit}</div>
+      <div style={{ color: '#6B8FAF', fontSize: 9, marginTop: 5, textAlign: 'center', lineHeight: 1.4 }}>
+        {delta > 0 ? `+${delta} pts → ${data.targetLabel}` : '✓ At target'}
       </div>
     </div>
   );
@@ -240,7 +231,7 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
     }
   };
 
-  // ── No data state ────────────────────────────────────────────────────────────
+  // ── No data state ──────────────────────────────────────────────────────────
   if (!latestReading) {
     return (
       <div style={{ background: '#0D2440', borderRadius: 12, padding: 24, border: '1px solid #163455', textAlign: 'center' }}>
@@ -271,17 +262,111 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
     );
   }
 
-  const doStatus = getParamStatus('do',          latestReading.dissolvedOxygen);
-  const pStatus  = getParamStatus('phosphorus',  latestReading.phosphorus);
-  const nStatus  = getParamStatus('nitrogen',    latestReading.nitrogen);
+  // ── Compute eutrophication scores from live mg/L readings ──────────────────
+  const eutrNScore  = nMgLToScore(latestReading.nitrogen);
+  const eutrPScore  = pMgLToScore(latestReading.phosphorus);
+  const eutrDOScore = doMgLToScore(latestReading.dissolvedOxygen);
 
+  // Composite risk (weighted)
+  const compositeRisk = Math.round(
+    EUTROPHICATION_WEIGHTS.p * eutrPScore +
+    EUTROPHICATION_WEIGHTS.n * eutrNScore +
+    EUTROPHICATION_WEIGHTS.do * eutrDOScore,
+  );
+
+  // Trophic state (worst of N and P drives overall state)
+  const trophicState = getTrophicState(eutrNScore, eutrPScore);
+  const trophicColor = getTrophicColor(trophicState);
+  const riskLabel    = getTrophicRiskLabel(trophicState);
+
+  // DO consequence
+  const doOxyStatus      = getDOStatus(eutrDOScore);
+  const doOxyStatusColor = getDOStatusColor(doOxyStatus);
+
+  // Individual N trophic state (N boundaries only)
+  const nState: TrophicState =
+    eutrNScore >= 70 ? 'Oligotrophic' : eutrNScore >= 50 ? 'Mesotrophic' : eutrNScore >= 30 ? 'Eutrophic' : 'Hyper-eutrophic';
+
+  // Individual P trophic state (P boundaries only)
+  const pState: TrophicState =
+    eutrPScore >= 66 ? 'Oligotrophic' : eutrPScore >= 45 ? 'Mesotrophic' : eutrPScore >= 20 ? 'Eutrophic' : 'Hyper-eutrophic';
+
+  // Individual DO status (from score)
+  const doStatusIndiv: DOStatus =
+    eutrDOScore >= 65 ? 'Normal' : eutrDOScore >= 45 ? 'Moderate stress' : eutrDOScore >= 20 ? 'Hypoxic' : 'Anoxic';
+
+  // Next-state targets for circularity widgets
+  const nTarget = eutrNScore >= 70
+    ? { score: 90, label: 'Ideal' }
+    : eutrNScore >= 50 ? { score: 70, label: 'Oligotrophic' }
+    : eutrNScore >= 30 ? { score: 50, label: 'Mesotrophic' }
+    : { score: 30, label: 'Eutrophic' };
+
+  const pTarget = eutrPScore >= 66
+    ? { score: 90, label: 'Ideal' }
+    : eutrPScore >= 45 ? { score: 66, label: 'Oligotrophic' }
+    : eutrPScore >= 20 ? { score: 45, label: 'Mesotrophic' }
+    : { score: 20, label: 'Eutrophic' };
+
+  const doTarget = eutrDOScore >= 65
+    ? { score: 90, label: 'Ideal' }
+    : eutrDOScore >= 45 ? { score: 65, label: 'Normal' }
+    : { score: 45, label: 'Moderate' };
+
+  const eutrParams: EutrParamData[] = [
+    {
+      key: 'N (NO₃-N)',
+      score: eutrNScore,
+      weight: EUTROPHICATION_WEIGHTS.n,
+      color: getTrophicColor(nState),
+      stateLabel: nState,
+      mgL: latestReading.nitrogen,
+      unit: 'mg/L',
+      targetScore: nTarget.score,
+      targetLabel: nTarget.label,
+    },
+    {
+      key: 'P (TP)',
+      score: eutrPScore,
+      weight: EUTROPHICATION_WEIGHTS.p,
+      color: getTrophicColor(pState),
+      stateLabel: pState,
+      mgL: latestReading.phosphorus,
+      unit: 'mg/L',
+      targetScore: pTarget.score,
+      targetLabel: pTarget.label,
+    },
+    {
+      key: 'DO',
+      score: eutrDOScore,
+      weight: EUTROPHICATION_WEIGHTS.do,
+      color: getDOStatusColor(doStatusIndiv),
+      stateLabel: doStatusIndiv,
+      mgL: latestReading.dissolvedOxygen,
+      unit: 'mg/L',
+      targetScore: doTarget.score,
+      targetLabel: doTarget.label,
+    },
+  ];
+
+  // Progress bar statuses (for Parameters section)
+  const doBarStatus = getParamStatus('do',         latestReading.dissolvedOxygen);
+  const pBarStatus  = getParamStatus('phosphorus', latestReading.phosphorus);
+  const nBarStatus  = getParamStatus('nitrogen',   latestReading.nitrogen);
+
+  // Alerts
   const dangerAlerts: { title: string; msg: string }[] = [];
-  if (latestReading.nitrogen > 2)
-    dangerAlerts.push({ title: '⚠ Nitrogen Elevated', msg: `Nitrogen at ${latestReading.nitrogen} mg/L — above safe threshold (2 mg/L). Consider reducing feed input.` });
-  if (latestReading.phosphorus > 0.1)
-    dangerAlerts.push({ title: '⚠ Phosphorus Elevated', msg: `Phosphorus at ${latestReading.phosphorus} mg/L — above recommended level (0.1 mg/L).` });
-  if (latestReading.dissolvedOxygen < 4)
-    dangerAlerts.push({ title: '⚠ Low Dissolved Oxygen', msg: `DO at ${latestReading.dissolvedOxygen} mg/L — below minimum threshold (4 mg/L). Increase aeration immediately.` });
+  if (latestReading.nitrogen >= 0.5)
+    dangerAlerts.push({ title: '⚠ Nitrogen Elevated', msg: `Nitrogen at ${latestReading.nitrogen} mg/L — above Eutrophic threshold (0.5 mg/L). Consider reducing feed input.` });
+  if (latestReading.phosphorus >= 0.027)
+    dangerAlerts.push({ title: '⚠ Phosphorus Elevated', msg: `Phosphorus at ${latestReading.phosphorus} mg/L — above safe Mesotrophic level (0.027 mg/L).` });
+  if (latestReading.dissolvedOxygen < 6)
+    dangerAlerts.push({ title: '⚠ Low Dissolved Oxygen', msg: `DO at ${latestReading.dissolvedOxygen} mg/L — below Normal threshold (6 mg/L). Increase aeration immediately.` });
+
+  const thumbPct =
+    trophicState === 'Oligotrophic' ? 10
+    : trophicState === 'Mesotrophic' ? 38
+    : trophicState === 'Eutrophic'   ? 65 : 88;
 
   return (
     <div>
@@ -298,70 +383,72 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </div>
       </div>
 
-      {/* Eutrophication Risk — Trophic State */}
-      {(() => {
-        const trophicState = getTrophicState(LATEST_READING.nScore, LATEST_READING.pScore);
-        const trophicColor = getTrophicColor(trophicState);
-        const riskLabel    = getTrophicRiskLabel(trophicState);
-        const doStatus     = getDOStatus(LATEST_READING.doScore);
-        const doColor      = getDOStatusColor(doStatus);
-        const thumbPct = trophicState === 'Oligotrophic' ? 10 : trophicState === 'Mesotrophic' ? 38 : trophicState === 'Eutrophic' ? 65 : 88;
-        return (
-          <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 14 }}>
-            <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>Eutrophication Risk</div>
-            <div style={{ color: trophicColor, fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{riskLabel}</div>
-            <div style={{ color: '#6B8FAF', fontSize: 11, marginBottom: 14 }}>Trophic State: <span style={{ color: trophicColor, fontWeight: 600 }}>{trophicState}</span></div>
-            <div style={{ position: 'relative', marginBottom: 10 }}>
-              <div style={{ background: 'linear-gradient(90deg,#00C896 0%,#3B82F6 33%,#F59E0B 66%,#EF4444 100%)', width: '100%', height: 14, borderRadius: 20, opacity: 0.7 }} />
-              <div style={{ position: 'absolute', top: '50%', left: `${thumbPct}%`, transform: 'translate(-50%,-50%)', width: 20, height: 20, background: trophicColor, borderRadius: '50%', border: '3px solid #FFFFFF', boxShadow: `0 0 10px ${trophicColor}88` }} />
+      {/* Eutrophication Risk */}
+      <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+          <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px' }}>Eutrophication Risk</div>
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1px' }}>Composite Score</div>
+            <div style={{ color: trophicColor, fontSize: 16, fontWeight: 700 }}>{compositeRisk}<span style={{ color: '#6B8FAF', fontSize: 10, fontWeight: 400 }}>/100</span></div>
+          </div>
+        </div>
+        <div style={{ color: trophicColor, fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{riskLabel}</div>
+        <div style={{ color: '#6B8FAF', fontSize: 11, marginBottom: 14 }}>Trophic State: <span style={{ color: trophicColor, fontWeight: 600 }}>{trophicState}</span></div>
+
+        {/* Gradient gauge */}
+        <div style={{ position: 'relative', marginBottom: 10 }}>
+          <div style={{ background: 'linear-gradient(90deg,#00C896 0%,#3B82F6 33%,#F59E0B 66%,#EF4444 100%)', width: '100%', height: 14, borderRadius: 20, opacity: 0.7 }} />
+          <div style={{ position: 'absolute', top: '50%', left: `${thumbPct}%`, transform: 'translate(-50%,-50%)', width: 20, height: 20, background: trophicColor, borderRadius: '50%', border: '3px solid #FFFFFF', boxShadow: `0 0 10px ${trophicColor}88` }} />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+          <span style={{ fontSize: 10, color: '#00C896' }}>Oligotrophic</span>
+          <span style={{ fontSize: 10, color: '#3B82F6' }}>Mesotrophic</span>
+          <span style={{ fontSize: 10, color: '#F59E0B' }}>Eutrophic</span>
+          <span style={{ fontSize: 10, color: '#EF4444' }}>Hyper-eutrophic</span>
+        </div>
+
+        {/* Reference table */}
+        <div style={{ background: '#071A2E', borderRadius: 8, padding: 12, marginBottom: 12 }}>
+          <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 8 }}>Reference Thresholds (weekly monitoring)</div>
+          {[
+            { state: 'Oligotrophic',    n: '< 0.3 mg/L',   p: '< 0.008 mg/L',  cond: 'Clear, healthy water',        color: '#00C896' },
+            { state: 'Mesotrophic',     n: '0.3–0.5 mg/L', p: '~0.027 mg/L',   cond: 'Moderate nutrients, balanced', color: '#3B82F6' },
+            { state: 'Eutrophic',       n: '0.5–1.5 mg/L', p: '~0.084 mg/L',   cond: 'Algal blooms, O₂ depletion',  color: '#F59E0B' },
+            { state: 'Hyper-eutrophic', n: '> 1.5 mg/L',   p: '> 0.1 mg/L',    cond: 'Severe blooms, dead zones',   color: '#EF4444' },
+          ].map((row) => (
+            <div key={row.state} style={{
+              display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0',
+              borderBottom: '1px solid #163455', opacity: row.state === trophicState ? 1 : 0.45,
+            }}>
+              <div style={{ width: 3, height: 16, background: row.color, borderRadius: 2, flexShrink: 0 }} />
+              <span style={{ color: row.color, fontSize: 9, fontWeight: 700, minWidth: 90 }}>{row.state}</span>
+              <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 72 }}>N: {row.n}</span>
+              <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 80 }}>P: {row.p}</span>
+              <span style={{ color: '#9CA3AF', fontSize: 9 }}>{row.cond}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-              <span style={{ fontSize: 10, color: '#00C896' }}>Oligotrophic</span>
-              <span style={{ fontSize: 10, color: '#3B82F6' }}>Mesotrophic</span>
-              <span style={{ fontSize: 10, color: '#F59E0B' }}>Eutrophic</span>
-              <span style={{ fontSize: 10, color: '#EF4444' }}>Hyper-eutrophic</span>
-            </div>
-            <div style={{ background: '#071A2E', borderRadius: 8, padding: 12, marginBottom: 12 }}>
-              <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 8 }}>Reference Thresholds</div>
-              {[
-                { state: 'Oligotrophic',    n: '< 0.3 mg/L',   p: '< 0.008 mg/L', cond: 'Clear, healthy water',        color: '#00C896' },
-                { state: 'Mesotrophic',     n: '0.3–0.5 mg/L', p: '~0.027 mg/L',  cond: 'Moderate nutrients, balanced', color: '#3B82F6' },
-                { state: 'Eutrophic',       n: '0.5–1.5 mg/L', p: '~0.084 mg/L',  cond: 'Algal blooms, O₂ depletion',  color: '#F59E0B' },
-                { state: 'Hyper-eutrophic', n: '> 1.5 mg/L',   p: '> 0.1 mg/L',   cond: 'Severe blooms, dead zones',   color: '#EF4444' },
-              ].map((row) => (
-                <div key={row.state} style={{
-                  display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0',
-                  borderBottom: '1px solid #163455', opacity: row.state === trophicState ? 1 : 0.45,
-                }}>
-                  <div style={{ width: 3, height: 16, background: row.color, borderRadius: 2, flexShrink: 0 }} />
-                  <span style={{ color: row.color, fontSize: 9, fontWeight: 700, minWidth: 90 }}>{row.state}</span>
-                  <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 72 }}>N: {row.n}</span>
-                  <span style={{ color: '#6B8FAF', fontSize: 9, minWidth: 80 }}>P: {row.p}</span>
-                  <span style={{ color: '#9CA3AF', fontSize: 9 }}>{row.cond}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: '#071A2E', borderRadius: 8, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 10, height: 10, borderRadius: '50%', background: doColor, boxShadow: `0 0 6px ${doColor}` }} />
-              <div>
-                <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1px' }}>DO Consequence</div>
-                <div style={{ color: doColor, fontSize: 11, fontWeight: 600 }}>{doStatus} — Score {LATEST_READING.doScore}/100</div>
-                <div style={{ color: '#6B8FAF', fontSize: 9, marginTop: 2 }}>
-                  Normal: DO &gt; 6–8 mg/L · Hypoxia: &lt; 2 mg/L · Anoxia: ≈ 0–0.5 mg/L
-                </div>
-              </div>
+          ))}
+        </div>
+
+        {/* DO consequence */}
+        <div style={{ background: '#071A2E', borderRadius: 8, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 10, height: 10, borderRadius: '50%', background: doOxyStatusColor, boxShadow: `0 0 6px ${doOxyStatusColor}`, flexShrink: 0 }} />
+          <div>
+            <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1px' }}>DO Consequence</div>
+            <div style={{ color: doOxyStatusColor, fontSize: 11, fontWeight: 600 }}>{doOxyStatus} — Score {eutrDOScore}/100</div>
+            <div style={{ color: '#6B8FAF', fontSize: 9, marginTop: 2 }}>
+              Normal: DO &gt; 6–8 mg/L · Hypoxia: &lt; 2 mg/L · Anoxia: ≈ 0–0.5 mg/L
             </div>
           </div>
-        );
-      })()}
+        </div>
+      </div>
 
       {/* Parameters */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>Parameters</div>
         {[
-          { name: 'Dissolved Oxygen (DO)', value: latestReading.dissolvedOxygen, unit: 'mg/L', status: doStatus, valColor: doStatus.color },
-          { name: 'Phosphorus',            value: latestReading.phosphorus,      unit: 'mg/L', status: pStatus,  valColor: pStatus.color  === '#00C896' ? '#FFFFFF' : pStatus.color  },
-          { name: 'Nitrogen',              value: latestReading.nitrogen,         unit: 'mg/L', status: nStatus,  valColor: nStatus.color  === '#00C896' ? '#FFFFFF' : nStatus.color  },
+          { name: 'Dissolved Oxygen (DO)', value: latestReading.dissolvedOxygen, unit: 'mg/L', status: doBarStatus, valColor: doBarStatus.color },
+          { name: 'Phosphorus (TP)',        value: latestReading.phosphorus,      unit: 'mg/L', status: pBarStatus,  valColor: pBarStatus.color  === '#00C896' ? '#FFFFFF' : pBarStatus.color  },
+          { name: 'Nitrogen (NO₃-N)',       value: latestReading.nitrogen,        unit: 'mg/L', status: nBarStatus,  valColor: nBarStatus.color  === '#00C896' ? '#FFFFFF' : nBarStatus.color  },
         ].map(({ name, value, unit, status, valColor }) => (
           <div key={name} style={{ background: '#0D2440', borderRadius: 12, padding: '14px 18px', border: `1px solid ${status.color !== '#00C896' ? '#3B2800' : '#163455'}`, marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
@@ -408,12 +495,19 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </form>
       </div>
 
-      {/* 6-Month Trend + CCI Circularity Widget */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
-        <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', flex: 1 }}>
-          <SixMonthTrendChart />
+      {/* 6-Month Trend Chart */}
+      <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 10 }}>
+        <SixMonthTrendChart />
+      </div>
+
+      {/* Eutrophication Circularity Widgets (N · P · DO) */}
+      <div style={{ marginBottom: 14 }}>
+        <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>
+          Parameter Circularity — weighted 0-100 · ghost arc = next target
         </div>
-        <CCICircularityWidget />
+        <div style={{ display: 'flex', gap: 10 }}>
+          {eutrParams.map((p) => <EutrophicationParamWidget key={p.key} data={p} />)}
+        </div>
       </div>
 
       {/* Alerts */}
@@ -425,10 +519,10 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
             <div style={{ color: '#9CA3AF', fontSize: 12 }}>{a.msg}</div>
           </div>
         ))}
-        {latestReading.dissolvedOxygen >= 5 && (
+        {latestReading.dissolvedOxygen >= 6 && (
           <div style={{ background: '#0A1F15', border: '1px solid #0A3320', borderRadius: 12, padding: '14px 18px', marginBottom: 8 }}>
-            <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ DO Levels Healthy</div>
-            <div style={{ color: '#9CA3AF', fontSize: 12 }}>Dissolved oxygen within ideal range. No action needed.</div>
+            <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ DO Levels Normal</div>
+            <div style={{ color: '#9CA3AF', fontSize: 12 }}>Dissolved oxygen within normal range (≥ 6 mg/L). No aeration action needed.</div>
           </div>
         )}
         {wqi && wqi.overall >= 90 && (
@@ -437,7 +531,7 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
             <div style={{ color: '#9CA3AF', fontSize: 12 }}>WQI score of {wqi.overall} — all parameters in optimal range.</div>
           </div>
         )}
-        {dangerAlerts.length === 0 && (!wqi || wqi.overall < 90) && latestReading.dissolvedOxygen >= 4 && (
+        {dangerAlerts.length === 0 && (!wqi || wqi.overall < 90) && latestReading.dissolvedOxygen >= 6 && (
           <div style={{ background: '#0A1F15', border: '1px solid #0A3320', borderRadius: 12, padding: '14px 18px' }}>
             <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ No Critical Alerts</div>
             <div style={{ color: '#9CA3AF', fontSize: 12 }}>All parameters are within acceptable ranges. Continue monitoring.</div>
