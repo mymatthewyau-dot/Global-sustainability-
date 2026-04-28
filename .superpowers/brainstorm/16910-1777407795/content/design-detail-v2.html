@@ -1,0 +1,142 @@
+<h2>Risk Tab — Chart + Log Design (fixed alignment)</h2>
+<p class="subtitle">Y-axis labels scaled down, "Oct" no longer clipped, chart fills its column properly.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Risk Tab — 6-Month Trend section</div>
+  <div class="mockup-body" style="background:#071A2E;padding:16px;border-radius:8px">
+
+    <div style="display:flex;gap:12px;align-items:stretch">
+
+      <!-- LEFT: Trend Chart card -->
+      <div style="flex:1;background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;display:flex;flex-direction:column;min-width:0">
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">6-Month Trend — Apr to Oct</div>
+        <div style="display:flex;gap:12px;margin-bottom:8px">
+          <span style="font-size:10px;color:#00C896">— DO Score</span>
+          <span style="font-size:10px;color:#F59E0B">— N Score</span>
+          <span style="font-size:10px;color:#8B5CF6">— P Score</span>
+        </div>
+        <!-- viewBox sized to match actual chart proportions (340×200) -->
+        <svg width="100%" viewBox="0 0 340 200" style="display:block;overflow:visible">
+          <!-- y grid + labels -->
+          <line x1="36" y1="16" x2="328" y2="16" stroke="#163455" strokeWidth="0.5" strokeDasharray="3,3"/>
+          <line x1="36" y1="58" x2="328" y2="58" stroke="#163455" strokeWidth="0.5" strokeDasharray="3,3"/>
+          <line x1="36" y1="101" x2="328" y2="101" stroke="#163455" strokeWidth="0.5" strokeDasharray="3,3"/>
+          <line x1="36" y1="143" x2="328" y2="143" stroke="#163455" strokeWidth="0.5" strokeDasharray="3,3"/>
+          <line x1="36" y1="170" x2="328" y2="170" stroke="#1E4A6E" strokeWidth="1"/>
+          <text x="30" y="19"  fill="#6B8FAF" fontSize="8" textAnchor="end" fontFamily="sans-serif">100</text>
+          <text x="30" y="61"  fill="#6B8FAF" fontSize="8" textAnchor="end" fontFamily="sans-serif">75</text>
+          <text x="30" y="104" fill="#6B8FAF" fontSize="8" textAnchor="end" fontFamily="sans-serif">50</text>
+          <text x="30" y="146" fill="#6B8FAF" fontSize="8" textAnchor="end" fontFamily="sans-serif">25</text>
+          <text x="30" y="173" fill="#6B8FAF" fontSize="8" textAnchor="end" fontFamily="sans-serif">0</text>
+          <!-- P line — starts ~12/100, ends ~24/100 (bottom third, dashed purple) -->
+          <polyline points="36,149 108,146 180,141 252,137 316,132" fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeDasharray="5,3" strokeLinejoin="round" strokeLinecap="round"/>
+          <!-- N line — starts ~40/100, ends ~58/100 (middle, amber) -->
+          <polyline points="36,101 108,95 180,87 252,78 316,68" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+          <!-- DO line — starts ~60/100, ends ~78/100 (top, green) -->
+          <polyline points="36,68 108,62 180,54 252,46 316,37" fill="none" stroke="#00C896" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round"/>
+          <!-- end dots -->
+          <circle cx="316" cy="37"  r="4" fill="#00C896" stroke="#071A2E" strokeWidth="1.5"/>
+          <circle cx="316" cy="68"  r="4" fill="#F59E0B" stroke="#071A2E" strokeWidth="1.5"/>
+          <circle cx="316" cy="132" r="4" fill="#8B5CF6" stroke="#071A2E" strokeWidth="1.5"/>
+          <!-- x labels -->
+          <text x="36"  y="185" fill="#6B8FAF" fontSize="8" textAnchor="middle" fontFamily="sans-serif">Apr</text>
+          <text x="108" y="185" fill="#6B8FAF" fontSize="8" textAnchor="middle" fontFamily="sans-serif">May</text>
+          <text x="180" y="185" fill="#6B8FAF" fontSize="8" textAnchor="middle" fontFamily="sans-serif">Jul</text>
+          <text x="252" y="185" fill="#6B8FAF" fontSize="8" textAnchor="middle" fontFamily="sans-serif">Sep</text>
+          <text x="316" y="185" fill="#6B8FAF" fontSize="8" textAnchor="middle" fontFamily="sans-serif">Oct</text>
+        </svg>
+      </div>
+
+      <!-- RIGHT: Recent Readings card -->
+      <div style="flex:1;background:#0D2440;border-radius:12px;padding:18px;border:1px solid #163455;display:flex;flex-direction:column;min-width:0">
+        <div style="color:#6B8FAF;font-size:10px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Recent Readings</div>
+
+        <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+          <div style="background:#071A2E;border-radius:8px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="color:#FFFFFF;font-size:11px;font-weight:600">Today, 14:30</span>
+              <span style="font-size:9px;background:#1E3A2F;color:#00C896;padding:2px 6px;border-radius:10px;font-weight:600">Manual</span>
+            </div>
+            <div style="font-size:11px;color:#6B8FAF;display:flex;gap:10px">
+              <span>P <b style="color:#F59E0B">0.12</b></span>
+              <span>N <b style="color:#EF4444">1.8</b></span>
+              <span>DO <b style="color:#00C896">6.2</b></span>
+            </div>
+          </div>
+
+          <div style="background:#071A2E;border-radius:8px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="color:#FFFFFF;font-size:11px;font-weight:600">Today, 08:00</span>
+              <span style="font-size:9px;background:#1E3A2F;color:#00C896;padding:2px 6px;border-radius:10px;font-weight:600">Manual</span>
+            </div>
+            <div style="font-size:11px;color:#6B8FAF;display:flex;gap:10px">
+              <span>P <b style="color:#F59E0B">0.11</b></span>
+              <span>N <b style="color:#EF4444">1.7</b></span>
+              <span>DO <b style="color:#00C896">6.1</b></span>
+            </div>
+          </div>
+
+          <div style="background:#071A2E;border-radius:8px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="color:#FFFFFF;font-size:11px;font-weight:600">Yesterday, 18:00</span>
+              <span style="font-size:9px;background:#1E3A2F;color:#00C896;padding:2px 6px;border-radius:10px;font-weight:600">Manual</span>
+            </div>
+            <div style="font-size:11px;color:#6B8FAF;display:flex;gap:10px">
+              <span>P <b style="color:#6B8FAF">0.11</b></span>
+              <span>N <b style="color:#F59E0B">1.6</b></span>
+              <span>DO <b style="color:#00C896">6.3</b></span>
+            </div>
+          </div>
+
+          <div style="background:#071A2E;border-radius:8px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="color:#FFFFFF;font-size:11px;font-weight:600">Yesterday, 09:00</span>
+              <span style="font-size:9px;background:#1E3A2F;color:#00C896;padding:2px 6px;border-radius:10px;font-weight:600">Manual</span>
+            </div>
+            <div style="font-size:11px;color:#6B8FAF;display:flex;gap:10px">
+              <span>P <b style="color:#6B8FAF">0.10</b></span>
+              <span>N <b style="color:#F59E0B">1.4</b></span>
+              <span>DO <b style="color:#00C896">6.4</b></span>
+            </div>
+          </div>
+
+          <div style="background:#071A2E;border-radius:8px;padding:9px 12px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+              <span style="color:#FFFFFF;font-size:11px;font-weight:600">2 days ago, 14:00</span>
+              <span style="font-size:9px;background:#1E3A2F;color:#00C896;padding:2px 6px;border-radius:10px;font-weight:600">Manual</span>
+            </div>
+            <div style="font-size:11px;color:#6B8FAF;display:flex;gap:10px">
+              <span>P <b style="color:#6B8FAF">0.09</b></span>
+              <span>N <b style="color:#6B8FAF">1.2</b></span>
+              <span>DO <b style="color:#00C896">6.5</b></span>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:12px;padding-top:10px;border-top:1px solid #163455">
+          <span style="color:#00C896;font-size:11px">View full history →</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:10px;color:#6B8FAF;font-size:10px;text-align:center">↑ Replaces the current standalone "6-Month Trend Chart" card</div>
+  </div>
+</div>
+
+<div class="options" style="margin-top:20px">
+  <div class="option" data-choice="approve" onclick="toggleSelect(this)">
+    <div class="letter">✓</div>
+    <div class="content">
+      <h3>Looks good — write the plan</h3>
+      <p>Both cards match, chart is properly sized, log matches the previous version style.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="change" onclick="toggleSelect(this)">
+    <div class="letter">✎</div>
+    <div class="content">
+      <h3>Still needs a change</h3>
+      <p>Tell me in the terminal what to adjust.</p>
+    </div>
+  </div>
+</div>

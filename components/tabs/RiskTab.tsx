@@ -71,14 +71,14 @@ function getFarmSummary(reading: SensorReading): string {
 // ── 6-Month Trend Chart ────────────────────────────────────────────────────────
 
 function SixMonthTrendChart() {
-  const W = 340, H = 200;
-  const pad = { top: 16, right: 12, bottom: 30, left: 36 };
+  const W = 500, H = 195;
+  const pad = { top: 16, right: 50, bottom: 34, left: 40 };
   const chartW = W - pad.left - pad.right;
   const chartH = H - pad.top - pad.bottom;
   const data = SIX_MONTH_HISTORY;
   const n = data.length;
 
-  const xLabels = data.filter((_, i) => i % 4 === 0 || i === n - 1);
+  const xLabels = data.filter((_, i) => i % 5 === 0 || i === n - 1);
   const xOf = (i: number) => pad.left + (i / (n - 1)) * chartW;
   const yOf = (v: number) => pad.top + chartH - (v / 100) * chartH;
   const polyPts = (key: 'nScore' | 'pScore' | 'doScore') =>
@@ -95,7 +95,7 @@ function SixMonthTrendChart() {
         <span style={{ fontSize: 11, color: '#F59E0B' }}>— N Score</span>
         <span style={{ fontSize: 11, color: '#8B5CF6' }}>— P Score</span>
       </div>
-      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block' }}>
+      <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ display: 'block', overflow: 'visible' }}>
         {yTicks.map((v) => {
           const y = yOf(v);
           return (
@@ -118,7 +118,7 @@ function SixMonthTrendChart() {
         {xLabels.map((d) => {
           const i = data.indexOf(d);
           return (
-            <text key={d.date} x={xOf(i)} y={H - 4} fill="#6B8FAF" fontSize="9" textAnchor="middle" fontFamily="sans-serif">
+            <text key={d.date} x={xOf(i)} y={pad.top + chartH + 16} fill="#6B8FAF" fontSize="9" textAnchor="middle" fontFamily="sans-serif">
               {d.label}
             </text>
           );

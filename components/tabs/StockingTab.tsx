@@ -17,163 +17,164 @@ function paramBar(value: number, max: number, color: string) {
   );
 }
 
-function priorityColor(p: StockingRecommendation['priority']): string {
-  if (p === 'High') return '#EF4444';
-  if (p === 'Medium') return '#F59E0B';
-  return '#00C896';
-}
-
-function priorityTagStyle(p: StockingRecommendation['priority']) {
-  const colors: Record<string, { bg: string; color: string }> = {
-    High:   { bg: '#FF6B6B22', color: '#FF6B6B' },
-    Medium: { bg: '#F4D03F22', color: '#F4D03F' },
-    Low:    { bg: '#00C89622', color: '#00C896' },
-  };
-  return colors[p];
-}
-
 // ── IMTA Farm Layout SVG ───────────────────────────────────────────────────────
 
 function ImtaFarmSVG() {
   return (
-    <svg viewBox="0 0 400 220" style={{ width: '100%', height: 'auto', display: 'block' }} xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 400 218" style={{ width: '100%', height: 'auto', display: 'block' }} xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <clipPath id="ec"><ellipse cx="200" cy="112" rx="188" ry="100" /></clipPath>
-        <marker id="mW" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3z" fill="#F4D03F" /></marker>
-        <marker id="mG" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3z" fill="#2ECC71" /></marker>
+        <marker id="mW2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3z" fill="#F4D03F" />
+        </marker>
+        <marker id="mG2" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3z" fill="#2ECC71" />
+        </marker>
 
-        {/* Tilapia symbol */}
-        <symbol id="T" viewBox="0 0 44 28" overflow="visible">
-          <path d="M34,14 L44,7 L41,14 L44,21 Z" fill="#3DBDB5" stroke="#2B8A85" strokeWidth="0.8" />
-          <ellipse cx="18" cy="14" rx="16" ry="6" fill="#4ECDC4" stroke="#2B8A85" strokeWidth="1.2" />
-          <ellipse cx="16" cy="16" rx="10" ry="3" fill="#7EEAE4" opacity="0.3" />
-          <polygon points="12,8 18,2 24,8" fill="#3DBDB5" stroke="#2B8A85" strokeWidth="0.8" />
-          <path d="M14,17 Q18,22 21,20" fill="#3DBDB5" stroke="#2B8A85" strokeWidth="0.9" strokeLinecap="round" />
-          <circle cx="9" cy="12" r="3.5" fill="#fff" stroke="#2B8A85" strokeWidth="0.8" />
-          <circle cx="9.5" cy="12.5" r="2" fill="#1A5276" />
+        {/* Red Snapper symbol */}
+        <symbol id="RS" viewBox="0 0 44 28" overflow="visible">
+          <path d="M34,14 L44,7 L41,14 L44,21 Z" fill="#D04820" stroke="#A03010" strokeWidth="0.8" />
+          <ellipse cx="18" cy="14" rx="16" ry="7" fill="#FF6040" stroke="#A03010" strokeWidth="1.2" />
+          <ellipse cx="15" cy="15" rx="9" ry="3.5" fill="#FF8060" opacity="0.35" />
+          <path d="M10,7 Q17,1 24,7" fill="#D04820" stroke="#A03010" strokeWidth="0.8" />
+          <path d="M14,17 Q18,23 22,20" fill="#D04820" stroke="#A03010" strokeWidth="0.9" strokeLinecap="round" />
+          <circle cx="9" cy="12" r="3.5" fill="#fff" stroke="#A03010" strokeWidth="0.8" />
+          <circle cx="9.5" cy="12.5" r="2" fill="#1A1A2E" />
           <circle cx="10.2" cy="11.8" r="0.7" fill="#fff" />
-          <path d="M2,14 Q1,13 2,12" fill="none" stroke="#2B8A85" strokeWidth="1" strokeLinecap="round" />
-        </symbol>
-
-        {/* Salmon symbol */}
-        <symbol id="S" viewBox="0 0 44 28" overflow="visible">
-          <path d="M34,14 L44,7 L41,14 L44,21 Z" fill="#E07050" stroke="#C0553A" strokeWidth="0.8" />
-          <ellipse cx="18" cy="14" rx="16" ry="6" fill="#FF8C69" stroke="#C0553A" strokeWidth="1.2" />
-          <ellipse cx="16" cy="16" rx="10" ry="3" fill="#FFAD90" opacity="0.3" />
-          <polygon points="12,8 18,2 24,8" fill="#E07050" stroke="#C0553A" strokeWidth="0.8" />
-          <path d="M14,17 Q18,22 21,20" fill="#E07050" stroke="#C0553A" strokeWidth="0.9" strokeLinecap="round" />
-          <circle cx="9" cy="12" r="3.5" fill="#fff" stroke="#C0553A" strokeWidth="0.8" />
-          <circle cx="9.5" cy="12.5" r="2" fill="#1A3A5C" />
-          <circle cx="10.2" cy="11.8" r="0.7" fill="#fff" />
-          <path d="M2,14 Q1,13 2,12" fill="none" stroke="#C0553A" strokeWidth="1" strokeLinecap="round" />
+          <path d="M2,14 Q1,13 2,12" fill="none" stroke="#A03010" strokeWidth="1" strokeLinecap="round" />
         </symbol>
 
         {/* Oyster symbol */}
-        <symbol id="O" viewBox="0 0 38 24" overflow="visible">
-          <ellipse cx="19" cy="19" rx="17" ry="7" fill="#C8A87A" stroke="#8B6914" strokeWidth="1.1" />
-          <ellipse cx="19" cy="13" rx="14" ry="7.5" fill="#E8D5A0" stroke="#8B6914" strokeWidth="1.1" />
-          <ellipse cx="19" cy="13" rx="8" ry="4.5" fill="#F5EDD0" />
-          <path d="M6,15 Q19,9 32,15" fill="none" stroke="#8B6914" strokeWidth="0.6" opacity="0.4" />
-          <circle cx="25" cy="10" r="3.2" fill="#fff" stroke="#8B6914" strokeWidth="0.8" />
-          <circle cx="25.8" cy="10.5" r="1.6" fill="#5D4037" />
-          <circle cx="26.4" cy="10" r="0.6" fill="#fff" />
-          <path d="M21,15 Q23,18 26,16" fill="none" stroke="#8B6914" strokeWidth="0.8" strokeLinecap="round" />
+        <symbol id="OY" viewBox="0 0 22 15" overflow="visible">
+          <ellipse cx="11" cy="11" rx="10" ry="4.5" fill="#C8A87A" stroke="#8B6914" strokeWidth="0.8" />
+          <ellipse cx="11" cy="7"  rx="8"  ry="5.5" fill="#E8D5A0" stroke="#8B6914" strokeWidth="0.8" />
+          <ellipse cx="11" cy="7"  rx="4"  ry="3"   fill="#F5EDD0" />
         </symbol>
 
-        {/* Seaweed symbol */}
-        <symbol id="W" viewBox="0 0 18 52" overflow="visible">
-          <path d="M9,51 Q9,42 9,33 Q9,24 9,15 Q9,7 9,0" fill="none" stroke="#27AE60" strokeWidth="1.8" />
-          <path d="M9,40 Q3,34 2,26 Q7,29 9,36" fill="#27AE60" opacity="0.9" />
-          <path d="M9,28 Q15,22 16,15 Q11,18 9,25" fill="#2ECC71" opacity="0.9" />
-          <path d="M9,16 Q3,10 2,4 Q7,7 9,13" fill="#27AE60" opacity="0.75" />
-          <path d="M9,6 Q14,2 15,0 Q10,1 9,5" fill="#2ECC71" opacity="0.6" />
+        {/* Healthy seaweed symbol */}
+        <symbol id="SW" viewBox="0 0 14 52" overflow="visible">
+          <path d="M7,51 Q7,37 7,22 Q7,10 7,0" fill="none" stroke="#27AE60" strokeWidth="1.6" />
+          <path d="M7,40 Q2,33 1,25 Q6,28 7,36" fill="#27AE60" opacity="0.9" />
+          <path d="M7,27 Q12,20 13,13 Q8,16 7,24" fill="#2ECC71" opacity="0.9" />
+          <path d="M7,15 Q2,9 1,3 Q6,6 7,13"    fill="#27AE60" opacity="0.7" />
+        </symbol>
+
+        {/* Fouled/degraded seaweed symbol */}
+        <symbol id="SWF" viewBox="0 0 14 52" overflow="visible">
+          <path d="M7,51 Q7,37 7,22 Q7,10 7,0" fill="none" stroke="#7A6248" strokeWidth="1.6" />
+          <path d="M7,40 Q2,33 1,25 Q6,28 7,36" fill="#9E7D5A" opacity="0.8" />
+          <path d="M7,27 Q12,20 13,13 Q8,16 7,24" fill="#C4A07A" opacity="0.7" />
+          <path d="M7,15 Q2,9 1,3 Q6,6 7,13"    fill="#7A6248" opacity="0.6" />
+          {/* epiphyte fuzz */}
+          <path d="M5,36 Q3,34 4,32" fill="none" stroke="#5A8A4A" strokeWidth="0.7" opacity="0.6" />
+          <path d="M9,24 Q11,22 10,20" fill="none" stroke="#5A8A4A" strokeWidth="0.7" opacity="0.6" />
         </symbol>
       </defs>
 
-      {/* Pond ellipse */}
-      <ellipse cx="200" cy="112" rx="188" ry="100" fill="#08254A" stroke="#163455" strokeWidth="1.5" />
+      {/* Full background */}
+      <rect width="400" height="218" fill="#071A2E" />
 
-      {/* Zone backgrounds */}
-      <rect x="12"  y="12" width="44"  height="200" fill="#2ECC7110" clipPath="url(#ec)" />
-      <rect x="56"  y="12" width="108" height="165" fill="#00C89610" clipPath="url(#ec)" />
-      <rect x="164" y="12" width="116" height="165" fill="#FF8C6908" clipPath="url(#ec)" />
-      <rect x="280" y="12" width="108" height="200" fill="#2ECC7110" clipPath="url(#ec)" />
+      {/* Water background — cage area */}
+      <rect x="4" y="4" width="246" height="210" fill="#08254A" rx="3" />
 
-      {/* Zone separator hints */}
-      <line x1="56"  y1="22" x2="56"  y2="38" stroke="#2ECC7128" strokeWidth="1" strokeDasharray="4 3" />
-      <line x1="164" y1="22" x2="164" y2="38" stroke="#00C89628" strokeWidth="1" strokeDasharray="4 3" />
-      <line x1="280" y1="22" x2="280" y2="38" stroke="#FF8C6928" strokeWidth="1" strokeDasharray="4 3" />
+      {/* ── 4 NET CAGES (2×2 grid) ── */}
 
-      {/* Zone labels */}
-      <text x="34"  y="24" textAnchor="middle" fill="#2ECC71" fontSize="7.5" fontFamily="system-ui" fontWeight="700">S. hemiphyllum</text>
-      <text x="110" y="24" textAnchor="middle" fill="#00C896"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">FED SPECIES</text>
-      <text x="222" y="24" textAnchor="middle" fill="#FF8C69"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">Oyster (Crassostrea)</text>
-      <text x="315" y="24" textAnchor="middle" fill="#2ECC71"  fontSize="7.5" fontFamily="system-ui" fontWeight="700">S. hemiphyllum</text>
+      {/* Cage 1 — top-left */}
+      <rect x="10" y="14" width="104" height="83" fill="#0D2440" stroke="#1E4A6B" strokeWidth="1.5" rx="3" />
+      {/* Cage 2 — top-right */}
+      <rect x="136" y="14" width="104" height="83" fill="#0D2440" stroke="#1E4A6B" strokeWidth="1.5" rx="3" />
+      {/* Cage 3 — bottom-left */}
+      <rect x="10" y="121" width="104" height="83" fill="#0D2440" stroke="#1E4A6B" strokeWidth="1.5" rx="3" />
+      {/* Cage 4 — bottom-right · Zone 4 · no filtration */}
+      <rect x="136" y="121" width="104" height="83" fill="#1C0A08" stroke="#EF4444" strokeWidth="1.5" rx="3" strokeDasharray="5 2" />
+      <rect x="136" y="121" width="104" height="83" fill="#EF444406" rx="3" />
 
-      {/* Left seaweed */}
-      <use href="#W" x="15" y="38" width="18" height="52" />
-      <use href="#W" x="30" y="55" width="16" height="45" />
-      <use href="#W" x="20" y="108" width="18" height="52" />
+      {/* Cage labels */}
+      <text x="62"  y="11"  textAnchor="middle" fill="#4A7FA0" fontSize="7" fontFamily="system-ui">Cage 1 · 800</text>
+      <text x="188" y="11"  textAnchor="middle" fill="#4A7FA0" fontSize="7" fontFamily="system-ui">Cage 2 · 800</text>
+      <text x="62"  y="214" textAnchor="middle" fill="#4A7FA0" fontSize="7" fontFamily="system-ui">Cage 3 · 800</text>
+      <text x="188" y="214" textAnchor="middle" fill="#EF4444" fontSize="7.5" fontFamily="system-ui" fontWeight="700">Zone 4 · 800 ✕</text>
 
-      {/* Right seaweed */}
-      <use href="#W" x="282" y="38" width="18" height="52" />
-      <use href="#W" x="298" y="60" width="16" height="45" />
-      <use href="#W" x="310" y="108" width="18" height="52" />
-      <line x1="326" y1="30" x2="326" y2="160" stroke="#163455" strokeWidth="1" opacity="0.5" />
-      <line x1="342" y1="30" x2="342" y2="160" stroke="#163455" strokeWidth="1" opacity="0.5" />
-      <use href="#W" x="319" y="42" width="18" height="52" />
-      <use href="#W" x="335" y="65" width="16" height="45" />
+      {/* Snapper fish icons — one per cage */}
+      <use href="#RS" x="22"  y="45" width="68" height="43" />
+      <use href="#RS" x="148" y="45" width="68" height="43" />
+      <use href="#RS" x="22"  y="152" width="68" height="43" />
+      <use href="#RS" x="148" y="152" width="68" height="43" />
 
-      {/* Fish */}
-      <use href="#T" x="62" y="45"  width="56" height="36" />
-      <use href="#T" x="95" y="92"  width="48" height="31" />
-      <use href="#S" x="60" y="128" width="56" height="36" />
-      <use href="#S" x="100" y="158" width="44" height="28" />
+      {/* ── CORRIDORS ── */}
 
-      {/* Fish count labels */}
-      <rect x="64" y="33" width="34" height="13" rx="5" fill="#071A2E" opacity="0.85" />
-      <text x="81" y="43" textAnchor="middle" fill="#4ECDC4" fontSize="8" fontFamily="system-ui">3,000 🐟</text>
-      <rect x="64" y="116" width="34" height="13" rx="5" fill="#071A2E" opacity="0.85" />
-      <text x="81" y="126" textAnchor="middle" fill="#FF8C69" fontSize="8" fontFamily="system-ui">2,000 🐠</text>
+      {/* Corridor H-top: between Cage 1 & Cage 2 (x=114–136) — OYSTERS */}
+      <rect x="114" y="14" width="22" height="83" fill="#C8A87A0D" />
+      <line x1="119" y1="17" x2="119" y2="94" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="125" y1="17" x2="125" y2="94" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="131" y1="17" x2="131" y2="94" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <use href="#OY" x="111" y="26" width="22" height="15" />
+      <use href="#OY" x="111" y="50" width="22" height="15" />
+      <use href="#OY" x="111" y="74" width="22" height="15" />
 
-      {/* Oyster cage lines */}
-      <line x1="193" y1="32" x2="193" y2="175" stroke="#8B6914" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="225" y1="32" x2="225" y2="175" stroke="#8B6914" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="257" y1="32" x2="257" y2="175" stroke="#8B6914" strokeWidth="1" opacity="0.15" strokeDasharray="4 4" />
-      <line x1="193" y1="32" x2="257" y2="32"  stroke="#8B6914" strokeWidth="1.2" opacity="0.5" />
+      {/* Corridor V-left: between Cage 1 & Cage 3 (y=97–121) — OYSTERS */}
+      <rect x="10" y="97" width="104" height="24" fill="#C8A87A0D" />
+      <line x1="14"  y1="103" x2="110" y2="103" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="14"  y1="109" x2="110" y2="109" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="14"  y1="115" x2="110" y2="115" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <use href="#OY" x="22"  y="95" width="22" height="15" />
+      <use href="#OY" x="52"  y="95" width="22" height="15" />
+      <use href="#OY" x="82"  y="95" width="22" height="15" />
 
-      {/* Oysters 3×3 grid */}
-      <use href="#O" x="175" y="48"  width="40" height="25" />
-      <use href="#O" x="175" y="88"  width="40" height="25" />
-      <use href="#O" x="175" y="128" width="40" height="25" />
-      <use href="#O" x="207" y="60"  width="40" height="25" />
-      <use href="#O" x="207" y="100" width="40" height="25" />
-      <use href="#O" x="207" y="140" width="40" height="25" />
-      <use href="#O" x="239" y="52"  width="36" height="23" />
-      <use href="#O" x="239" y="92"  width="36" height="23" />
-      <use href="#O" x="239" y="132" width="36" height="23" />
+      {/* Corridor H-bottom: between Cage 3 & Cage 4 (x=114–136) — OYSTERS */}
+      <rect x="114" y="121" width="22" height="83" fill="#C8A87A0D" />
+      <line x1="119" y1="124" x2="119" y2="201" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="125" y1="124" x2="125" y2="201" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <line x1="131" y1="124" x2="131" y2="201" stroke="#8B6914" strokeWidth="0.7" strokeDasharray="2 3" opacity="0.5" />
+      <use href="#OY" x="111" y="133" width="22" height="15" />
+      <use href="#OY" x="111" y="157" width="22" height="15" />
+      <use href="#OY" x="111" y="181" width="22" height="15" />
 
-      {/* Oyster count label */}
-      <rect x="183" y="30" width="28" height="12" rx="4" fill="#071A2E" opacity="0.85" />
-      <text x="197" y="40" textAnchor="middle" fill="#C8A87A" fontSize="7.5" fontFamily="system-ui">1,000 🦪</text>
+      {/* Corridor V-right: between Cage 2 & Cage 4 (y=97–121) — ZONE 4 EMPTY */}
+      <rect x="136" y="97" width="104" height="24" fill="#EF444418" />
+      <text x="188" y="113" textAnchor="middle" fill="#EF4444" fontSize="7.5" fontFamily="system-ui" fontWeight="700">✕ No oyster filtration</text>
 
-      {/* Flow: organics fish → oysters */}
-      <path d="M 155,107 Q 168,95 174,82" fill="none" stroke="#F4D03F" strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#mW)" />
-      <rect x="122" y="73" width="52" height="12" rx="3" fill="#071A2E" opacity="0.82" />
-      <text x="148" y="82" textAnchor="middle" fill="#F4D03F" fontSize="7.5" fontFamily="system-ui">💩 organics</text>
+      {/* Flow: organics → oysters */}
+      <path d="M114,56 Q107,62 111,72" fill="none" stroke="#F4D03F" strokeWidth="1.2" strokeDasharray="4 3" markerEnd="url(#mW2)" />
 
-      {/* Flow: nutrients fish → left seaweed */}
-      <path d="M 64,72 Q 50,66 44,60" fill="none" stroke="#2ECC71" strokeWidth="1.3" strokeDasharray="4 3" markerEnd="url(#mG)" />
-      <rect x="4" y="58" width="36" height="11" rx="3" fill="#071A2E" opacity="0.82" />
-      <text x="22" y="67" textAnchor="middle" fill="#2ECC71" fontSize="7" fontFamily="system-ui">nutrients</text>
+      {/* Flow: dissolved N → Sargassum */}
+      <path d="M250,109 Q262,109 272,109" fill="none" stroke="#2ECC71" strokeWidth="1.2" strokeDasharray="4 3" markerEnd="url(#mG2)" />
 
-      {/* Flow: nutrients oysters → right seaweed */}
-      <path d="M 155,95 Q 268,85 282,78" fill="none" stroke="#2ECC71" strokeWidth="1.3" strokeDasharray="4 3" markerEnd="url(#mG)" />
+      {/* ── DIVIDER ── */}
+      <line x1="250" y1="8" x2="250" y2="210" stroke="#163455" strokeWidth="1" />
 
-      {/* Dissolved nutrient particles */}
-      <circle cx="42"  cy="108" r="1.8" fill="#00C896" opacity="0.45" />
-      <circle cx="38"  cy="126" r="1.4" fill="#00C896" opacity="0.3" />
-      <circle cx="46"  cy="143" r="1.8" fill="#00C896" opacity="0.4" />
+      {/* ── SARGASSUM EASTERN BOUNDARY ── */}
+      <rect x="252" y="4" width="144" height="210" fill="#060E08" rx="2" />
+      <text x="324" y="13" textAnchor="middle" fill="#27AE60" fontSize="7" fontFamily="system-ui" fontWeight="700">S. hemiphyllum · Eastern Boundary</text>
+
+      {/* Ropes 1–3: healthy (green) */}
+      <use href="#SW"  x="256" y="18" width="14" height="52" />
+      <use href="#SW"  x="270" y="26" width="14" height="52" />
+      <use href="#SW"  x="256" y="82" width="14" height="52" />
+      <use href="#SW"  x="270" y="90" width="14" height="52" />
+      <use href="#SW"  x="256" y="146" width="14" height="52" />
+
+      {/* Ropes 4–8: fouled (brownish-degraded) */}
+      <use href="#SWF" x="288" y="18" width="14" height="52" />
+      <use href="#SWF" x="302" y="24" width="14" height="52" />
+      <use href="#SWF" x="316" y="16" width="14" height="52" />
+      <use href="#SWF" x="330" y="22" width="14" height="52" />
+      <use href="#SWF" x="344" y="18" width="14" height="52" />
+      <use href="#SWF" x="288" y="82" width="14" height="52" />
+      <use href="#SWF" x="302" y="88" width="14" height="52" />
+      <use href="#SWF" x="316" y="80" width="14" height="52" />
+      <use href="#SWF" x="330" y="86" width="14" height="52" />
+      <use href="#SWF" x="344" y="82" width="14" height="52" />
+      <use href="#SWF" x="288" y="146" width="14" height="52" />
+      <use href="#SWF" x="302" y="152" width="14" height="52" />
+      <use href="#SWF" x="316" y="144" width="14" height="52" />
+
+      {/* Seaweed legend */}
+      <rect x="254" y="172" width="140" height="40" rx="3" fill="#071A2E" opacity="0.92" />
+      <rect x="258" y="178" width="6" height="6" rx="1" fill="#27AE60" />
+      <text x="268" y="184" fill="#27AE60" fontSize="7" fontFamily="system-ui">Ropes 1–3 · functional (~130 kg)</text>
+      <rect x="258" y="189" width="6" height="6" rx="1" fill="#9E7D5A" />
+      <text x="268" y="195" fill="#F59E0B" fontSize="7" fontFamily="system-ui">Ropes 4–8 · fouled by epiphytes</text>
+      <text x="258" y="207" fill="#EF4444" fontSize="7" fontFamily="system-ui" fontWeight="600">58% thalli colonised · 34% uptake</text>
     </svg>
   );
 }
@@ -183,24 +184,36 @@ function ImtaFarmSVG() {
 function TrophicBalance() {
   const cards = [
     {
-      icon: '🐟', name: 'Fed Species', sub: 'Tilapia + Salmon', color: '#00C896',
-      count: '5,000', unit: 'individuals',
-      role: 'Require active feeding. Produce organic waste + dissolved nutrients.',
-      badge: { label: '⚠ High density', bg: '#F4D03F22', color: '#F4D03F' },
+      icon: '🐠',
+      name: 'Fed Species',
+      sub: 'Red Snapper · Lutjanus argentimaculatus',
+      color: '#FF6040',
+      count: '3,200',
+      unit: 'individuals · 4.0 fish/m³',
+      role: 'Above optimal range (2.5–3.0/m³). FCR 2.14 vs baseline 1.58 — 35% efficiency decline from chronic stress.',
+      badge: { label: '⚠ Stress indicators · above optimal density', bg: '#F4D03F22', color: '#F4D03F' },
       borderColor: '#F4D03F33',
     },
     {
-      icon: '🦪', name: 'Organic Extractive', sub: 'Oysters · Mussels', color: '#C8A87A',
-      count: '1,000', unit: 'individuals',
-      role: 'Filter organic particles. Need 5× more to balance 5,000 fish.',
-      badge: { label: '✗ Underpopulated', bg: '#FF6B6B22', color: '#FF6B6B' },
+      icon: '🦪',
+      name: 'Organic Extractive',
+      sub: 'Hong Kong Oyster · Crassostrea hongkongensis',
+      color: '#C8A87A',
+      count: '24,000',
+      unit: 'individuals · 75% zone coverage',
+      role: 'Zone 4 (200 m³) unfiltered since Q3 2024. 40% re-filtration in covered zones. Particulate P accumulating.',
+      badge: { label: '✗ Zone 4 uncovered · spatial imbalance', bg: '#FF6B6B22', color: '#FF6B6B' },
       borderColor: '#FF6B6B33',
     },
     {
-      icon: '🌿', name: 'Inorganic Extractive', sub: 'Seaweed · Kelp', color: '#2ECC71',
-      count: '0', unit: 'not present',
-      role: 'Absorb dissolved N + P. Missing = ammonia accumulates.',
-      badge: { label: '✗ Missing from farm', bg: '#FF6B6B22', color: '#FF6B6B' },
+      icon: '🌿',
+      name: 'Inorganic Extractive',
+      sub: 'Sargassum · Sargassum hemiphyllum',
+      color: '#2ECC71',
+      count: '176 kg',
+      unit: 'functional / 420 kg total wet wt.',
+      role: '58% of thalli fouled by Ulva/Cladophora epiphytes. N uptake 0.31 g/kg/d vs design 0.82 g/kg/d.',
+      badge: { label: '✗ Severely degraded · 34% efficiency', bg: '#FF6B6B22', color: '#FF6B6B' },
       borderColor: '#FF6B6B33',
     },
   ];
@@ -209,40 +222,34 @@ function TrophicBalance() {
     <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 600 }}>Trophic Balance</div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {cards.map((c) => (
-          <div key={c.name} style={{ background: '#071A2E', borderRadius: 10, border: `1px solid ${c.borderColor}`, padding: '10px 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: 18, width: 28, textAlign: 'center' }}>{c.icon}</span>
-              <div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: c.color }}>{c.name}</div>
-                <div style={{ fontSize: 9, color: '#8BA3B8' }}>{c.sub}</div>
+          <div key={c.name} style={{ background: '#071A2E', borderRadius: 10, border: `1px solid ${c.borderColor}`, padding: '10px 12px', display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <span style={{ fontSize: 18, width: 26, textAlign: 'center', flexShrink: 0, marginTop: 1 }}>{c.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 3 }}>
+                <div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: c.color }}>{c.name}</div>
+                  <div style={{ fontSize: 9, color: '#8BA3B8', fontStyle: 'italic' }}>{c.sub}</div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, lineHeight: 1, color: c.color }}>{c.count}</div>
+                  <div style={{ fontSize: 9, color: '#8BA3B8' }}>{c.unit}</div>
+                </div>
               </div>
+              <div style={{ fontSize: 9.5, color: '#8BA3B8', lineHeight: 1.4, marginBottom: 5 }}>{c.role}</div>
+              <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 8.5, padding: '2px 7px', borderRadius: 5, fontWeight: 700, background: c.badge.bg, color: c.badge.color }}>{c.badge.label}</span>
             </div>
-            <div style={{ fontSize: 18, fontWeight: 800, lineHeight: 1, color: c.color }}>{c.count}</div>
-            <div style={{ fontSize: 10, color: '#8BA3B8' }}>{c.unit}</div>
-            <div style={{ fontSize: 10, color: '#8BA3B8', marginTop: 4, lineHeight: 1.4 }}>{c.role}</div>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 700, marginTop: 5, background: c.badge.bg, color: c.badge.color }}>{c.badge.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Donut chart + legend */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, paddingTop: 4, borderTop: '1px solid #163455' }}>
-        <svg width="68" height="68" viewBox="0 0 68 68" style={{ flexShrink: 0 }}>
-          <circle cx="34" cy="34" r="26" fill="none" stroke="#00C896" strokeWidth="12" strokeDasharray="81 163" strokeDashoffset="0" transform="rotate(-90 34 34)" />
-          <circle cx="34" cy="34" r="26" fill="none" stroke="#FF8C69" strokeWidth="12" strokeDasharray="54 163" strokeDashoffset="-81" transform="rotate(-90 34 34)" />
-          <circle cx="34" cy="34" r="26" fill="none" stroke="#C8A87A" strokeWidth="12" strokeDasharray="28 163" strokeDashoffset="-135" transform="rotate(-90 34 34)" />
-          <circle cx="34" cy="34" r="18" fill="#071A2E" />
-          <text x="34" y="31" textAnchor="middle" fontSize="8" fill="#E0EAF4" fontWeight="700">3:2:1</text>
-          <text x="34" y="41" textAnchor="middle" fontSize="7" fill="#8BA3B8">current</text>
-        </svg>
-        <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.6 }}>
-          <div><span style={{ color: '#00C896' }}>●</span> Tilapia 50%</div>
-          <div><span style={{ color: '#FF8C69' }}>●</span> Salmon 33%</div>
-          <div><span style={{ color: '#C8A87A' }}>●</span> Oyster 17%</div>
-          <div style={{ marginTop: 3, fontSize: 10, color: '#FF6B6B' }}>Target: add seaweed</div>
-        </div>
+      {/* Daily nitrogen budget */}
+      <div style={{ paddingTop: 8, borderTop: '1px solid #163455', fontSize: 9.5, color: '#8BA3B8', lineHeight: 1.7 }}>
+        <div style={{ color: '#CBD5E1', fontWeight: 600, marginBottom: 2, fontSize: 10 }}>Daily N Budget</div>
+        <div><span style={{ color: '#EF4444' }}>▲ Input:</span> ~15.6 g TAN/day (fish 11.4 + feed waste 4.2)</div>
+        <div><span style={{ color: '#EF4444' }}>▼ Removal:</span> ~130 g N/day at 34% Sargassum capacity</div>
+        <div><span style={{ color: '#EF4444' }}>⚠ Surplus:</span> ~214 g N/day accumulating as nitrate-N</div>
       </div>
     </div>
   );
@@ -251,214 +258,218 @@ function TrophicBalance() {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function StockingTab({ latestReading, recommendations, initialStockingDensity }: StockingTabProps) {
-  if (!latestReading) {
-    return (
-      <div style={{ color: '#6B8FAF', fontSize: 13, textAlign: 'center', padding: 40 }}>
-        No sensor data available. Log a reading in the Risk tab first.
-      </div>
-    );
-  }
-
-  const { dissolvedOxygen, phosphorus, nitrogen, stockingDensity } = latestReading;
-
-  const nutrientStatus =
-    phosphorus > 0.2 || nitrogen > 5 ? { label: 'Critical', color: '#EF4444' }
-    : phosphorus > 0.1 || nitrogen > 2 ? { label: 'Elevated', color: '#F59E0B' }
-    : { label: 'Normal', color: '#00C896' };
-
-  const doStatus = dissolvedOxygen >= 5 ? { label: 'Good',     color: '#00C896' }
-    : dissolvedOxygen >= 4             ? { label: 'Moderate', color: '#F59E0B' }
-    :                                    { label: 'Low',      color: '#EF4444' };
-
-  const densityStatus = stockingDensity > 40 ? { label: 'High',     color: '#EF4444' }
-    : stockingDensity > 25                   ? { label: 'Moderate', color: '#F59E0B' }
-    :                                          { label: 'Normal',   color: '#00C896' };
 
   return (
     <div>
-      {/* Subtitle */}
-      <div style={{ color: '#8BA3B8', fontSize: 12, marginBottom: 14 }}>
-        IMTA framework · Current density: {stockingDensity} fish/m³
-      </div>
-
       {/* TOP GRID: Farm SVG + Trophic Balance */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
-        {/* IMTA Farm Layout */}
         <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14 }}>
-          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>IMTA Farm Layout</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>IMTA Farm Layout — 3.8 ha · 4 Net Cages · 800 m³</div>
           <ImtaFarmSVG />
         </div>
-
-        {/* Trophic Balance */}
         <TrophicBalance />
       </div>
 
-      {/* Key Row */}
+      {/* Legend row */}
       <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14, marginBottom: 12, display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#C8D8E8', padding: '0 16px', borderRight: '1px solid #163455', whiteSpace: 'nowrap' }}>
           <div style={{ width: 32, height: 0, borderTop: '2px dashed #F4D03F', flexShrink: 0 }} />
           <span>💩 Organic waste</span>
-          <span style={{ fontSize: 10, color: '#8BA3B8' }}>Fish → oysters</span>
+          <span style={{ fontSize: 10, color: '#8BA3B8' }}>Snapper → oysters</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 11, color: '#C8D8E8', padding: '0 16px', borderRight: '1px solid #163455', whiteSpace: 'nowrap' }}>
           <div style={{ width: 32, height: 0, borderTop: '2px dashed #2ECC71', flexShrink: 0 }} />
           <span>🌿 Dissolved nutrients</span>
-          <span style={{ fontSize: 10, color: '#8BA3B8' }}>Fish → seaweed</span>
+          <span style={{ fontSize: 10, color: '#8BA3B8' }}>Water → Sargassum</span>
         </div>
         <div style={{ marginLeft: 'auto', fontSize: 11, color: '#C8D8E8', paddingLeft: 16, whiteSpace: 'nowrap' }}>
-          ⚠️ Problem zones <span style={{ color: '#FF6B6B', fontWeight: 700 }}>glow red</span>
+          ⚠️ Zone 4 corridor <span style={{ color: '#EF4444', fontWeight: 700 }}>no oyster filtration</span>
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* Stats row — case study water quality */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
         <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: densityStatus.color }}>{stockingDensity}</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>fish / m³ (current)</div>
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 4, fontWeight: 600, background: densityStatus.color + '22', color: densityStatus.color }}>{densityStatus.label}</span>
-        </div>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#CBD5E1' }}>{initialStockingDensity}</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>fish / m³ (initial)</div>
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 4, fontWeight: 600, background: '#163455', color: '#6B8FAF' }}>Baseline</span>
-        </div>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: doStatus.color }}>{dissolvedOxygen}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>4.2</div>
           <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — DO</div>
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 4, fontWeight: 600, background: doStatus.color + '22', color: doStatus.color }}>{doStatus.label}</span>
+          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Target ≥ 6.0</div>
+          {paramBar(4.2, 10, '#EF4444')}
+          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>Critical</span>
         </div>
         <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: nutrientStatus.color }}>P+N</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>Phosphorus + Nitrogen</div>
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 4, fontWeight: 600, background: nutrientStatus.color + '22', color: nutrientStatus.color }}>{nutrientStatus.label}</span>
+          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>0.48</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — TAN</div>
+          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Safe &lt; 0.10</div>
+          {paramBar(0.48, 0.6, '#EF4444')}
+          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>4.8× threshold</span>
+        </div>
+        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
+          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#F59E0B' }}>3.8</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — Nitrate-N</div>
+          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Target &lt; 2.0</div>
+          {paramBar(3.8, 6, '#F59E0B')}
+          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#F59E0B22', color: '#F59E0B' }}>Elevated</span>
+        </div>
+        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
+          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>2.14</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8' }}>FCR current</div>
+          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Baseline 1.58</div>
+          {paramBar(2.14, 3, '#EF4444')}
+          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>35% decline</span>
         </div>
       </div>
 
-      {/* Analysis Grid */}
+      {/* Analysis grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
 
-        {/* Parameter Analysis */}
+        {/* System Failure Analysis */}
         <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14 }}>
-          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>Parameter → Root Cause</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>System Failure Analysis</div>
 
           {/* Column headers */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, marginBottom: 6, padding: '0 0 4px', borderBottom: '1px solid #163455' }}>
-            {['Parameter', 'Current', 'Change', 'Why'].map((h) => (
-              <div key={h} style={{ fontSize: 9, color: '#6B8FAF', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700 }}>{h}</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, marginBottom: 6, padding: '0 0 4px', borderBottom: '1px solid #163455' }}>
+            {['Parameter', 'Design / Current', 'Gap'].map((h) => (
+              <div key={h} style={{ fontSize: 9, color: '#6B8FAF', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700 }}>{h}</div>
             ))}
           </div>
 
-          {/* N row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
+          {/* Row 1: Sargassum N uptake */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🟡 N</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: excess fish feed input</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#F59E0B' }}>{nitrogen} mg/L</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Elevated</div>
-              {paramBar(nitrogen, 6, '#F59E0B')}
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>🌿 Sargassum N uptake</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Inorganic extractive layer</div>
             </div>
             <div>
-              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>↓ Reduce daily feed ration</div>
-              <div style={{ fontSize: 9, color: '#00C896', marginTop: 2 }}>Saves PHP 280/day</div>
+              <div style={{ fontSize: 10, color: '#00C896' }}>Design: 344 g N/day</div>
+              <div style={{ fontSize: 10, color: '#EF4444', marginTop: 2 }}>Actual: ~130 g N/day</div>
             </div>
-            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
-              Overfeeding is the primary DIN source; cutting it reduces dissolved inorganic nitrogen across all trophic layers
-            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>214 g/day unprocessed — accumulating as nitrate</div>
           </div>
 
-          {/* P row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
+          {/* Row 2: Oyster coverage */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🟡 P</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: vacant longline — no oyster filtration</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#F59E0B' }}>{phosphorus} mg/L</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Elevated</div>
-              {paramBar(phosphorus, 0.3, '#F59E0B')}
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🦪 Oyster coverage</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Organic filtration zone</div>
             </div>
             <div>
-              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>→ Redistribute oysters to fill empty longlines</div>
-              <div style={{ fontSize: 9, color: '#00C896', marginTop: 2 }}>No extra cost · 2–3 days</div>
+              <div style={{ fontSize: 10, color: '#00C896' }}>Design: 100%</div>
+              <div style={{ fontSize: 10, color: '#F59E0B', marginTop: 2 }}>Actual: ~75%</div>
             </div>
-            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
-              Oysters are the organic extractive layer; an unmanned corridor lets particulate P accumulate unchecked
-            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Zone 4 (200 m³) zero filtration since Q3 2024</div>
           </div>
 
-          {/* DO row */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 4, padding: '8px 0', alignItems: 'start' }}>
+          {/* Row 3: Uneaten feed */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>🔴 DO</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Root cause: seaweed longlines depleted (5 ropes)</div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 600, color: '#EF4444' }}>{dissolvedOxygen} mg/L</div>
-              <div style={{ fontSize: 9, color: '#8BA3B8', marginTop: 2 }}>Critical</div>
-              {paramBar(dissolvedOxygen, 10, '#EF4444')}
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>🍖 Uneaten feed</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Organic load input</div>
             </div>
             <div>
-              <div style={{ fontSize: 10, color: '#CBD5E1', lineHeight: 1.4 }}>↑ Reseed 5 ropes with S. hemiphyllum</div>
-              <div style={{ fontSize: 9, color: '#F59E0B', marginTop: 2 }}>PHP 21,000 total (USD 365)</div>
+              <div style={{ fontSize: 10, color: '#00C896' }}>Design: &lt;1.2 kg/day</div>
+              <div style={{ fontSize: 10, color: '#F59E0B', marginTop: 2 }}>Actual: ~2.8 kg/day</div>
             </div>
-            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>
-              Seaweed is the inorganic extractive layer; without it, photosynthetic O₂ production collapses and eutrophication accelerates
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>+1.6 kg/day excess beyond system capacity</div>
+          </div>
+
+          {/* Row 4: FCR */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, padding: '8px 0', borderBottom: '1px solid #163455', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>🐠 Snapper FCR</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Feed conversion ratio</div>
             </div>
+            <div>
+              <div style={{ fontSize: 10, color: '#00C896' }}>Baseline: 1.58</div>
+              <div style={{ fontSize: 10, color: '#EF4444', marginTop: 2 }}>Current: 2.14</div>
+            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>35% decline — sub-clinical chronic stress across cohort</div>
+          </div>
+
+          {/* Row 5: TAN */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr', gap: 4, padding: '8px 0', alignItems: 'start' }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>⚗️ TAN</div>
+              <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>Total ammonia nitrogen</div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: '#00C896' }}>Safe: &lt;0.10 mg/L</div>
+              <div style={{ fontSize: 10, color: '#EF4444', marginTop: 2 }}>Current: 0.48 mg/L</div>
+            </div>
+            <div style={{ fontSize: 9, color: '#8BA3B8', lineHeight: 1.4 }}>4.8× threshold · NH₃ fraction at gill-damage level (pH 8.0, 29.6°C)</div>
           </div>
         </div>
 
         {/* Recommendations */}
         <div style={{ background: '#0D2440', borderRadius: 12, border: '1px solid #163455', padding: 14 }}>
-          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>Recommendations</div>
+          <div style={{ fontSize: 10, color: '#8BA3B8', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10, fontWeight: 600 }}>Corrective Action Plan</div>
 
-          {/* Recommendation 1: Reduce feed ration */}
+          {/* Rec 1: Reduce snapper density */}
           <div style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid #163455' }}>
-            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#EF4444' }}>↓</div>
+            <div style={{ fontSize: 18, width: 26, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#EF4444', fontWeight: 700 }}>↓</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>Reduce daily feed ration</div>
-              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
-                Overfeeding is the primary dissolved inorganic nitrogen (DIN) source. Cutting input reduces the N load propagating across the IMTA system.
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 3 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444' }}>Reduce snapper density 25%</div>
+                <span style={{ fontSize: 8, padding: '1px 5px', borderRadius: 4, fontWeight: 700, background: '#EF444422', color: '#EF4444', whiteSpace: 'nowrap' }}>48 h</span>
               </div>
-              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>Saves PHP 280/day · Offsets germling cost in ~75 days</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                3,200 → 2,400 individuals · 4.0 → 3.0 fish/m³ (optimal). Removes 800 fish (~306 kg, avg 382 g) from Cage 4 and upper size quartile. TAN excretion drops 11.4 → 8.6 g/day.
+              </div>
+              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>TAN below 0.10 mg/L within 18–22 days of intervention</div>
               <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#FF6B6B22', color: '#FF6B6B' }}>
-                High priority · Targets: N
+                Critical · Targets: TAN, FCR
               </span>
             </div>
           </div>
 
-          {/* Recommendation 2: Redistribute oysters */}
+          {/* Rec 2: Increase oysters */}
           <div style={{ display: 'flex', gap: 10, padding: '8px 0', borderBottom: '1px solid #163455' }}>
-            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#F59E0B' }}>→</div>
+            <div style={{ fontSize: 18, width: 26, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#F59E0B', fontWeight: 700 }}>+</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B', marginBottom: 2 }}>Redistribute oysters to vacant longline corridor</div>
-              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
-                Unmanned longlines allow particulate phosphorus to accumulate. Oyster (Crassostrea) redistribution restores the organic extractive layer at no extra procurement cost.
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 3 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#F59E0B' }}>Increase oysters 25%</div>
+                <span style={{ fontSize: 8, padding: '1px 5px', borderRadius: 4, fontWeight: 700, background: '#F59E0B22', color: '#F59E0B', whiteSpace: 'nowrap' }}>3 weeks</span>
               </div>
-              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>No additional cost · 2–3 working days · Uses existing banca boats</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                24,000 → 30,000 C. hongkongensis. Add 6,000 spat-on-shell (15–20 mm) from Lingayen or Bolinao (~45 km). Populate Zone 4 first (4 longlines × 1,500). Reaches 100% zone coverage and ~72,000 L/hr filtration.
+              </div>
+              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>6–8 weeks to functional capacity · breaks Zone 4 re-filtration pattern</div>
               <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#F4D03F22', color: '#F4D03F' }}>
-                Medium priority · Targets: P
+                Moderate · Targets: organic filtration, phosphate
               </span>
             </div>
           </div>
 
-          {/* Recommendation 3: Reseed seaweed */}
+          {/* Rec 3: Rehabilitate Sargassum */}
           <div style={{ display: 'flex', gap: 10, padding: '8px 0' }}>
-            <div style={{ fontSize: 20, width: 28, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#EF4444' }}>↑</div>
+            <div style={{ fontSize: 18, width: 26, textAlign: 'center', flexShrink: 0, marginTop: 1, color: '#2ECC71', fontWeight: 700 }}>↑</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#EF4444', marginBottom: 2 }}>Reseed 5 ropes with S. hemiphyllum germlings</div>
-              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
-                Depleted seaweed longlines collapse photosynthetic O₂ production, causing the DO deficit. Certified S. hemiphyllum germlings from the BFAR hatchery at Dagupan restore the inorganic extractive layer.
+              <div style={{ display: 'flex', gap: 6, alignItems: 'center', marginBottom: 3 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#2ECC71' }}>Rehabilitate S. hemiphyllum +60%</div>
+                <span style={{ fontSize: 8, padding: '1px 5px', borderRadius: 4, fontWeight: 700, background: '#2ECC7122', color: '#2ECC71', whiteSpace: 'nowrap' }}>48 h</span>
               </div>
-              <div style={{ fontSize: 10, color: '#F59E0B', marginBottom: 4 }}>PHP 4,200/rope · PHP 21,000 total (≈ USD 365)</div>
+              <div style={{ fontSize: 11, color: '#8BA3B8', lineHeight: 1.45, marginBottom: 4 }}>
+                176 → 480 kg functional biomass. Ropes 1–3 (&lt;35% fouling): manual epiphyte removal → ~130 kg recovery. Ropes 4–8 (&gt;60% fouling, necrotic): strip + reseed with BFAR-certified germlings at 70 kg/rope → ~350 kg new stock.
+              </div>
+              <div style={{ fontSize: 10, color: '#F59E0B', marginBottom: 2 }}>PHP 4,200/rope × 5 ropes = PHP 21,000 (≈ USD 365)</div>
+              <div style={{ fontSize: 10, color: '#00C896', marginBottom: 4 }}>PHP 280/day feed saving offsets cost in ~75 days · N extraction ≥394 g/day at Week 8</div>
               <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, fontWeight: 600, background: '#FF6B6B22', color: '#FF6B6B' }}>
-                High priority · Targets: DO
+                Critical · Targets: N, DO, nitrate
               </span>
             </div>
           </div>
         </div>
 
+      </div>
+
+      {/* 8-week projected outcome */}
+      <div style={{ background: '#071A2E', borderRadius: 10, border: '1px solid #2ECC7130', padding: '12px 16px', marginTop: 12 }}>
+        <div style={{ fontSize: 10, color: '#2ECC71', textTransform: 'uppercase', letterSpacing: '0.07em', fontWeight: 600, marginBottom: 6 }}>Projected System State · Week 8 Post-Intervention</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, fontSize: 10, color: '#8BA3B8', lineHeight: 1.6 }}>
+          <div><span style={{ color: '#FF6040', fontWeight: 600 }}>Snapper</span><br />2,400 ind. · 3.0 fish/m³<br />TAN ~8.6 g/day</div>
+          <div><span style={{ color: '#C8A87A', fontWeight: 600 }}>Oysters</span><br />30,000 ind. · 100% zones<br />~68,000 L/hr filtration</div>
+          <div><span style={{ color: '#2ECC71', fontWeight: 600 }}>Sargassum</span><br />~480 kg functional<br />~394 g N/day removal</div>
+          <div><span style={{ color: '#00C896', fontWeight: 600 }}>Water Quality</span><br />TAN &lt;0.10 by Day 22<br />Nitrate-N toward 2.0 mg/L</div>
+        </div>
       </div>
     </div>
   );
