@@ -3,8 +3,7 @@
 import { useState, useMemo } from 'react';
 import { SensorReading, WQIScore, Farm, LabelScore } from '@/types';
 import { scoreEcoLabels } from '@/lib/eco-label-scoring';
-import { LATEST_READING } from '@/lib/cci-data';
-import { calculateCCI, CCI_WEIGHTS, ASC_THRESHOLD } from '@/lib/cci-calculator';
+import { calculateCCI, CCI_WEIGHTS, ASC_THRESHOLD, nMgLToScore, pMgLToScore, doMgLToScore } from '@/lib/cci-calculator';
 
 const CARD   = '#0D2440';
 const BG     = '#071A2E';
@@ -28,8 +27,13 @@ interface Props {
   farm: Farm;
 }
 
-function CCIEligibilityWidget() {
-  const { nScore, pScore, doScore } = LATEST_READING;
+interface CCIWidgetProps {
+  nScore: number;
+  pScore: number;
+  doScore: number;
+}
+
+function CCIEligibilityWidget({ nScore, pScore, doScore }: CCIWidgetProps) {
   const cci = calculateCCI(nScore, pScore, doScore);
   const nComp  = parseFloat((CCI_WEIGHTS.n  * nScore).toFixed(1));
   const pComp  = parseFloat((CCI_WEIGHTS.p  * pScore).toFixed(1));
@@ -159,6 +163,10 @@ function CCIEligibilityWidget() {
 }
 
 export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
+  const liveNScore  = latestReading ? nMgLToScore(latestReading.nitrogen)         : 0;
+  const livePScore  = latestReading ? pMgLToScore(latestReading.phosphorus)       : 0;
+  const liveDOScore = latestReading ? doMgLToScore(latestReading.dissolvedOxygen) : 0;
+
   const labels = useMemo(
     () => scoreEcoLabels(latestReading, wqi, farm),
     [latestReading, wqi, farm],
@@ -204,7 +212,7 @@ export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
       </div>
 
       {/* CCI Eligibility Widget */}
-      <CCIEligibilityWidget />
+      <CCIEligibilityWidget nScore={liveNScore} pScore={livePScore} doScore={liveDOScore} />
 
       {/* Discover Panel */}
       {discoverOpen && (
