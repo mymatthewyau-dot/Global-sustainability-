@@ -290,10 +290,12 @@ export default function StockingTab({ latestReading, recommendations, initialSto
       {/* Stats row — case study water quality */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
         <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>4.2</div>
+          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>
+            {latestReading?.dissolvedOxygen ?? 5}
+          </div>
           <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — DO</div>
           <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Target ≥ 6.0</div>
-          {paramBar(4.2, 10, '#EF4444')}
+          {paramBar(latestReading?.dissolvedOxygen ?? 5, 10, '#EF4444')}
           <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>Critical</span>
         </div>
         <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
