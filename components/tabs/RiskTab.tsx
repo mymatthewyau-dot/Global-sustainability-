@@ -383,6 +383,19 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </div>
       </div>
 
+      {/* Alerts */}
+      {dangerAlerts.length > 0 && (
+        <div style={{ marginBottom: 14 }}>
+          <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>Alerts</div>
+          {dangerAlerts.map((a) => (
+            <div key={a.title} style={{ background: '#1A0D0D', border: '1px solid #3B1515', borderRadius: 12, padding: '14px 18px', marginBottom: 8 }}>
+              <div style={{ color: '#EF4444', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{a.title}</div>
+              <div style={{ color: '#9CA3AF', fontSize: 12 }}>{a.msg}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Eutrophication Risk */}
       <div style={{ background: '#0D2440', borderRadius: 12, padding: 18, border: '1px solid #163455', marginBottom: 14 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
@@ -510,34 +523,6 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
         </div>
       </div>
 
-      {/* Alerts */}
-      <div>
-        <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 10 }}>Alerts</div>
-        {dangerAlerts.map((a) => (
-          <div key={a.title} style={{ background: '#1A0D0D', border: '1px solid #3B1515', borderRadius: 12, padding: '14px 18px', marginBottom: 8 }}>
-            <div style={{ color: '#EF4444', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>{a.title}</div>
-            <div style={{ color: '#9CA3AF', fontSize: 12 }}>{a.msg}</div>
-          </div>
-        ))}
-        {latestReading.dissolvedOxygen >= 6 && (
-          <div style={{ background: '#0A1F15', border: '1px solid #0A3320', borderRadius: 12, padding: '14px 18px', marginBottom: 8 }}>
-            <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ DO Levels Normal</div>
-            <div style={{ color: '#9CA3AF', fontSize: 12 }}>Dissolved oxygen within normal range (≥ 6 mg/L). No aeration action needed.</div>
-          </div>
-        )}
-        {wqi && wqi.overall >= 90 && (
-          <div style={{ background: '#0A1F15', border: '1px solid #0A3320', borderRadius: 12, padding: '14px 18px', marginBottom: 8 }}>
-            <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ Excellent Water Quality</div>
-            <div style={{ color: '#9CA3AF', fontSize: 12 }}>WQI score of {wqi.overall} — all parameters in optimal range.</div>
-          </div>
-        )}
-        {dangerAlerts.length === 0 && (!wqi || wqi.overall < 90) && latestReading.dissolvedOxygen >= 6 && (
-          <div style={{ background: '#0A1F15', border: '1px solid #0A3320', borderRadius: 12, padding: '14px 18px' }}>
-            <div style={{ color: '#00C896', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>✓ No Critical Alerts</div>
-            <div style={{ color: '#9CA3AF', fontSize: 12 }}>All parameters are within acceptable ranges. Continue monitoring.</div>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
