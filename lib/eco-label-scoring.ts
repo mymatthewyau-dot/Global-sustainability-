@@ -1,4 +1,5 @@
-import { SensorReading, WQIScore, Farm, LabelScore } from '@/types';
+import { SensorReading, Farm, LabelScore } from '@/types';
+import { nMgLToScore, pMgLToScore, doMgLToScore, EUTROPHICATION_WEIGHTS } from './cci-calculator';
 
 function daysSince(isoDate: string): number {
   return Math.floor((Date.now() - new Date(isoDate).getTime()) / 86_400_000);
@@ -6,11 +7,20 @@ function daysSince(isoDate: string): number {
 
 export function scoreEcoLabels(
   reading: SensorReading | null,
-  wqi: WQIScore | null,
   farm: Farm,
 ): LabelScore[] {
   const imtaDays = daysSince(farm.imtaStartDate);
-  const wqiScore = wqi?.overall ?? 0;
+  const eutrComposite = (() => {
+    if (!reading) return 0;
+    const nScore  = nMgLToScore(reading.nitrogen);
+    const pScore  = pMgLToScore(reading.phosphorus);
+    const doScore = doMgLToScore(reading.dissolvedOxygen);
+    return Math.round(
+      EUTROPHICATION_WEIGHTS.p  * pScore  +
+      EUTROPHICATION_WEIGHTS.n  * nScore  +
+      EUTROPHICATION_WEIGHTS.do * doScore,
+    );
+  })();
   const do_ = reading?.dissolvedOxygen ?? 0;
   const p = reading?.phosphorus ?? 0;
   const n = reading?.nitrogen ?? 0;
@@ -28,11 +38,11 @@ export function scoreEcoLabels(
     annualAudit: 900,
     criteria: [
       {
-        name: 'Water Quality Baseline',
-        met: wqiScore >= 70,
-        detail: wqiScore >= 70
-          ? `WQI ${wqiScore} ≥ 70 — sustained baseline confirmed`
-          : `WQI ${wqiScore} below required 70`,
+        name: 'Eutrophication Score ≥ 55',
+        met: eutrComposite >= 55,
+        detail: eutrComposite >= 55
+          ? `Eutrophication score ${eutrComposite} — low-to-medium risk confirmed`
+          : `Eutrophication score ${eutrComposite} — below required 55 (current: Critical Risk)`,
       },
       {
         name: 'Dissolved Oxygen ≥ 5 mg/L',
@@ -90,11 +100,11 @@ export function scoreEcoLabels(
           : 'No readings logged yet',
       },
       {
-        name: 'WQI ≥ 60',
-        met: wqiScore >= 60,
-        detail: wqiScore >= 60
-          ? `WQI ${wqiScore} meets minimum`
-          : `WQI ${wqiScore} below required 60`,
+        name: 'Eutrophication Score ≥ 45',
+        met: eutrComposite >= 45,
+        detail: eutrComposite >= 45
+          ? `Eutrophication score ${eutrComposite} — meets minimum threshold`
+          : `Eutrophication score ${eutrComposite} — below required 45`,
       },
       {
         name: 'DO ≥ 4 mg/L',
@@ -141,11 +151,11 @@ export function scoreEcoLabels(
     annualAudit: 400,
     criteria: [
       {
-        name: 'WQI ≥ 80',
-        met: wqiScore >= 80,
-        detail: wqiScore >= 80
-          ? `WQI ${wqiScore} meets high standard`
-          : `WQI ${wqiScore} below required 80`,
+        name: 'Eutrophication Score ≥ 65',
+        met: eutrComposite >= 65,
+        detail: eutrComposite >= 65
+          ? `Eutrophication score ${eutrComposite} — meets high standard`
+          : `Eutrophication score ${eutrComposite} — below required 65 (high-standard farms only)`,
       },
       {
         name: 'Low Stocking Density (≤ 25 fish/m³)',

@@ -158,7 +158,6 @@ function DashboardContent() {
         {activeTab === 'Eco-label' && (
           <EcoLabelTab
             latestReading={latestReading}
-            wqi={wqi}
             farm={farm}
           />
         )}

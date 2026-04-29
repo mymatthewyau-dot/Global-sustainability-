@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { SensorReading, WQIScore, Farm, LabelScore } from '@/types';
+import { SensorReading, Farm, LabelScore } from '@/types';
 import { scoreEcoLabels } from '@/lib/eco-label-scoring';
 import { calculateCCI, CCI_WEIGHTS, ASC_THRESHOLD, nMgLToScore, pMgLToScore, doMgLToScore } from '@/lib/cci-calculator';
 
@@ -23,7 +23,6 @@ function scoreColor(score: number): string {
 
 interface Props {
   latestReading: SensorReading | null;
-  wqi: WQIScore | null;
   farm: Farm;
 }
 
@@ -161,7 +160,7 @@ function CCIEligibilityWidget({ nScore, pScore, doScore }: CCIWidgetProps) {
   );
 }
 
-export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
+export default function EcoLabelTab({ latestReading, farm }: Props) {
   const { liveNScore, livePScore, liveDOScore } = useMemo(() => ({
     liveNScore:  latestReading ? nMgLToScore(latestReading.nitrogen)         : 0,
     livePScore:  latestReading ? pMgLToScore(latestReading.phosphorus)       : 0,
@@ -169,8 +168,8 @@ export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
   }), [latestReading]);
 
   const labels = useMemo(
-    () => scoreEcoLabels(latestReading, wqi, farm),
-    [latestReading, wqi, farm],
+    () => scoreEcoLabels(latestReading, farm),
+    [latestReading, farm],
   );
 
   const [discoverOpen, setDiscoverOpen] = useState(true);
