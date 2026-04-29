@@ -224,7 +224,7 @@ export default function EcoLabelTab({ latestReading, farm }: Props) {
           <div style={{ background: BG, border: `1px solid ${BORDER}`, borderRadius: 8, padding: '10px 12px', marginBottom: 12, display: 'flex', gap: 8, alignItems: 'flex-start' }}>
             <div style={{ color: GREEN, fontSize: 14, flexShrink: 0 }}>◎</div>
             <div style={{ color: MUTED, fontSize: 11, lineHeight: 1.6 }}>
-              Scores are calculated live from your <strong style={{ color: '#CBD5E1' }}>current WQI</strong>, <strong style={{ color: '#CBD5E1' }}>water parameters</strong>, and <strong style={{ color: '#CBD5E1' }}>IMTA duration</strong>.
+              Scores are calculated live from your <strong style={{ color: '#CBD5E1' }}>eutrophication composite score</strong>, <strong style={{ color: '#CBD5E1' }}>water parameters</strong>, and <strong style={{ color: '#CBD5E1' }}>IMTA duration</strong>.
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
