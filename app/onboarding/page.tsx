@@ -1,195 +1,84 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { db, id } from '@/lib/instant';
 
-export default function OnboardingPage() {
-  const [farmName, setFarmName] = useState('');
-  const [location, setLocation] = useState('');
-  const [imtaStartDate, setImtaStartDate] = useState('');
-  const [initialStockingDensity, setInitialStockingDensity] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const router = useRouter();
+const DEMO_FARM = {
+  name: 'Barangay Lucap IMTA Site',
+  location: 'Lingayen Gulf, Philippines',
+  imtaStartDate: new Date('2026-04-01').getTime(),
+  initialStockingDensity: 4,
+};
 
+const DEMO_READING = {
+  dissolvedOxygen: 5,
+  phosphorus: 0.175,
+  nitrogen: 0.4,
+  stockingDensity: 4,
+};
+
+export default function OnboardingPage() {
+  const router = useRouter();
+  const [error, setError] = useState('');
   const { isLoading: authLoading, user } = db.useAuth();
 
-  // Check if user already has a farm
-  const farmQuery = user
-    ? {
-        farms: {
-          $: {
-            where: {
-              ownerId: user.id,
-            },
-          },
-        },
-      }
-    : null;
-  
-  const { data: farmData, isLoading: farmLoading } = db.useQuery(farmQuery as any) as { 
-    data?: { farms?: any[] }; 
-    isLoading: boolean; 
+  const farmQuery = user ? { farms: { $: { where: { ownerId: user.id } } } } : null;
+  const { data: farmData, isLoading: farmLoading } = db.useQuery(farmQuery as any) as {
+    data?: { farms?: any[] };
+    isLoading: boolean;
   };
 
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/auth');
+      return;
     }
-  }, [user, authLoading, router]);
-
-  useEffect(() => {
     if (farmData?.farms && farmData.farms.length > 0) {
-      // User already has a farm, redirect to dashboard
       router.push('/');
+      return;
     }
-  }, [farmData, router]);
+    if (!user || farmLoading || farmData === undefined) return;
 
-  const handleCreateFarm = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    // No farm exists — auto-create demo farm + seed reading
+    const farmId = id();
+    const readingId = id();
+    db.transact([
+      (db.tx as any).farms[farmId].update({
+        ...DEMO_FARM,
+        createdAt: Date.now(),
+        ownerId: user.id,
+      }),
+      (db.tx as any).sensorReadings[readingId].update({
+        farmId,
+        timestamp: Date.now(),
+        ...DEMO_READING,
+        wqiScore: 0,
+      }),
+    ])
+      .then(() => router.push('/'))
+      .catch((err: any) => setError(err.message || 'Failed to set up demo farm.'));
+  }, [user, authLoading, farmData, farmLoading, router]);
 
-    try {
-      const now = Date.now();
-      const imtaTimestamp = new Date(imtaStartDate).getTime();
-
-      await db.transact([
-        (db.tx as any).farms[id()].update({
-          name: farmName,
-          location: location || undefined,
-          imtaStartDate: imtaTimestamp,
-          initialStockingDensity: parseFloat(initialStockingDensity),
-          createdAt: now,
-          ownerId: user!.id,
-        }),
-      ]);
-
-      // Redirect to dashboard
-      router.push('/');
-    } catch (err: any) {
-      setError(err.message || 'Failed to create farm. Please try again.');
-      setIsLoading(false);
-    }
-  };
-
-  if (authLoading || farmLoading) {
+  if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+          <p className="text-red-600 font-medium">{error}</p>
+          <button onClick={() => router.push('/auth')} className="mt-4 text-blue-600 underline text-sm">
+            Back to sign in
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="text-5xl mb-4">🏞️</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to IMTA Dashboard
-          </h1>
-          <p className="text-gray-600">
-            Let&apos;s set up your aquaculture farm profile
-          </p>
-        </div>
-
-        <form onSubmit={handleCreateFarm} className="space-y-4">
-          <div>
-            <label
-              htmlFor="farmName"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Farm Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="farmName"
-              type="text"
-              value={farmName}
-              onChange={(e) => setFarmName(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              placeholder="e.g., Green Valley Aquafarm"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Location <span className="text-gray-400">(optional)</span>
-            </label>
-            <input
-              id="location"
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              placeholder="e.g., Bali, Indonesia"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="imtaStartDate"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              IMTA Implementation Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="imtaStartDate"
-              type="date"
-              value={imtaStartDate}
-              onChange={(e) => setImtaStartDate(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              When did you start using Integrated Multi-Trophic Aquaculture?
-            </p>
-          </div>
-
-          <div>
-            <label
-              htmlFor="initialStockingDensity"
-              className="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Initial Stocking Density (rough estimate) <span className="text-red-500">*</span>
-            </label>
-            <input
-              id="initialStockingDensity"
-              type="number"
-              min="0"
-              step="0.1"
-              value={initialStockingDensity}
-              onChange={(e) => setInitialStockingDensity(e.target.value)}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              placeholder="e.g. 25"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Fish per cubic metre (m³) — a rough estimate is fine
-            </p>
-          </div>
-
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
-          >
-            {isLoading ? 'Creating Farm...' : 'Create Farm Profile'}
-          </button>
-        </form>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+        <p className="text-gray-600 text-sm">Setting up your dashboard…</p>
       </div>
     </div>
   );
 }
-
