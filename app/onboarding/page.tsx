@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { db, id } from '@/lib/instant';
 
@@ -21,6 +21,7 @@ const DEMO_READING = {
 export default function OnboardingPage() {
   const router = useRouter();
   const [error, setError] = useState('');
+  const hasCreated = useRef(false);
   const { isLoading: authLoading, user } = db.useAuth();
 
   const farmQuery = user ? { farms: { $: { where: { ownerId: user.id } } } } : null;
@@ -41,6 +42,8 @@ export default function OnboardingPage() {
     if (!user || farmLoading || farmData === undefined) return;
 
     // No farm exists — auto-create demo farm + seed reading
+    if (hasCreated.current) return;
+    hasCreated.current = true;
     const farmId = id();
     const readingId = id();
     db.transact([
