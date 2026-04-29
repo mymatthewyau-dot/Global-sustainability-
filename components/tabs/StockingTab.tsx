@@ -287,40 +287,6 @@ export default function StockingTab({ latestReading, recommendations, initialSto
         </div>
       </div>
 
-      {/* Stats row — case study water quality */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 12 }}>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>
-            {latestReading?.dissolvedOxygen ?? 5}
-          </div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — DO</div>
-          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Target ≥ 6.0</div>
-          {paramBar(latestReading?.dissolvedOxygen ?? 5, 10, '#EF4444')}
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>Critical</span>
-        </div>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>0.48</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — TAN</div>
-          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Safe &lt; 0.10</div>
-          {paramBar(0.48, 0.6, '#EF4444')}
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>4.8× threshold</span>
-        </div>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#F59E0B' }}>3.8</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>mg/L — Nitrate-N</div>
-          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Target &lt; 2.0</div>
-          {paramBar(3.8, 6, '#F59E0B')}
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#F59E0B22', color: '#F59E0B' }}>Elevated</span>
-        </div>
-        <div style={{ background: '#0D2440', borderRadius: 10, border: '1px solid #163455', padding: '10px 12px' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, lineHeight: 1, marginBottom: 2, color: '#EF4444' }}>2.14</div>
-          <div style={{ fontSize: 10, color: '#8BA3B8' }}>FCR current</div>
-          <div style={{ fontSize: 9, color: '#6B8FAF', marginTop: 1 }}>Baseline 1.58</div>
-          {paramBar(2.14, 3, '#EF4444')}
-          <span style={{ display: 'inline-block', fontSize: 9, padding: '2px 6px', borderRadius: 5, marginTop: 2, fontWeight: 600, background: '#EF444422', color: '#EF4444' }}>35% decline</span>
-        </div>
-      </div>
-
       {/* Analysis grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
 
