@@ -393,7 +393,7 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
           </div>
         </div>
         <div style={{ color: trophicColor, fontSize: 20, fontWeight: 700, marginBottom: 4 }}>{riskLabel}</div>
-        <div style={{ color: '#6B8FAF', fontSize: 11, marginBottom: 14 }}>Trophic State: <span style={{ color: trophicColor, fontWeight: 600 }}>{trophicState}</span></div>
+        <div style={{ color: '#6B8FAF', fontSize: 11, marginBottom: 14 }}>Trophic State: <span style={{ color: trophicColor, fontWeight: 600 }}>{trophicState === 'Oligotrophic' ? 'Low Risk' : trophicState === 'Mesotrophic' ? 'Medium Risk' : trophicState === 'Eutrophic' ? 'High Risk' : 'Critical Risk'}</span></div>
 
         {/* Gradient gauge */}
         <div style={{ position: 'relative', marginBottom: 10 }}>
@@ -401,24 +401,24 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
           <div style={{ position: 'absolute', top: '50%', left: `${thumbPct}%`, transform: 'translate(-50%,-50%)', width: 20, height: 20, background: trophicColor, borderRadius: '50%', border: '3px solid #FFFFFF', boxShadow: `0 0 10px ${trophicColor}88` }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-          <span style={{ fontSize: 10, color: '#00C896' }}>Oligotrophic</span>
-          <span style={{ fontSize: 10, color: '#3B82F6' }}>Mesotrophic</span>
-          <span style={{ fontSize: 10, color: '#F59E0B' }}>Eutrophic</span>
-          <span style={{ fontSize: 10, color: '#EF4444' }}>Hyper-eutrophic</span>
+          <span style={{ fontSize: 10, color: '#00C896' }}>Low Risk</span>
+          <span style={{ fontSize: 10, color: '#3B82F6' }}>Medium Risk</span>
+          <span style={{ fontSize: 10, color: '#F59E0B' }}>High Risk</span>
+          <span style={{ fontSize: 10, color: '#EF4444' }}>Critical Risk</span>
         </div>
 
         {/* Reference table */}
         <div style={{ background: '#071A2E', borderRadius: 8, padding: 12, marginBottom: 12 }}>
           <div style={{ color: '#6B8FAF', fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.2px', marginBottom: 8 }}>Reference Thresholds (weekly monitoring)</div>
           {[
-            { state: 'Oligotrophic',    n: '< 0.3 mg/L',   p: '< 0.008 mg/L',  cond: 'Clear, healthy water',        color: '#00C896' },
-            { state: 'Mesotrophic',     n: '0.3–0.5 mg/L', p: '~0.027 mg/L',   cond: 'Moderate nutrients, balanced', color: '#3B82F6' },
-            { state: 'Eutrophic',       n: '0.5–1.5 mg/L', p: '~0.084 mg/L',   cond: 'Algal blooms, O₂ depletion',  color: '#F59E0B' },
-            { state: 'Hyper-eutrophic', n: '> 1.5 mg/L',   p: '> 0.1 mg/L',    cond: 'Severe blooms, dead zones',   color: '#EF4444' },
+            { state: 'Low Risk',      n: '< 0.3 mg/L',   p: '< 0.008 mg/L',  cond: 'Clear, healthy water',        color: '#00C896', key: 'Oligotrophic' },
+            { state: 'Medium Risk',   n: '0.3–0.5 mg/L', p: '~0.027 mg/L',   cond: 'Moderate nutrients, balanced', color: '#3B82F6', key: 'Mesotrophic' },
+            { state: 'High Risk',     n: '0.5–1.5 mg/L', p: '~0.084 mg/L',   cond: 'Algal blooms, O₂ depletion',  color: '#F59E0B', key: 'Eutrophic' },
+            { state: 'Critical Risk', n: '> 1.5 mg/L',   p: '> 0.1 mg/L',    cond: 'Severe blooms, dead zones',   color: '#EF4444', key: 'Hyper-eutrophic' },
           ].map((row) => (
             <div key={row.state} style={{
               display: 'flex', alignItems: 'center', gap: 8, padding: '5px 0',
-              borderBottom: '1px solid #163455', opacity: row.state === trophicState ? 1 : 0.45,
+              borderBottom: '1px solid #163455', opacity: row.key === trophicState ? 1 : 0.45,
             }}>
               <div style={{ width: 3, height: 16, background: row.color, borderRadius: 2, flexShrink: 0 }} />
               <span style={{ color: row.color, fontSize: 9, fontWeight: 700, minWidth: 90 }}>{row.state}</span>

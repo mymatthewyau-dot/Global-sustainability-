@@ -1,0 +1,16 @@
+[      49ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[     418ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[     443ms] [LOG] [Fast Refresh] done in 394ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[     742ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/dashboard:0
+[    1109ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559
+[    1198ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib' @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[   87902ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559
+[   87984ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib' @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226

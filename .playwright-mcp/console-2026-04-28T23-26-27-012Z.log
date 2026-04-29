@@ -1,0 +1,48 @@
+[     438ms] [INFO] %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/compiled/react-dom/cjs/react-dom.development.js:38559
+[     531ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib' @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  106954ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[  107600ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  107701ms] [LOG] [Fast Refresh] done in 746ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[  112719ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[  112920ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  112936ms] [LOG] [Fast Refresh] done in 218ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[  117619ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[  117843ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  117863ms] [LOG] [Fast Refresh] done in 244ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[  122841ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[  123018ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  123033ms] [LOG] [Fast Refresh] done in 193ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43
+[  127213ms] [LOG] [Fast Refresh] rebuilding @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:186
+[  127318ms] [WARNING] ./lib/instantdb.ts
+Module not found: Can't resolve '@instantdb/admin' in '/Users/xena/Global-sustainability-/lib'
+
+Import trace for requested module:
+./lib/instantdb.ts
+./components/AuthProvider.tsx
+./components/SignUpForm.tsx @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:226
+[  127331ms] [LOG] [Fast Refresh] done in 118ms @ webpack-internal:///(app-pages-browser)/./node_modules/next/dist/client/components/react-dev-overlay/app/hot-reloader-client.js:43

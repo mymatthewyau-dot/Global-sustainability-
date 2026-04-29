@@ -1,0 +1,4 @@
+- generic [active]:
+  - button [ref=e1] [cursor=pointer]:
+    - img [ref=e2]
+  - alert [ref=e5]

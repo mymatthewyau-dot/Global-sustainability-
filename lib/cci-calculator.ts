@@ -54,10 +54,10 @@ export function getDOStatusColor(status: DOStatus): string {
 }
 
 export function getTrophicRiskLabel(state: TrophicState): string {
-  if (state === 'Oligotrophic')    return 'LOW RISK';
-  if (state === 'Mesotrophic')     return 'LOW-MODERATE RISK';
-  if (state === 'Eutrophic')       return 'MODERATE-HIGH RISK';
-  return 'HIGH RISK — ALGAL BLOOM LIKELY';
+  if (state === 'Oligotrophic') return 'LOW RISK';
+  if (state === 'Mesotrophic')  return 'MEDIUM RISK';
+  if (state === 'Eutrophic')    return 'HIGH RISK';
+  return 'CRITICAL RISK — ALGAL BLOOM LIKELY';
 }
 
 // Eutrophication risk weights: P primary (limiting nutrient), N secondary, DO consequence

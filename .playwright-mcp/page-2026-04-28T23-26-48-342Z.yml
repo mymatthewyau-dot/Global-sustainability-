@@ -1,0 +1,207 @@
+- generic [ref=e1]:
+  - button [ref=e2] [cursor=pointer]:
+    - img [ref=e3]
+  - alert [ref=e6]
+  - generic [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e11]: Overall Water Quality Index
+        - generic [ref=e12]: 87.5 / 100
+      - generic [ref=e13]:
+        - generic [ref=e16]: Connected
+        - generic [ref=e17]: Good
+        - generic [ref=e18]:
+          - generic [ref=e19]: xenachowht@gmail.com
+          - button "Sign Out" [ref=e20] [cursor=pointer]
+    - generic [ref=e21]:
+      - button "Eutrophication" [ref=e22] [cursor=pointer]
+      - button "Stocking" [ref=e23] [cursor=pointer]
+      - button "Eco-label" [active] [ref=e24] [cursor=pointer]
+    - generic [ref=e431]:
+      - generic [ref=e432]:
+        - generic [ref=e433]:
+          - generic [ref=e434]: Eco-label Progress
+          - generic [ref=e435]: Track your certification journey and unlock revenue premiums
+        - button "✦ Discover Labels" [ref=e436] [cursor=pointer]:
+          - generic [ref=e437]: ✦
+          - text: Discover Labels
+      - generic [ref=e438]:
+        - generic [ref=e439]:
+          - generic [ref=e440]:
+            - generic [ref=e441]:
+              - generic [ref=e442]: ♻ Circularity Index (CCI)
+              - generic [ref=e443]: ✓ Exceeds ASC Threshold
+            - generic [ref=e444]: "Weights: N=40% · P=35% · DO=25%"
+            - generic [ref=e445]:
+              - generic [ref=e446]:
+                - generic [ref=e449]: N (Nitrogen)
+                - generic [ref=e450]: 40% × 58
+                - generic [ref=e451]: = 23.2
+              - generic [ref=e452]:
+                - generic [ref=e455]: P (Phosphorus)
+                - generic [ref=e456]: 35% × 24
+                - generic [ref=e457]: = 8.4
+              - generic [ref=e458]:
+                - generic [ref=e461]: DO (Dissolved Oxygen)
+                - generic [ref=e462]: 25% × 78
+                - generic [ref=e463]: = 19.5
+              - generic [ref=e464]:
+                - generic [ref=e465]: 23.2 + 8.4 + 19.5
+                - generic [ref=e466]: = 51.1%
+            - generic [ref=e471]:
+              - generic [ref=e472]: 0%
+              - generic [ref=e473]:
+                - text: "ASC threshold:"
+                - strong [ref=e474]: 48%
+              - generic [ref=e475]: 100%
+          - generic [ref=e476]:
+            - generic [ref=e477]: Peak CCI
+            - generic [ref=e478]: 51.1%
+            - generic [ref=e479]: Winter/Spring
+            - generic [ref=e481]:
+              - text: ✓ Reliably exceeds 50%
+              - text: ✓ Exceeds 48% ASC Score 2 threshold
+        - generic [ref=e482]:
+          - generic [ref=e483]: 🏅
+          - generic [ref=e484]:
+            - generic [ref=e485]: Your farm is eligible to apply for an Eco-label
+            - generic [ref=e486]: CCI of 51.1% exceeds the ASC Score 2 threshold of 48%. Track your certification journey below.
+          - generic [ref=e487]: Start Application →
+      - generic [ref=e488]:
+        - generic [ref=e489]:
+          - generic [ref=e490]: ✦ Labels You Could Qualify For
+          - generic [ref=e491] [cursor=pointer]: ✕ close
+        - generic [ref=e492]:
+          - generic [ref=e493]: ◎
+          - generic [ref=e494]:
+            - text: Scores are calculated live from your
+            - strong [ref=e495]: current WQI
+            - text: ","
+            - strong [ref=e496]: water parameters
+            - text: ", and"
+            - strong [ref=e497]: IMTA duration
+            - text: .
+        - generic [ref=e498]:
+          - generic [ref=e499]:
+            - generic [ref=e500]: ASC
+            - generic [ref=e501]: Aquaculture Stewardship Council
+            - generic [ref=e505]: 50%
+            - generic [ref=e506]: 3 of 6 criteria met · Asia-Pacific
+            - generic [ref=e507]: Revenue premium
+            - generic [ref=e508]:
+              - text: +$12,400 / yr
+              - generic [ref=e509]: avg +18%
+            - button "✓ Tracking" [ref=e510] [cursor=pointer]
+          - generic [ref=e511]:
+            - generic [ref=e512]: GlobalG.A.P.
+            - generic [ref=e513]: Good Agricultural Practices
+            - generic [ref=e517]: 57%
+            - generic [ref=e518]: 4 of 7 criteria met · Global
+            - generic [ref=e519]: Revenue premium
+            - generic [ref=e520]:
+              - text: +$8,200 / yr
+              - generic [ref=e521]: avg +12%
+            - button "✓ Tracking" [ref=e522] [cursor=pointer]
+          - generic [ref=e523]:
+            - generic [ref=e524]: Friend of the Sea
+            - generic [ref=e525]: World Sustainability Organization
+            - generic [ref=e529]: 60%
+            - generic [ref=e530]: 3 of 5 criteria met · Global
+            - generic [ref=e531]: Revenue premium
+            - generic [ref=e532]:
+              - text: +$5,600 / yr
+              - generic [ref=e533]: avg +8%
+            - button "+ Add to my labels" [ref=e534] [cursor=pointer]
+      - generic [ref=e535]: Your Active Labels (2)
+      - generic [ref=e536]:
+        - generic [ref=e537] [cursor=pointer]:
+          - generic [ref=e539]: ASC
+          - generic [ref=e540]: Aquaculture Stewardship Council · Asia-Pacific
+          - generic [ref=e543]:
+            - generic [ref=e544]: 50%
+            - generic [ref=e545]: 3 of 6 criteria met
+        - generic [ref=e546] [cursor=pointer]:
+          - generic [ref=e547]: GlobalG.A.P.
+          - generic [ref=e548]: Good Agricultural Practices · Global
+          - generic [ref=e551]:
+            - generic [ref=e552]: 57%
+            - generic [ref=e553]: 4 of 7 criteria met
+        - generic [ref=e554] [cursor=pointer]:
+          - generic [ref=e555]: +
+          - generic [ref=e556]: Add label
+      - generic [ref=e558]:
+        - generic [ref=e559]:
+          - generic [ref=e560]: ASC Certification — Overall Progress
+          - generic [ref=e561]: 3 criteria met · 3 remaining · Est. completion ~6 weeks
+        - generic [ref=e562]: 50%
+      - generic [ref=e567]:
+        - generic [ref=e568]:
+          - generic [ref=e569]: Certification Journey · ASC
+          - generic [ref=e570]:
+            - generic [ref=e572]: ✓
+            - generic [ref=e574]:
+              - generic [ref=e575]: Water Quality Baseline
+              - generic [ref=e576]: WQI 87.5 ≥ 70 — sustained baseline confirmed
+              - generic [ref=e577]: Achieved
+          - generic [ref=e578]:
+            - generic [ref=e580]: ✓
+            - generic [ref=e582]:
+              - generic [ref=e583]: Dissolved Oxygen ≥ 5 mg/L
+              - generic [ref=e584]: DO 5 mg/L — within optimal range
+              - generic [ref=e585]: Achieved
+          - generic [ref=e586]:
+            - generic [ref=e588]: ✓
+            - generic [ref=e590]:
+              - generic [ref=e591]: Ammonia / Nitrogen Control
+              - generic [ref=e592]: Nitrogen 0.4 mg/L — TAN under control
+              - generic [ref=e593]: Achieved
+          - generic [ref=e599]:
+            - generic [ref=e600]: Phosphorus Control
+            - generic [ref=e601]: Phosphorus 0.175 mg/L — exceeds 0.1 mg/L limit
+            - generic [ref=e602]: In Progress
+          - generic [ref=e608]:
+            - generic [ref=e609]: IMTA System Active ≥ 60 Days
+            - generic [ref=e610]: Only 4 days — needs 60 days minimum
+            - generic [ref=e611]: In Progress
+          - generic [ref=e616]:
+            - generic [ref=e617]: Chemical-Free Period
+            - generic [ref=e618]: 14-day antibiotic-free window — in progress
+            - generic [ref=e619]: In Progress
+          - generic [ref=e620]:
+            - generic [ref=e622]: 🏁
+            - generic [ref=e623]:
+              - generic [ref=e624]: Submit ASC Application
+              - generic [ref=e625]: Unlock +$12,400/yr premium across certified markets
+              - generic [ref=e626]: Finish Line
+        - generic [ref=e627]:
+          - generic [ref=e628]: Financial Return · ASC
+          - generic [ref=e629]:
+            - generic [ref=e630]: Estimated Annual Revenue Premium
+            - generic [ref=e631]: +$12,400
+            - generic [ref=e632]: +18% above uncertified market price · Asia-Pacific
+          - generic [ref=e633]:
+            - generic [ref=e634]:
+              - generic [ref=e635]: Certification cost (one-time)
+              - generic [ref=e636]: ~$2,800
+            - generic [ref=e637]:
+              - generic [ref=e638]: Annual audit fee
+              - generic [ref=e639]: ~$900 / yr
+            - generic [ref=e640]:
+              - generic [ref=e641]: Break-even point
+              - generic [ref=e642]: ~3 months
+            - generic [ref=e643]:
+              - generic [ref=e644]: Net benefit (Year 1)
+              - generic [ref=e645]: +$8,700
+            - generic [ref=e646]:
+              - generic [ref=e647]: Net benefit (Year 2+)
+              - generic [ref=e648]: +$11,500 / yr
+          - generic [ref=e649]:
+            - generic [ref=e650]: Estimated Timeline to Certification
+            - generic [ref=e655]:
+              - generic [ref=e656]: Now
+              - generic [ref=e657]: ← You are here
+              - generic [ref=e658]: ~6 wks
+          - generic [ref=e659]:
+            - generic [ref=e660]: Combined potential (all active labels)
+            - generic [ref=e661]: +$20,600 / yr
+            - generic [ref=e662]: ASC ($12,400) + GlobalG.A.P. ($8,200) if all certified
