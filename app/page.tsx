@@ -9,6 +9,14 @@ import EcoLabelTab from '@/components/tabs/EcoLabelTab';
 import { db } from '@/lib/instant';
 import { useFarm } from '@/lib/farm-context';
 import { calculateWQI } from '@/lib/wqi-calculator';
+import {
+  nMgLToScore,
+  pMgLToScore,
+  doMgLToScore,
+  EUTROPHICATION_WEIGHTS,
+  getTrophicState,
+  getTrophicColor,
+} from '@/lib/cci-calculator';
 import { generateStockingRecommendations } from '@/lib/stocking-recommendations';
 import { convertToSensorReading } from '@/lib/sensor-data-instant';
 import { SensorReading, WQIScore } from '@/types';
@@ -24,13 +32,6 @@ const GREEN  = '#00C896';
 const AMBER  = '#F59E0B';
 const RED    = '#EF4444';
 const BLUE   = '#3B82F6';
-
-function wqiColor(score: number): string {
-  if (score >= 90) return GREEN;
-  if (score >= 70) return BLUE;
-  if (score >= 50) return AMBER;
-  return RED;
-}
 
 function DashboardContent() {
   const { farm } = useFarm();
@@ -59,6 +60,24 @@ function DashboardContent() {
     return calculateWQI(latestReading);
   }, [latestReading]);
 
+  const eutrScore = useMemo(() => {
+    if (!latestReading) return null;
+    const nScore  = nMgLToScore(latestReading.nitrogen);
+    const pScore  = pMgLToScore(latestReading.phosphorus);
+    const doScore = doMgLToScore(latestReading.dissolvedOxygen);
+    const composite = Math.round(
+      EUTROPHICATION_WEIGHTS.p  * pScore  +
+      EUTROPHICATION_WEIGHTS.n  * nScore  +
+      EUTROPHICATION_WEIGHTS.do * doScore,
+    );
+    const trophicState = getTrophicState(nScore, pScore);
+    return {
+      composite,
+      trophicState,
+      color: getTrophicColor(trophicState),
+    };
+  }, [latestReading]);
+
   const stockingRecs = useMemo(() => {
     if (!latestReading) return [];
     return generateStockingRecommendations(latestReading);
@@ -85,9 +104,9 @@ function DashboardContent() {
         {/* WQI Persistent Header */}
         <div style={{ background: CARD, borderRadius: 12, padding: '14px 20px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: `1px solid ${BORDER}` }}>
           <div>
-            <div style={{ color: MUTED, fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 3 }}>Overall Water Quality Index</div>
-            <div style={{ color: wqi ? wqiColor(wqi.overall) : MUTED, fontSize: 28, fontWeight: 700 }}>
-              {wqi ? wqi.overall : '—'} <span style={{ fontSize: 13, color: MUTED, fontWeight: 400 }}>/ 100</span>
+            <div style={{ color: MUTED, fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 3 }}>Eutrophication Risk Score</div>
+            <div style={{ color: eutrScore ? eutrScore.color : MUTED, fontSize: 28, fontWeight: 700 }}>
+              {eutrScore ? eutrScore.composite : '—'} <span style={{ fontSize: 13, color: MUTED, fontWeight: 400 }}>/ 100</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -95,9 +114,9 @@ function DashboardContent() {
               <div style={{ width: 7, height: 7, background: GREEN, borderRadius: '50%', boxShadow: `0 0 6px ${GREEN}` }} />
               <span style={{ color: GREEN, fontSize: 11, fontWeight: 600 }}>Connected</span>
             </div>
-            {wqi && (
-              <div style={{ background: '#0A3320', borderRadius: 8, padding: '7px 14px', border: `1px solid ${GREEN}` }}>
-                <span style={{ color: GREEN, fontSize: 13, fontWeight: 600 }}>{wqi.category}</span>
+            {eutrScore && (
+              <div style={{ background: eutrScore.color + '22', borderRadius: 8, padding: '7px 14px', border: `1px solid ${eutrScore.color}` }}>
+                <span style={{ color: eutrScore.color, fontSize: 13, fontWeight: 600 }}>{eutrScore.trophicState}</span>
               </div>
             )}
             <AuthButton />
