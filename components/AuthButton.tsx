@@ -31,7 +31,15 @@ export default function AuthButton() {
       </span>
       <button
         onClick={signOut}
-        className="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-semibold hover:bg-gray-200 transition"
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: '#6B8FAF',
+          fontSize: 11,
+          cursor: 'pointer',
+          padding: '4px 8px',
+          textDecoration: 'underline',
+        }}
       >
         Sign Out
       </button>

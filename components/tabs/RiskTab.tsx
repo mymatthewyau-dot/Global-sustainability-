@@ -516,7 +516,7 @@ export default function RiskTab({ latestReading, readings, wqi, farmId }: RiskTa
       {/* Eutrophication Circularity Widgets (N · P · DO) */}
       <div style={{ marginBottom: 14 }}>
         <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>
-          Parameter Circularity — weighted 0-100 · ghost arc = next target
+          Parameter Scores — weighted 0-100 · faded arc = improvement target
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           {eutrParams.map((p) => <EutrophicationParamWidget key={p.key} data={p} />)}
