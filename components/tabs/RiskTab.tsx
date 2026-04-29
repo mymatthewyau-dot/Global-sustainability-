@@ -88,7 +88,7 @@ function SixMonthTrendChart() {
   return (
     <div>
       <div style={{ color: '#6B8FAF', fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 8 }}>
-        6-Month Trend — Apr to Oct (Weekly)
+        Historical Trend — Apr to Oct 2025 (Weekly)
       </div>
       <div style={{ display: 'flex', gap: 14, marginBottom: 10 }}>
         <span style={{ fontSize: 11, color: '#00C896' }}>— DO Score</span>
