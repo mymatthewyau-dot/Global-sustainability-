@@ -16,6 +16,7 @@ import {
   EUTROPHICATION_WEIGHTS,
   getTrophicState,
   getTrophicColor,
+  getTrophicRiskLabel,
 } from '@/lib/cci-calculator';
 import { generateStockingRecommendations } from '@/lib/stocking-recommendations';
 import { convertToSensorReading } from '@/lib/sensor-data-instant';
@@ -29,9 +30,6 @@ const CARD   = '#0D2440';
 const BORDER = '#163455';
 const MUTED  = '#6B8FAF';
 const GREEN  = '#00C896';
-const AMBER  = '#F59E0B';
-const RED    = '#EF4444';
-const BLUE   = '#3B82F6';
 
 function DashboardContent() {
   const { farm } = useFarm();
@@ -75,6 +73,7 @@ function DashboardContent() {
       composite,
       trophicState,
       color: getTrophicColor(trophicState),
+      riskLabel: getTrophicRiskLabel(trophicState),
     };
   }, [latestReading]);
 
@@ -101,7 +100,7 @@ function DashboardContent() {
     <div style={{ minHeight: '100vh', background: BG, fontFamily: "'Segoe UI', system-ui, sans-serif", color: '#CBD5E1' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '20px 24px 40px' }}>
 
-        {/* WQI Persistent Header */}
+        {/* Eutrophication Risk Score Header */}
         <div style={{ background: CARD, borderRadius: 12, padding: '14px 20px', marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: `1px solid ${BORDER}` }}>
           <div>
             <div style={{ color: MUTED, fontSize: 10, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 3 }}>Eutrophication Risk Score</div>
