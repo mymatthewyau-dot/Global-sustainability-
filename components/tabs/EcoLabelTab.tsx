@@ -120,7 +120,7 @@ function CCIEligibilityWidget({ nScore, pScore, doScore }: CCIWidgetProps) {
 
         {/* Right: big score + verdict */}
         <div style={{ textAlign: 'center', minWidth: 110 }}>
-          <div style={{ color: MUTED, fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 6 }}>Peak CCI</div>
+          <div style={{ color: MUTED, fontSize: 9, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 6 }}>Current CCI</div>
           <div style={{
             color: eligible ? GREEN : AMBER,
             fontSize: 42, fontWeight: 800, lineHeight: 1,
@@ -128,7 +128,6 @@ function CCIEligibilityWidget({ nScore, pScore, doScore }: CCIWidgetProps) {
           }}>
             {cci.total}%
           </div>
-          <div style={{ color: MUTED, fontSize: 9, marginTop: 4 }}>Winter/Spring</div>
           {eligible && (
             <div style={{ marginTop: 12, background: '#0A3320', border: `1px solid ${GREEN}`, borderRadius: 8, padding: '8px 10px' }}>
               <div style={{ color: GREEN, fontSize: 10, fontWeight: 700, lineHeight: 1.4 }}>
@@ -163,9 +162,11 @@ function CCIEligibilityWidget({ nScore, pScore, doScore }: CCIWidgetProps) {
 }
 
 export default function EcoLabelTab({ latestReading, wqi, farm }: Props) {
-  const liveNScore  = latestReading ? nMgLToScore(latestReading.nitrogen)         : 0;
-  const livePScore  = latestReading ? pMgLToScore(latestReading.phosphorus)       : 0;
-  const liveDOScore = latestReading ? doMgLToScore(latestReading.dissolvedOxygen) : 0;
+  const { liveNScore, livePScore, liveDOScore } = useMemo(() => ({
+    liveNScore:  latestReading ? nMgLToScore(latestReading.nitrogen)         : 0,
+    livePScore:  latestReading ? pMgLToScore(latestReading.phosphorus)       : 0,
+    liveDOScore: latestReading ? doMgLToScore(latestReading.dissolvedOxygen) : 0,
+  }), [latestReading]);
 
   const labels = useMemo(
     () => scoreEcoLabels(latestReading, wqi, farm),
